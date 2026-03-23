@@ -1,3 +1,5 @@
+using Business_Layer.Abstract;
+using Business_Layer.Concrete;
 using Data_Access_Layer.Abstract;
 using Data_Access_Layer.Concrete;
 using Data_Access_Layer.Context;
@@ -15,6 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericManager<>));
 
 var app = builder.Build();
 
