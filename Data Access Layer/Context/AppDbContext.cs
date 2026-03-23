@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Entity_Layer;
+using Entity_Layer.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +11,7 @@ namespace Data_Access_Layer.Context
 {
     //adı direkt olarak DbContext yapılınca migration atarken more than one DbContext found hatası gelir, bundan dolayı AppDbContext yapıldı
     //eğer ileride Identity kullanmaktan vazgeçilirse IdentityDbContext yerine direkt olarak DbContext yapıp migration atılırsa sistem onaylar.
-    public class AppDbContext:IdentityDbContext<AppUser>
+    public class AppDbContext:IdentityDbContext<AppUser> 
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -27,6 +27,10 @@ namespace Data_Access_Layer.Context
 //DbContextOptions<AppDbContext> options: program.cs içerisinde yazılan o bağlantı dizesini (connection string) paketlenmiş bir kutu olarak temsil eder.
 //: base(options): base kelimesi miras alınan sınıfı yani IdentityDbContext'i temsil eder.
 //kısacası, AppDbContext program.cs'ten ayarları alıyor ve base sınıfa iletiyor.
+
+//IdentityDbContext<AppUser> yazarak generic sınıfa şunu dersin:
+//  * Tabloyu Genişlet: Sadece standart Email, Password alanlarını değil, benim AppUser içine yazdığım Name,Surname gib propları da AspNetUsers tablosuna sütun olarak ekle.
+//  * Kod Tamamlama (IntelliSense): Projenin herhangi bir yerinde kullanıcı verisi çektiğinde, sistem otomatik olarak .Name veya .City özelliklerini tanır. Eğer <AppUser> yazılmasaydı sistem eklenen bu özel alanlardan haberdar olmazdı.
 
 //ASP.NET Users tablosunda NormalizedUserName adında bir prop var. Bu prop UserName'in büyük küçük harf uyum sorununu gidermektedir. enhar83 = ENHAR83 olur. Amacı karşılaştırmaları hızlandırmak ve hataları önlemektir.
 //aynı durum NormalizedEmail için de geçerlidir. tamamen aynı görevi görmektelerdir.
