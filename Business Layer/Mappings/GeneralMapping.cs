@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Entity_Layer.DTOs.LoginDtos;
 using Entity_Layer.DTOs.RegisterDtos;
 using Entity_Layer.Entities;
 
@@ -26,6 +27,7 @@ namespace Business_Layer.Mappings
                 ReverseMap ile AppUser -> UserRegisterDto (örneğin kullanıcı bilgilerini düzenleme sayfasına gönderirken, dbdeki veriyi tekrar DTO'ya çevirmek için kullanılır.
              */
             CreateMap<UserRegisterDto, AppUser>().ReverseMap();
+            CreateMap<UserLoginDto, AppUser>().ReverseMap();
         }
     }
 }
