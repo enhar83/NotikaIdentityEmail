@@ -26,6 +26,7 @@ namespace Business_Layer.Mappings
                 normalde UserRegisterDto -> AppUser (kayıt olurken kullanılır)
                 ReverseMap ile AppUser -> UserRegisterDto (örneğin kullanıcı bilgilerini düzenleme sayfasına gönderirken, dbdeki veriyi tekrar DTO'ya çevirmek için kullanılır.
              */
+
             CreateMap<UserRegisterDto, AppUser>().ReverseMap();
             CreateMap<UserLoginDto, AppUser>().ReverseMap();
         }

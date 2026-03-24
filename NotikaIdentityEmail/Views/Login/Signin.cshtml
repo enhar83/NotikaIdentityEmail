@@ -1,4 +1,4 @@
-﻿
+﻿@model UserLoginDto
 @{
     Layout = null;
 }
@@ -44,21 +44,26 @@
 
 					<div class="wrap-input100 validate-input m-b-23">
 						<span class="label-input100">Email Adresiniz</span>
-						<input class="input100" type="text" placeholder="Email Adresinizi Giriniz...">
+						<input class="input100" type="text" asp-for="Email" placeholder="Email Adresinizi Giriniz...">
+						<span asp-validation-for="Email" class="text-danger" style="font-size:12px;"></span>
 						<span class="focus-input100" data-symbol="&#xf206;"></span>
 					</div>
 
 					<div class="wrap-input100 validate-input">
 						<span class="label-input100">Şifreniz</span>
-						<input class="input100" type="password" placeholder="Şifrenizi Giriniz...">
+						<input class="input100" type="password" asp-for="Password" placeholder="Şifrenizi Giriniz...">
+						<span asp-validation-for="Password" class="text-danger" style="font-size:12px;"></span>
 						<span class="focus-input100" data-symbol="&#xf190;"></span>
 					</div>
 
-					<div class="text-right p-t-8 p-b-31">
-						<a href="#">
-							Şifreni mi Unuttun?
-						</a>
+					<div class="wrap-input100 validate-input">
 					</div>
+
+					<div class="text-right p-t-8 p-b-31">
+						<a href="#">Şifreni mi Unuttun?</a>
+					</div>
+
+					<div asp-validation-summary="ModelOnly" class="text-danger custom-validation-summary m-b-20 text-center"></div>
 
 					<div class="container-login100-form-btn">
 						<div class="wrap-login100-form-btn">
@@ -68,6 +73,8 @@
 							</button>
 						</div>
 					</div>
+
+					
 
 					<div class="txt1 text-center p-t-54 p-b-20">
 						<span>
@@ -94,7 +101,7 @@
 							Bir Hesabın Yok mu?
 						</span>
 
-						<a href="#" class="txt2">
+						<a href="/Register/Signup" class="txt2">
 							Kayıt Ol
 						</a>
 					</div>
@@ -125,3 +132,10 @@
 
 </body>
 </html>
+
+<style>
+	.text-danger {
+		color: #ff0000 !important;
+		font-size: 13px;
+	}
+</style>

@@ -58,6 +58,11 @@
 				<div class="form-row-last">
 					<input type="submit" class="register" value="Kayıt Ol">
 				</div>
+
+				<div class="account-check">
+					<span>Zaten bir hesabınız var mı?</span>
+					<a href="/Login/Signin">Giriş Yap</a>
+				</div>
 			</form>
 		</div>
 	</div>
@@ -109,6 +114,34 @@
 		padding: 0;
 		margin: 0;
 	}
+
+	.account-check {
+		text-align: center;
+		margin-top: 20px;
+		padding-bottom: 20px;
+		font-family: 'Nunito', sans-serif;
+	}
+
+		.account-check span {
+			color: rgba(255, 255, 255, 0.8); /* Biraz soluk beyaz */
+			font-size: 15px;
+			display: block; /* Alt alta gelmeleri için */
+			margin-bottom: 5px;
+		}
+
+		.account-check a {
+			color: #ffffff;
+			font-weight: 700;
+			text-decoration: none;
+			font-size: 16px;
+			transition: all 0.3s ease;
+			border-bottom: 1px solid transparent;
+		}
+
+			.account-check a:hover {
+				color: #ff6b6b; /* Üzerine gelince buton rengine yakın bir renk */
+				border-bottom: 1px solid #ff6b6b;
+			}
 
 	.input-text {
 		color: #ffffff !important;
