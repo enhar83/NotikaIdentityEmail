@@ -42,6 +42,7 @@ builder.Services.AddScoped<IAppUserService, AppUserManager>();
 builder.Services.AddAutoMapper(typeof(GeneralMapping)); //AutoMapper.Extensions.Microsoft.DependencyInjection paketi kurulmazsa hata alýnýr.
 
 builder.Services.AddValidatorsFromAssemblyContaining<UserRegisterValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UserLoginValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 
