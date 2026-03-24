@@ -2,6 +2,7 @@ using Business_Layer.Abstract;
 using Business_Layer.Concrete;
 using Business_Layer.Mappings;
 using Business_Layer.ValidationRules.AppUserValidationRules;
+using Business_Layer.ValidationRules.IdentityErrorMessages;
 using Data_Access_Layer.Abstract;
 using Data_Access_Layer.Concrete;
 using Data_Access_Layer.Context;
@@ -24,8 +25,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 //identity sistemi bir servisler bütünüdür ve bu servislerin DI container'a eklenmesi gerekiyor. 
 //ctor içerisinde kullansan da program.cs kayýdý yapýlmazsa hata alýrsýn. nesneyi üretemez ve invalid operations exception hatasý gelir.
 //AppUser'ý ekliyoruz, ileride AppRole eklenince o da buraya gelecek. 
-builder.Services.AddIdentity<AppUser, IdentityRole>()
+builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+})
     .AddEntityFrameworkStores<AppDbContext>() //identity bilgilerini hangi db içerisinde tutacaðýný belirtir.
+    .AddErrorDescriber<CustomIdentityErrorDescriber>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
