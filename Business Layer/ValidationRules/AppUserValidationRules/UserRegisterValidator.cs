@@ -19,15 +19,28 @@ namespace Business_Layer.ValidationRules.AppUserValidationRules
             RuleFor(x => x.Surname)
                 .NotEmpty().WithMessage("Soyad alanı boş geçilemez.");
 
+            RuleFor(x => x.UserName)
+                .NotEmpty().WithMessage("Kullanıcı adı boş geçilemez.");
+
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("Email adresi gereklidir.")
                 .EmailAddress().WithMessage("Lütfen geçerli bir e-posta adresi giriniz.");
 
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Şifre boş geçilemez.")
-                .MinimumLength(6).WithMessage("Şifre en az 6 karakter olmalıdır.");
+                .MinimumLength(6).WithMessage("Şifre en az 6 karakter olmalıdır.")
+                .Matches(@"[A-Z]+").WithMessage("Şifre en az bir büyük harf içermelidir.")
+                .Matches(@"[a-z]+").WithMessage("Şifre en az bir küçük harf içermelidir.")
+                .Matches(@"[0-9]+").WithMessage("Şifre en az bir rakam içermelidir.")
+                .Matches(@"[\!\?\*\.]+").WithMessage("Şifre en az bir özel karakter (!?*.) içermelidir.");
 
             RuleFor(x => x.ConfirmPassword)
+                .NotEmpty().WithMessage("Şifre tekrar alanı boş geçilemez.")
+                .MinimumLength(6).WithMessage("Şifre en az 6 karakter olmalıdır.")
+                .Matches(@"[A-Z]+").WithMessage("Şifre en az bir büyük harf içermelidir.")
+                .Matches(@"[a-z]+").WithMessage("Şifre en az bir küçük harf içermelidir.")
+                .Matches(@"[0-9]+").WithMessage("Şifre en az bir rakam içermelidir.")
+                .Matches(@"[\!\?\*\.]+").WithMessage("Şifre en az bir özel karakter (!?*.) içermelidir.")
                 .Equal(x => x.Password).WithMessage("Şifreler birbiriyle uyuşmuyor.");
         }
     }

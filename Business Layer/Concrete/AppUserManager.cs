@@ -30,8 +30,8 @@ namespace Business_Layer.Concrete
             //dtodaki password ve confirmpassword alanları appuser içinde karşılık bulmadığından dolayı bu alanlar kopyalanmaz. (dbde passwordhash tutulur)
             var appUser = _mapper.Map<AppUser>(userRegisterDto);
 
-            //userRegisterDto.Password içerisindeki açık metni alır, karmaşık bir algoritma ile Hash'ler
-            //oluşturulan bu hashlenmiş şifreyyi ve diğer kullanıcı bilgilerini AspNetUsers tablosuna kaydeder.
+            //userRegisterDto.Password içerisindeki açık metni alır, karmaşık bir algoritma ile Hash'ler. metodu çağırırken nesneyi ve password yollamak zorunludur, iki parametre ile çalışıyor.
+            //oluşturulan bu hashlenmiş şifreyi ve diğer kullanıcı bilgilerini AspNetUsers tablosuna kaydeder.
             //IdentityResult döner. eğer her şey yolundaysa Succeeded = true olur. eğer bir hata varsa hataları zaten içerisinde barındırır.
             var result = await _userManager.CreateAsync(appUser, userRegisterDto.Password);
             return result;

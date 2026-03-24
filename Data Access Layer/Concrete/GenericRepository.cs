@@ -12,7 +12,7 @@ namespace Data_Access_Layer.Concrete
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         //protected olması sadece bu sınıf ve bu sınıftan miras alanların erişilebilir olması anlamına geliyor. private yapılsaydı ileride yazılacak olan ProductRepository bu değişkenleri kullanamazdı.
-        //readonly olması ise _db nesnesinin sadece contructor içinde atanabileceğini kodun başka hiçbir yerinde yanlışlıkla değiştirilemeyeceğini garanti eder. (güvenlik önlemi)
+        //readonly olması ise _db nesnesinin sadece contructor içinde atanabileceğini kodun başka hiçbir yerinde yanlışlıkla değiştirilemeyeceğini garanti eder. (güvenlik önlemi). örneğin tc kimlik no doğduğunda bir kere verilir (sadece constructorda doğarken belirlenir)
         protected readonly AppDbContext _db;
         protected DbSet<T> _dbSet;
 

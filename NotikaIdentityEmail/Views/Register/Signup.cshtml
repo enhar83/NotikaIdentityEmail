@@ -1,0 +1,138 @@
+﻿@model UserRegisterDto
+
+@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Identity Kayıt Formu</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" type="text/css" href="/colorlib-regform-35/css/nunito-font.css">
+	<link rel="stylesheet" href="/colorlib-regform-35/css/style.css" />
+</head>
+<body class="form-v9">
+	<div class="page-content">
+		<div class="form-v9-content" style="background-image: url('/colorlib-regform-35/images/form-v9.jpg')">
+			<form class="form-detail" method="post">
+
+				<h2>Yeni Kullanıcı Kaydı</h2>
+
+				<div class="form-row-total">
+					<div class="form-row">
+						<input type="text" class="input-text" asp-for="Name" placeholder="Adınız">
+						<span asp-validation-for="Name" class="text-danger" style="font-size:12px;"></span>
+					</div>
+					<div class="form-row">
+						<input type="text" class="input-text" asp-for="Surname" placeholder="Soyadınız">
+						<span asp-validation-for="Surname" class="text-danger" style="font-size:12px;"></span>
+					</div>
+				</div>
+				<div class="form-row-total">
+					<div class="form-row">
+						<input type="text" class="input-text" asp-for="UserName" placeholder="Kullanıcı Adınız">
+						<span asp-validation-for="UserName" class="text-danger" style="font-size:12px;"></span>
+					</div>
+					<div class="form-row">
+						<input type="email" class="input-text" asp-for="Email" placeholder="Email Adresiniz">
+						<span asp-validation-for="Email" class="text-danger" style="font-size:12px;"></span>
+					</div>
+				</div>
+				<div class="form-row-total">
+					<div class="form-row">
+						<input type="password" class="input-text" asp-for="Password" placeholder="Şifreniz">
+						<span asp-validation-for="Password" class="text-danger" style="font-size:12px;"></span>
+					</div>
+					<div class="form-row">
+						<input type="password" class="input-text" placeholder="Şifre Tekrar" asp-for="ConfirmPassword">
+						<span asp-validation-for="ConfirmPassword" class="text-danger" style="font-size:12px;"></span>
+					</div>
+				</div>
+
+				<!-- model doğrulama hatalarını kullanıcıya göstermek için kullanılır. -->
+				<!-- None olursa hata mesajı gösterilmez, ModelOnly olursa sadece ModelState.AddModelError kısmındaki genel hata mesajları gösterilir, All ise hhem AddModelError hem de model proplarına ait (data annotations) tüm validasyon hatalarını gösterir. -->
+				<div asp-validation-summary="ModelOnly" class="text-danger" style="list-style:none; margin-bottom:15px; font-weight:bold;"></div>
+
+				<div class="form-row-last">
+					<input type="submit" class="register" value="Kayıt Ol">
+				</div>
+			</form>
+		</div>
+	</div>
+</body>
+</html>
+
+<style>
+	.text-danger {
+		color: #ff6b6b !important;
+		font-size: 11px;
+		display: block;
+		margin-top: -40px;
+		margin-bottom: 5px;
+		text-align: left;
+		margin-left: 25px;
+		font-weight: 600;
+		font-family: 'Nunito', sans-serif;
+	}
+
+
+	.form-row {
+		margin-bottom: 20px !important;
+	}
+
+	span.text-danger {
+		color: #ff6b6b !important;
+		font-size: 11px;
+		display: block;
+		margin-top: -40px;
+		margin-bottom: 5px;
+		text-align: left;
+		margin-left: 25px;
+		font-weight: 600;
+		font-family: 'Nunito', sans-serif;
+	}
+
+
+	.validation-summary-errors {
+		margin-top: 10px !important; 
+		margin-bottom: 15px !important;
+		text-align: center !important;
+		margin-left: 0 !important;
+		display: block;
+		width: 100%;
+	}
+
+	.validation-summary-errors ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.input-text {
+		color: #ffffff !important;
+		background: transparent !important;
+	}
+
+
+	.input-text:focus {
+		color: #ffffff !important;
+	}
+
+
+	.input-text::placeholder {
+		color: rgba(255, 255, 255, 0.7) !important;
+		opacity: 1;
+	}
+
+
+	.input-text:-ms-input-placeholder {
+		color: rgba(255, 255, 255, 0.7) !important;
+	}
+
+	.input-text::-ms-input-placeholder {
+		color: rgba(255, 255, 255, 0.7) !important;
+	}
+</style>
+
