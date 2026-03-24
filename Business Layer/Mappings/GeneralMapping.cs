@@ -1,0 +1,57 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using AutoMapper;
+using Entity_Layer.DTOs.RegisterDtos;
+using Entity_Layer.Entities;
+
+namespace Business_Layer.Mappings
+{
+    //automapper kütüphanesinin bu sınıfı tanıması için mutlaka Profile sınıfından miras alması gerekir. bu miras sayesinde sınıf içerisinde CreateMap gibi özel yetenekler kullanılabilir. 
+    public class GeneralMapping :Profile
+    {
+        //automapper uygulama ilk çalıştığında bu sınıfın içine girer ve Constructor içindeki kuralları okur. kurallar buraya yazılır çünkü uygulama ayağa kalkarken bu sözlük bir kez belleğe alınmalı ve ihtiyaç anında hemen kullanılmalıdır.
+        public GeneralMapping()
+        {
+            /*  UserRegisterDto nesnesi gelirse onu AppUser nesnesine dönüştürmeyi bil, içindeki isimleri karşılaştır; örneğin ikisinde de Name alanı varsa DTO'dakini al ve Entity'dekinin içine kopyala
+                ilk parametre (UserRegisterDto): kaynak (source), yani eldeki ham ver.
+                ikinci parametre (AppUser): hedef (destination), yani verinin dönüştürülmesini istediğin nihai nesne.
+            */
+            
+            /*
+                ReverseMap: çift yönlü bilet gibidir, kuralın sadece soldan sağa değil, sağdan sola da çalışmasını sağlar.
+                normalde UserRegisterDto -> AppUser (kayıt olurken kullanılır)
+                ReverseMap ile AppUser -> UserRegisterDto (örneğin kullanıcı bilgilerini düzenleme sayfasına gönderirken, dbdeki veriyi tekrar DTO'ya çevirmek için kullanılır.
+             */
+            CreateMap<UserRegisterDto, AppUser>().ReverseMap();
+        }
+    }
+}
+
+/*
+    Mapping Nedir?
+        - bir nesnenin içindeki verileri başka bir nesnenin içine kopyalama işlemidir.
+        - günlük hayat örneği: elinde bir nüfus cüzdanı (entity) var, üzerinde tc no, ad, soyad vs gibi 20 adet bilgi yazıyor. bir kargo göndermek istiyosun ve kargo formu (DTO) senden sadece ad soyad ve telefon istiyor.
+            * nüfus cüzdanındaki ad kısmını bakıp kargo formundaki ad kısmına yazma eylemi Mapping olarak adlandırılır.
+
+    Neden AutoMapper Kullanılır?
+        - eğer automapper kullanılmazsa her kayıt işleminde şöyle kodlar yazılmak zorunda olur;
+            var user = new AppUser();
+            user.Name = registerDto.Name;
+            user.Surname = registerDto.Surname;
+            user.Email = registerDto.Email;
+            user.UserName = registerDto.UserName;
+            user.City = registerDto.City;
+
+        - bu yöntemle 50 tane tablo olduğunu düşün, binlerce satır gereksiz atama kodu yazılır. AutoMapper ise der ki sen bana şablonu bir kere ver ben isimleri aynı olanları senin yerine otomatik kopyalarım.
+
+    AutoMapper Nasıl Çalışır?
+        - 1. Profile: hangi sınıfın hangi sınıfa dönüşeceği yazılır (kullanım kılavuzu)
+        - 2. CreateMap: A sınıfını B sınıfına dönüştürebilirsin komutudur.
+        - 3. Map: Gerçekten dönüştürme işlemini başlatan tetikleyicidir.
+
+    Kritik Bilgi
+        - eğer isimler birebir aynıysa (Name=Name), automapper hiçbir ek kod yazmaya gerek kalmadan eşleştirmeyi yapar. eğer isimler farklı olsaydı buraya ekstra bir ForMember kuralı eklemek gerekecekti.
+ */
