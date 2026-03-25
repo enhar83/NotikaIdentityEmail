@@ -25,7 +25,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 //identity sistemi bir servisler bütünüdür ve bu servislerin DI container'a eklenmesi gerekiyor. 
 //ctor içerisinde kullansan da program.cs kayýdý yapýlmazsa hata alýrsýn. nesneyi üretemez ve invalid operations exception hatasý gelir.
 //AppUser'ý ekliyoruz, ileride AppRole eklenince o da buraya gelecek. 
-builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
 {
     options.User.RequireUniqueEmail = true;
 })
@@ -38,6 +38,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericManager<>));
 builder.Services.AddScoped<IAppUserService, AppUserManager>();
+builder.Services.AddScoped<ICategoryService, CategoryManager>();
 
 builder.Services.AddAutoMapper(typeof(GeneralMapping)); //AutoMapper.Extensions.Microsoft.DependencyInjection paketi kurulmazsa hata alýnýr.
 

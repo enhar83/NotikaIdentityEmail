@@ -30,7 +30,7 @@ namespace Data_Access_Layer.Concrete
 
         //burada eğer id kontrolü yapılmazsa sarı ünlem (posible null reference döner) nedeni ise metot tanımlanırken bir değer döneceği garanti veriliyor ama null dönme ihtimali de var. bu bir çelişki yaratıyor.
         //bu durumdan kurtulmak için Task<T?> ile Id yanlış ise null dönebilir diye sisteme haber vermektir. 
-        public async Task<T?> GetByIdAsync(string id)
+        public async Task<T?> GetByIdAsync(Guid id)
         {
             return await _dbSet.FindAsync(id);
         }

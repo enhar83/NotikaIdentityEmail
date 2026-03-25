@@ -12,6 +12,6 @@ namespace Business_Layer.Abstract
         void TUpdate(T entity); 
         void TDelete(T entity);
         Task<List<T>> TGetListAsync();
-        Task<T?> TGetByIdAsync(string id);
+        Task<T?> TGetByIdAsync(Guid id);
     }
 }

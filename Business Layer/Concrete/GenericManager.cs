@@ -25,7 +25,7 @@ namespace Business_Layer.Concrete
             _uow.SaveAsync().Wait();
         }
 
-        public async Task<T?> TGetByIdAsync(string id)
+        public async Task<T?> TGetByIdAsync(Guid id)
         {
             return await _repository.GetByIdAsync(id);
         }
