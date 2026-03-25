@@ -27,7 +27,7 @@ namespace NotikaIdentityEmail.Controllers
                 var result = await _appUserService.LoginAsync(userLoginDto);
 
                 if (result.Succeeded)
-                    return RedirectToAction("MyProfile", "Profile");
+                    return RedirectToAction("Inbox", "Message");
 
                 else
                     ModelState.AddModelError("", "Email veya Şifre hatalı");

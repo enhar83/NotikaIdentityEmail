@@ -10,7 +10,7 @@ namespace Entity_Layer.Entities
     {
         public Guid Id { get; set; }
         public string? CategoryName { get; set; }
-        public string? CategoryStringUrl { get; set; }
+        public string? CategoryIconUrl { get; set; }
         public bool? CategoryStatus { get; set; }
         public ICollection<Message> Messages { get; set; }
     }
