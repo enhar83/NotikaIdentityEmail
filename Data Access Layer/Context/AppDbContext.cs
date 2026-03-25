@@ -16,6 +16,14 @@ namespace Data_Access_Layer.Context
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            // bu satır, projedeki (Assembly) tüm IEntityTypeConfiguration arayüzünü uygulayan sınıfları bulur ve otomatik olarak dbye yansıtır.
+            builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+        }
     }
 }
 
