@@ -39,6 +39,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericManager<>));
 builder.Services.AddScoped<IAppUserService, AppUserManager>();
 builder.Services.AddScoped<ICategoryService, CategoryManager>();
+builder.Services.AddScoped<IMessageService, MessageManager>();
 
 builder.Services.AddAutoMapper(typeof(GeneralMapping)); //AutoMapper.Extensions.Microsoft.DependencyInjection paketi kurulmazsa hata alýnýr.
 
