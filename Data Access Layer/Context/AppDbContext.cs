@@ -17,6 +17,10 @@ namespace Data_Access_Layer.Context
         {
         }
 
+
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Message> Messages { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

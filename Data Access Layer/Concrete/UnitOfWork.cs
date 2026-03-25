@@ -5,16 +5,23 @@ using System.Text;
 using System.Threading.Tasks;
 using Data_Access_Layer.Abstract;
 using Data_Access_Layer.Context;
+using Entity_Layer.Entities;
 
 namespace Data_Access_Layer.Concrete
 {
     public class UnitOfWork : IUnitOfWork
     {
+        public IGenericRepository<Category> Categories { get; private set; }
+        public IGenericRepository<Message> Messages { get; private set; }
+
         private readonly AppDbContext _db;
 
         public UnitOfWork(AppDbContext db)
         {
             _db = db;
+
+            Categories = new GenericRepository<Category>(_db);
+            Messages = new GenericRepository<Message>(_db);
         }
 
         //db bağlantıları maliyetli işlerdir. işlemler bitince o kapıyı kapatmak gerekir.
