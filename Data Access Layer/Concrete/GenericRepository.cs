@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Data_Access_Layer.Abstract;
@@ -38,6 +39,11 @@ namespace Data_Access_Layer.Concrete
         public async Task<List<T>> GetListAsync()
         {
             return await _dbSet.ToListAsync();
+        }
+
+        public IQueryable<T> GetWhere(Expression<Func<T, bool>> method)
+        {
+            return _dbSet.Where(method);
         }
 
         public async Task InsertAsync(T entity)

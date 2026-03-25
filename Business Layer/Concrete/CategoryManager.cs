@@ -3,19 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Business_Layer.Abstract;
 using Data_Access_Layer.Abstract;
+using Entity_Layer.DTOs.CategoryDtos;
 using Entity_Layer.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business_Layer.Concrete
 {
     public class CategoryManager : ICategoryService
     {
         private readonly IUnitOfWork _uow;
+        private readonly IMapper _mapper;
 
-        public CategoryManager(IUnitOfWork uow)
+        public CategoryManager(IUnitOfWork uow, IMapper mapper)
         {
             _uow = uow;
+            _mapper = mapper;
         }
 
         public void TDelete(Category entity)
@@ -27,6 +33,21 @@ namespace Business_Layer.Concrete
         public async Task<Category?> TGetByIdAsync(Guid id)
         {
             return await _uow.Categories.GetByIdAsync(id);
+        }
+
+        public async Task<List<CategorySidebarDto>> TGetCategoryListForSidebarAsync()
+        {
+            //IQueryable olarak status'u aktif olan categoryleri alıyoruz.
+            var query = _uow.Categories.GetWhere(x => x.CategoryStatus == true);
+
+            //ProjectTo ile SQL'den sadece Dto içerisinde bulunan alanlar istenir (Id ve Name)
+            //ToList() ile de çağrılıyor. 
+            return await query
+                .ProjectTo<CategorySidebarDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            // normal map kullanılsaydı: SELECT *FROM Categories sorgusu dbye gidecekti. böylelikle ne kadar sütun varsa hepsi RAM'e dolardı.
+            // projectto kullanıldığından dolayı: SELECT CategoryId, CategoryName FROM Categories konutu dbye gidecek. Sadece istenen sütunlar RAM'e çekildi ve RAM yoruulmaz.
         }
 
         public async Task<List<Category>> TGetListAsync()

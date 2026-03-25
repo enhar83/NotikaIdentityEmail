@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Entity_Layer.DTOs.CategoryDtos;
 using Entity_Layer.DTOs.LoginDtos;
 using Entity_Layer.DTOs.RegisterDtos;
 using Entity_Layer.Entities;
@@ -29,6 +30,7 @@ namespace Business_Layer.Mappings
 
             CreateMap<UserRegisterDto, AppUser>().ReverseMap();
             CreateMap<UserLoginDto, AppUser>().ReverseMap();
+            CreateMap<Category, CategorySidebarDto>().ReverseMap();
         }
     }
 }

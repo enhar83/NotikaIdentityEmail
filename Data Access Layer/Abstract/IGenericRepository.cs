@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +14,7 @@ namespace Data_Access_Layer.Abstract
         Task InsertAsync(T entity);
         void Update(T entity); //ef core içerisinde update genellikle asenkron yapıda değildir.
         void Delete(T entity);
+        IQueryable<T> GetWhere(Expression<Func<T, bool>> method); //filtre alabilen ve sorguyu dbye göndermeden tutan metot
     }
 }
 
