@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Entity_Layer.DTOs.CategoryDtos;
 using Entity_Layer.DTOs.LoginDtos;
+using Entity_Layer.DTOs.MessageDtos;
 using Entity_Layer.DTOs.RegisterDtos;
 using Entity_Layer.Entities;
+using Microsoft.AspNetCore.Routing.Constraints;
 
 namespace Business_Layer.Mappings
 {
@@ -31,6 +33,11 @@ namespace Business_Layer.Mappings
             CreateMap<UserRegisterDto, AppUser>().ReverseMap();
             CreateMap<UserLoginDto, AppUser>().ReverseMap();
             CreateMap<Category, CategorySidebarDto>().ReverseMap();
+
+            CreateMap<Message, MessageListInboxDto>()
+                .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => src.Sender.Name + "" + src.Sender.Surname))
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
+                .ReverseMap();
         }
     }
 }
