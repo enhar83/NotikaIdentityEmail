@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Entity_Layer.Entities
 {
-    public class AppUser:IdentityUser
+    public class AppUser:IdentityUser<Guid>
     {
         public string Name { get; set; } = "";
         public string Surname { get; set; } = "";

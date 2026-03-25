@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Entity_Layer.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +12,7 @@ namespace Data_Access_Layer.Context
 {
     //adı direkt olarak DbContext yapılınca migration atarken more than one DbContext found hatası gelir, bundan dolayı AppDbContext yapıldı
     //eğer ileride Identity kullanmaktan vazgeçilirse IdentityDbContext yerine direkt olarak DbContext yapıp migration atılırsa sistem onaylar.
-    public class AppDbContext:IdentityDbContext<AppUser> 
+    public class AppDbContext:IdentityDbContext<AppUser,IdentityRole<Guid>,Guid> 
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
