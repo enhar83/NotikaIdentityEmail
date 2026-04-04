@@ -13,5 +13,6 @@ namespace Business_Layer.Abstract
     {
         Task<List<MessageListInboxDto>> TGetMessageListForInboxAsync();
         Task<List<MessageListSendboxDto>> TGetMessageListForSendboxAsync();
+        Task<MessageDetailDto> TGetMessageDetailAsync(Guid id);
     }
 }

@@ -39,6 +39,18 @@ namespace Business_Layer.Concrete
             return _uow.Messages.GetListAsync();   
         }
 
+        public async Task<MessageDetailDto> TGetMessageDetailAsync(Guid id)
+        {
+            var query = _uow.Messages.GetWhere();
+
+            return await query
+                .Where(m => m.Id == id)
+                .ProjectTo<MessageDetailDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
+
+            //where'i projectto'dan önce kullanmak SQL tarafında daha optimize bir sorgu oluşturur. modern ıqueryable sağlayıcıları bunu optimize eder ama önce where yazmak daha iyidir.
+        }
+
         public async Task<List<MessageListInboxDto>> TGetMessageListForInboxAsync()
         {
             var query = _uow.Messages.GetWhere();
