@@ -34,6 +34,12 @@ namespace Business_Layer.Concrete
             return await _uow.Messages.GetByIdAsync(id);
         }
 
+        public async Task TComposeMessage(Message message)
+        {
+            await _uow.Messages.InsertAsync(message);
+            await _uow.SaveAsync();
+        }
+
         public Task<List<Message>> TGetListAsync()
         {
             return _uow.Messages.GetListAsync();   
