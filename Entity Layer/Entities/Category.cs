@@ -8,7 +8,7 @@ namespace Entity_Layer.Entities
 {
     public class Category
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public string? CategoryName { get; set; }
         public string? CategoryIconUrl { get; set; }
         public bool? CategoryStatus { get; set; }

@@ -40,7 +40,6 @@ namespace Business_Layer.Mappings
                 dest: hedefteki alandır. o alana gider.
                 src: destten alınan alanları buradaki istenen alanın içerisine koyar.
              */
-
             CreateMap<Message, MessageListInboxDto>()
                 .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => src.Sender.Name + " " + src.Sender.Surname))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
@@ -55,6 +54,21 @@ namespace Business_Layer.Mappings
                 .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => src.Sender.Name + " " + src.Sender.Surname))
                 .ForMember(dest => dest.ReceiverName, opt => opt.MapFrom(src => src.Receiver.Name + " " + src.Receiver.Surname))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
+                .ReverseMap();
+
+            /*
+                ForSourceMember(): kaynak sınıfıta bulunan ancak hedefte karşılık bulunamayan proplar için kullanılır.
+
+                DoNotValidate(): bu propun hedef sınıfta bir karşılığı yok bunu doğrulama demektir.
+
+                Ignore(): bu alanı şimdilik boş bırak, mapping yaparken buraya dokunma demektir. Message entitysi içerisinde bir SenderId, ReceiverId olmasından dolayı kullanılıyor.
+                          eğer Ignore() kullanılmazsa, automapper orada bir veri bulamadığı için hata verebilir. bu kısım Controller içerisinde elle doldurulucak.
+            */
+            CreateMap<ComposeMessageDto, Message>()
+                .ForSourceMember(src => src.SenderEmail, opt => opt.DoNotValidate())
+                .ForSourceMember(src => src.ReceiverEmail, opt => opt.DoNotValidate())
+                .ForMember(dest => dest.SenderId, opt => opt.Ignore())
+                .ForMember(dest => dest.ReceiverId, opt => opt.Ignore())
                 .ReverseMap();
         }
     }

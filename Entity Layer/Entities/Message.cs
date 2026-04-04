@@ -8,7 +8,7 @@ namespace Entity_Layer.Entities
 {
     public class Message
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public string Subject { get; set; }
         public DateTime SendDate { get; set; } = DateTime.Now;
         public string MessageDetail { get; set; }
