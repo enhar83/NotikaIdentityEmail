@@ -13,37 +13,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Business_Layer.Concrete
 {
-    public class MessageManager : IMessageService
+    public class MessageManager : GenericManager<Message>, IMessageService
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
 
-        public MessageManager(IUnitOfWork uow, IMapper mapper)
+        public MessageManager(IGenericRepository<Message> repository, IUnitOfWork uow, IMapper mapper) : base(repository, uow)
         {
             _uow = uow;
             _mapper = mapper;
         }
 
-        public void TDelete(Message entity)
-        {
-            _uow.Messages.Delete(entity);
-        }
 
-        public async Task<Message?> TGetByIdAsync(Guid id)
-        {
-            return await _uow.Messages.GetByIdAsync(id);
-        }
-
-        public async Task TComposeMessage(Message message)
-        {
-            await _uow.Messages.InsertAsync(message);
-            await _uow.SaveAsync();
-        }
-
-        public Task<List<Message>> TGetListAsync()
-        {
-            return _uow.Messages.GetListAsync();   
-        }
 
         public async Task<MessageDetailDto> TGetMessageDetailAsync(Guid id)
         {
@@ -75,16 +56,6 @@ namespace Business_Layer.Concrete
                 .ProjectTo<MessageListSendboxDto>(_mapper.ConfigurationProvider)
                 .OrderByDescending(m => m.SendDate)
                 .ToListAsync();
-        }
-
-        public async Task TInsertAsync(Message entity)
-        {
-            await _uow.Messages.InsertAsync(entity);
-        }
-
-        public void TUpdate(Message entity)
-        {
-            _uow.Messages.Update(entity);
         }
     }
 }

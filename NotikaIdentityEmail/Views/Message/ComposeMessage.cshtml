@@ -1,0 +1,121 @@
+﻿@model ComposeMessageDto
+
+@{
+    ViewData["Title"] = "Yeni Mesaj Oluştur";
+    Layout = "~/Views/UserLayout/Index.cshtml";
+}
+
+<div class="inbox-area">
+    <div class="container">
+        <div class="row">
+
+            @await Component.InvokeAsync("_MessageSidebarComponentPartial")
+
+            <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+                <form method="post">
+                    <div class="view-mail-list sm-res-mg-t-30">
+                        <div class="view-mail-hd">
+                            <div class="view-mail-hrd">
+                                <h2>Yeni Mesaj Girişi</h2>
+                            </div>
+                        </div>
+
+                        <div class="cmp-int mg-t-20">
+                            @* Gönderen Email (Şimdilik Manuel) *@
+                            <div class="row">
+                                <div class="col-lg-1 col-md-2 col-sm-2 col-xs-12">
+                                    <div class="cmp-int-lb cmp-int-lb1 text-right">
+                                        <span>From: </span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-11 col-md-10 col-sm-10 col-xs-12">
+                                    <div class="form-group">
+                                        <div class="nk-int-st cmp-int-in">
+                                            <input type="email" asp-for="SenderEmail" class="form-control" placeholder="Senin e-posta adresin" />
+                                            <span asp-validation-for="SenderEmail" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @* Alıcı Email *@
+                            <div class="row">
+                                <div class="col-lg-1 col-md-2 col-sm-2 col-xs-12">
+                                    <div class="cmp-int-lb cmp-int-lb1 text-right">
+                                        <span>To: </span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-11 col-md-10 col-sm-10 col-xs-12">
+                                    <div class="form-group">
+                                        <div class="nk-int-st cmp-int-in">
+                                            <input type="email" asp-for="ReceiverEmail" class="form-control" placeholder="alıcı@example.com" />
+                                            <span asp-validation-for="ReceiverEmail" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @* Kategori Dropdown *@
+                            <div class="row">
+                                <div class="col-lg-1 col-md-2 col-sm-2 col-xs-12">
+                                    <div class="cmp-int-lb text-right">
+                                        <span>Category: </span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-11 col-md-10 col-sm-10 col-xs-12">
+                                    <div class="form-group">
+                                        <div class="nk-int-st">
+                                            <select asp-for="CategoryId" asp-items="ViewBag.CategoryList" class="form-control">
+                                                <option value="">Lütfen Bir Kategori Seçiniz</option>
+                                            </select>
+                                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @* Konu *@
+                            <div class="row">
+                                <div class="col-lg-1 col-md-2 col-sm-2 col-xs-12">
+                                    <div class="cmp-int-lb text-right">
+                                        <span>Subject: </span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-11 col-md-10 col-sm-10 col-xs-12">
+                                    <div class="form-group">
+                                        <div class="nk-int-st cmp-int-in">
+                                            <input type="text" asp-for="Subject" class="form-control" placeholder="Mesaj konusu" />
+                                            <span asp-validation-for="Subject" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @* Mesaj İçeriği *@
+                        <div class="cmp-int-box mg-t-20">
+                            <div class="form-group">
+                                <label>Mesaj Detayı</label>
+                                <div class="nk-int-st">
+                                    <textarea asp-for="MessageDetail" class="form-control" rows="10" placeholder="Mesajınızı buraya yazın..."></textarea>
+                                </div>
+                                <span asp-validation-for="MessageDetail" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="vw-ml-action-ls text-right mg-t-20">
+                            <div class="btn-group ib-btn-gp active-hook nk-email-inbox">
+                                <button type="submit" class="btn btn-default btn-sm waves-effect">
+                                    <i class="notika-icon notika-next"></i> Mesajı Gönder
+                                </button>
+                                <a href="/Message/Inbox" class="btn btn-default btn-sm waves-effect">
+                                    <i class="notika-icon notika-trash"></i> İptal Et
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
