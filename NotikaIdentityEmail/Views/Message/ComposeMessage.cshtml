@@ -25,7 +25,7 @@
                             <div class="row">
                                 <div class="col-lg-1 col-md-2 col-sm-2 col-xs-12">
                                     <div class="cmp-int-lb cmp-int-lb1 text-right">
-                                        <span>From: </span>
+                                        <span>Kimden: </span>
                                     </div>
                                 </div>
                                 <div class="col-lg-11 col-md-10 col-sm-10 col-xs-12">
@@ -42,7 +42,7 @@
                             <div class="row">
                                 <div class="col-lg-1 col-md-2 col-sm-2 col-xs-12">
                                     <div class="cmp-int-lb cmp-int-lb1 text-right">
-                                        <span>To: </span>
+                                        <span>Kime: </span>
                                     </div>
                                 </div>
                                 <div class="col-lg-11 col-md-10 col-sm-10 col-xs-12">
@@ -59,7 +59,7 @@
                             <div class="row">
                                 <div class="col-lg-1 col-md-2 col-sm-2 col-xs-12">
                                     <div class="cmp-int-lb text-right">
-                                        <span>Category: </span>
+                                        <span>Kategori: </span>
                                     </div>
                                 </div>
                                 <div class="col-lg-11 col-md-10 col-sm-10 col-xs-12">
@@ -78,7 +78,7 @@
                             <div class="row">
                                 <div class="col-lg-1 col-md-2 col-sm-2 col-xs-12">
                                     <div class="cmp-int-lb text-right">
-                                        <span>Subject: </span>
+                                        <span>Konu: </span>
                                     </div>
                                 </div>
                                 <div class="col-lg-11 col-md-10 col-sm-10 col-xs-12">
@@ -97,7 +97,11 @@
                             <div class="form-group">
                                 <label>Mesaj Detayı</label>
                                 <div class="nk-int-st">
-                                    <textarea asp-for="MessageDetail" class="form-control" rows="10" placeholder="Mesajınızı buraya yazın..."></textarea>
+                                    @* Sunucuya gidecek asıl veri alanı (Gizli) *@
+                                    <textarea asp-for="MessageDetail" id="MessageDetail" style="display:none;"></textarea>
+
+                                    @* Görsel olarak görünecek Summernote editörü *@
+                                    <div class="html-editor-cm"></div>
                                 </div>
                                 <span asp-validation-for="MessageDetail" class="text-danger"></span>
                             </div>
