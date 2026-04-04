@@ -28,14 +28,26 @@ namespace Business_Layer.Mappings
                 ReverseMap: çift yönlü bilet gibidir, kuralın sadece soldan sağa değil, sağdan sola da çalışmasını sağlar.
                 normalde UserRegisterDto -> AppUser (kayıt olurken kullanılır)
                 ReverseMap ile AppUser -> UserRegisterDto (örneğin kullanıcı bilgilerini düzenleme sayfasına gönderirken, dbdeki veriyi tekrar DTO'ya çevirmek için kullanılır.
+                soldaki bilgi taşınan, sağdaki ise görülmek istenen son hali gibi düşünebilir.
              */
 
             CreateMap<UserRegisterDto, AppUser>().ReverseMap();
             CreateMap<UserLoginDto, AppUser>().ReverseMap();
             CreateMap<Category, CategorySidebarDto>().ReverseMap();
 
+            /*
+                normalde automapper isimleri aynı olan alanları otomatik eşler, ancak isimler farklıysa formember ile bu işlem tamamlanır.
+                dest: hedefteki alandır. o alana gider.
+                src: destten alınan alanları buradaki istenen alanın içerisine koyar.
+             */
+
             CreateMap<Message, MessageListInboxDto>()
-                .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => src.Sender.Name + "" + src.Sender.Surname))
+                .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => src.Sender.Name + " " + src.Sender.Surname))
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
+                .ReverseMap();
+
+            CreateMap<Message, MessageListSendboxDto>()
+                .ForMember(dest => dest.ReceiverName, opt => opt.MapFrom(src => src.Receiver.Name + " " + src.Receiver.Surname))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
                 .ReverseMap();
         }

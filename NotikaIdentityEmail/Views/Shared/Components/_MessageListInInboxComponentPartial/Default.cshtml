@@ -1,0 +1,49 @@
+﻿@model List<MessageListInboxDto>
+
+<div class="table-responsive">
+    <table class="table table-hover table-inbox">
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr class="@(item.IsRead ? "" : "unread")">
+                        @* 1. Sütun: Seçim Kutusu *@
+                        <td style="width: 40px; vertical-align: middle;">
+                            <label><input type="checkbox" class="i-checks"></label>
+                        </td>
+
+                        @* 2. Sütun: Gönderici Adı (Sabit genişlik hizayı korur) *@
+                        <td style="width: 200px; vertical-align: middle;">
+                            <a href="/Message/MessageDetails/@item.Id">@item.SenderName</a>
+                        </td>
+
+                        @* 3. Sütun: Kategori (Sabit hizada başlar) *@
+                        <td style="width: 130px; vertical-align: middle;">
+                            <span class="label label-warning">@item.CategoryName</span>
+                        </td>
+
+                        @* 4. Sütun: Mesaj Konusu (Strong/Kalın) *@
+                        <td style="vertical-align: middle;">
+                            <a href="/Message/MessageDetails/@item.Id">
+                                <strong>@item.Subject</strong>
+                            </a>
+                        </td>
+
+                        @* 5. Sütun: Tarih *@
+                        <td class="text-right mail-date" style="width: 120px; vertical-align: middle;">
+                            @item.SendDate.ToString("dd.MM.yyyy")
+                        </td>
+
+                        @* 6. Sütun: Mesajı Görüntüle Butonu *@
+                        <td class="text-right" style="width: 150px; vertical-align: middle;">
+                            <a href="/Message/MessageDetails/@item.Id" class="btn btn-sm btn-info">
+                                Mesaj İçeriği
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

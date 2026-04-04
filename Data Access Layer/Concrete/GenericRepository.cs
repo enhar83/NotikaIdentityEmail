@@ -41,9 +41,11 @@ namespace Data_Access_Layer.Concrete
             return await _dbSet.ToListAsync();
         }
 
-        public IQueryable<T> GetWhere(Expression<Func<T, bool>> method)
+        public IQueryable<T> GetWhere(Expression<Func<T, bool>> filter)
         {
-            return _dbSet.Where(method);
+            return filter == null
+                ? _dbSet
+                : _dbSet.Where(filter);
         }
 
         public async Task InsertAsync(T entity)

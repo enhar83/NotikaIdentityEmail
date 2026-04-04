@@ -26,6 +26,18 @@ namespace Data_Access_Layer.Context
         {
             base.OnModelCreating(builder);
 
+            builder.Entity<Message>()
+        .Property(x => x.Id)
+        .HasDefaultValueSql("NEWID()");
+
+            builder.Entity<Category>()
+        .Property(x => x.Id)
+        .HasDefaultValueSql("NEWID()");
+
+            builder.Entity<AppUser>()
+        .Property(x => x.Id)
+        .HasDefaultValueSql("NEWID()");
+
             // bu satır, projedeki (Assembly) tüm IEntityTypeConfiguration arayüzünü uygulayan sınıfları bulur ve otomatik olarak dbye yansıtır.
             builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         }
