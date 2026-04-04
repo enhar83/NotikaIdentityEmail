@@ -10,12 +10,10 @@ namespace NotikaIdentityEmail.ViewComponents.MessageViewComponents
     public class _MessageListInInboxComponentPartial:ViewComponent
     {
         private readonly IMessageService _messageService;
-        private readonly UserManager<AppUser> _userManager;
 
-        public _MessageListInInboxComponentPartial(IMessageService messageService, UserManager<AppUser> userManager)
+        public _MessageListInInboxComponentPartial(IMessageService messageService)
         {
             _messageService = messageService;
-            _userManager = userManager;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()

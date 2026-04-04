@@ -1,4 +1,4 @@
-﻿@model List<MessageListInboxDto>
+﻿@model List<Entity_Layer.DTOs.MessageDtos.MessageListSendboxDto>
 
 <div class="table-responsive">
     <table class="table table-hover table-inbox">
@@ -7,23 +7,23 @@
             {
                 @foreach (var item in Model)
                 {
-                    <tr class="@(item.IsRead ? "" : "unread")">
+                    <tr>
                         @* 1. Sütun: Seçim Kutusu *@
                         <td style="width: 40px; vertical-align: middle;">
                             <label><input type="checkbox" class="i-checks"></label>
                         </td>
 
-                        @* 2. Sütun: Gönderici Adı (Sabit genişlik hizayı korur) *@
+                        @* 2. Sütun: Alıcı Adı (Sendbox olduğu için ReceiverName kullanıldı) *@
                         <td style="width: 200px; vertical-align: middle;">
-                            <a href="/Message/MessageDetails/@item.Id">@item.SenderName</a>
+                            <a href="/Message/MessageDetails/@item.Id">@item.ReceiverName</a>
                         </td>
 
-                        @* 3. Sütun: Kategori (Sabit hizada başlar) *@
+                        @* 3. Sütun: Kategori *@
                         <td style="width: 130px; vertical-align: middle;">
                             <span class="label label-warning">@item.CategoryName</span>
                         </td>
 
-                        @* 4. Sütun: Mesaj Konusu (Strong/Kalın) *@
+                        @* 4. Sütun: Mesaj Konusu *@
                         <td style="vertical-align: middle;">
                             <a href="/Message/MessageDetails/@item.Id">
                                 <strong>@item.Subject</strong>
