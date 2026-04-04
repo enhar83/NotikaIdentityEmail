@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Business_Layer.Abstract;
+using Business_Layer.Exceptions;
 using Data_Access_Layer.Abstract;
 using Entity_Layer.DTOs.MessageDtos;
 using Entity_Layer.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Business_Layer.Concrete
@@ -17,14 +19,40 @@ namespace Business_Layer.Concrete
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
+        private readonly UserManager<AppUser> _userManager;
 
-        public MessageManager(IGenericRepository<Message> repository, IUnitOfWork uow, IMapper mapper) : base(repository, uow)
+        public MessageManager(IGenericRepository<Message> repository, IUnitOfWork uow, IMapper mapper, UserManager<AppUser> userManager) : base(repository, uow)
         {
             _uow = uow;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
+        public async Task TSendMessageAsync(ComposeMessageDto composeMessageDto)
+        {
+            var receiverId = await _userManager.Users
+            .Where(u => u.Email == composeMessageDto.ReceiverEmail)
+            .Select(u => u.Id)
+            .FirstOrDefaultAsync();
 
+            var senderId = await _userManager.Users
+                .Where(u => u.Email == composeMessageDto.SenderEmail)
+                .Select(u => u.Id)
+                .FirstOrDefaultAsync();
+
+            if (receiverId == Guid.Empty) throw new LogicException("ReceiverEmail", "Sistemde bu mail bulunamadı.");
+            if (senderId == Guid.Empty) throw new LogicException("SenderEmail", "Sistemde bu mail bulunamadı.");
+            if (senderId == receiverId) throw new LogicException("ReceiverEmail", "Kendinize mail yollayamazsınız.");
+
+            var message = _mapper.Map<Message>(composeMessageDto);
+            message.ReceiverId = receiverId;
+            message.SenderId = senderId;
+            message.SendDate = DateTime.Now;
+            message.IsRead = false;
+
+            await TInsertAsync(message);
+            //genericmanager içerisinde bu metot alınır ve kullanılır. 
+        }
 
         public async Task<MessageDetailDto> TGetMessageDetailAsync(Guid id)
         {

@@ -1,12 +1,14 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
 using Business_Layer.Abstract;
+using Business_Layer.Exceptions;
 using Entity_Layer.DTOs.MessageDtos;
 using Entity_Layer.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace NotikaIdentityEmail.Controllers
 {
@@ -22,7 +24,7 @@ namespace NotikaIdentityEmail.Controllers
             _messageService = messageService;
             _categoryService = categoryService;
             _userManager = userManager;
-            _mapper=mapper;
+            _mapper = mapper;
         }
 
         public IActionResult Inbox()
@@ -55,32 +57,23 @@ namespace NotikaIdentityEmail.Controllers
                 return View(composedMessage);
             }
 
-            var receiverUser = await _userManager.FindByEmailAsync(composedMessage.ReceiverEmail);
-            var senderUser = await _userManager.FindByEmailAsync(composedMessage.SenderEmail);
-
-            if (receiverUser == null)
+            try
             {
-                ModelState.AddModelError("ReceiverEmail", "Sistemde bu e-posta adresine sahip bir kullanıcı bulunamadı.");
+                await _messageService.TSendMessageAsync(composedMessage);
+                return RedirectToAction("Sendbox");
+            }
+            catch (LogicException ex)
+            {
+                ModelState.AddModelError(ex.PropertyName, ex.Message);
                 await GetCategoryListAsync();
                 return View(composedMessage);
             }
-            if (senderUser == null)
+            catch (Exception ex)
             {
-                ModelState.AddModelError("SenderEmail", "Sistemde bu e-posta adresine sahip bir kullanıcı bulunamadı.");
+                ModelState.AddModelError("", "Beklenmedik bir hata oluştu.");
                 await GetCategoryListAsync();
                 return View(composedMessage);
             }
-
-            var message = _mapper.Map<Message>(composedMessage);
-
-            message.ReceiverId = receiverUser.Id;
-            message.SenderId = senderUser.Id;
-            message.SendDate = DateTime.Now;
-            message.IsRead = false;
-
-            await _messageService.TInsertAsync(message);
-
-            return RedirectToAction("Sendbox");
         }
         private async Task GetCategoryListAsync()
         {
