@@ -7,6 +7,7 @@ using Business_Layer.ValidationRules.MessageValidationRules;
 using Data_Access_Layer.Abstract;
 using Data_Access_Layer.Concrete;
 using Data_Access_Layer.Context;
+using Entity_Layer.DTOs.AppUserDtos.ConfirmUserDto;
 using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using Entity_Layer.Entities;
 using FluentValidation;
@@ -49,6 +50,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<UserRegisterValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UserLoginValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<ComposeMessageValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<EditProfileDto>();
+builder.Services.AddValidatorsFromAssemblyContaining<ConfirmUserDto>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 

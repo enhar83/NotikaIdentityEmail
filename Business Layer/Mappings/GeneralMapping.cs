@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Entity_Layer.DTOs.AppUserDtos.ConfirmUserDto;
 using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
 using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using Entity_Layer.DTOs.AppUserDtos.RegisterDtos;
@@ -73,6 +74,8 @@ namespace Business_Layer.Mappings
                 .ReverseMap();
 
             CreateMap<EditProfileDto, AppUser>().ReverseMap();
+
+            CreateMap<ConfirmUserDto, AppUser>().ReverseMap();
         }
     }
 }
