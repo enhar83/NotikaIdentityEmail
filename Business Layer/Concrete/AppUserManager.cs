@@ -88,15 +88,21 @@ namespace Business_Layer.Concrete
         //Task<IdentityResult>: Controller katmanına, ben kayıt işlemini denedim, işte sonuç burada der. eğer başarılıysa kullanıcıyı giriş sayfasına yönlendir, başarısızsa hata mesajlarını kullanıcıya göster.
         public async Task<IdentityResult> RegisterAsync(UserRegisterDto userRegisterDto)
         {
+            Random rnd = new Random();
+            int code = rnd.Next(100000, 1000000); //ilk değer dahil ikincisi dahil değil.
+
             //mapping: dto içindeki proplari alır, appuser'ın içindeki aynı isimli alanlara kopyalar.
             //dtodaki password ve confirmpassword alanları appuser içinde karşılık bulmadığından dolayı bu alanlar kopyalanmaz. (dbde passwordhash tutulur)
             var appUser = _mapper.Map<AppUser>(userRegisterDto);
+            appUser.ActivationCode = code; //üretilen 6 haneli kodu kullanıcı nesnesine bağlar.
 
             //userRegisterDto.Password içerisindeki açık metni alır, karmaşık bir algoritma ile Hash'ler. metodu çağırırken nesneyi ve password yollamak zorunludur, iki parametre ile çalışıyor.
             //oluşturulan bu hashlenmiş şifreyi ve diğer kullanıcı bilgilerini AspNetUsers tablosuna kaydeder.
             //IdentityResult döner. eğer her şey yolundaysa Succeeded = true olur. eğer bir hata varsa hataları zaten içerisinde barındırır.
             var result = await _userManager.CreateAsync(appUser, userRegisterDto.Password);
+
+            if (result.Succeeded)
             return result;
-        }
+        } 
     }
 }

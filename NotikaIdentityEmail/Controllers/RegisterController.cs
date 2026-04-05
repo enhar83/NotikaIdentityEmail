@@ -30,7 +30,7 @@ namespace NotikaIdentityEmail.Controllers
 
             //identityden gelen cevaba bakar. her şey yolundaysa kullanıcıyı içeri alır.
             if (result.Succeeded)
-                return RedirectToAction("Signin","Login");
+                return RedirectToAction("UserActivation","Activation");
 
             //eğer identity bir hata verirse (kullanıcı adı önceden alınmış gibi) bu hatayı ekrandaki ValidationSummary kısmına yansıtmak için listeye ekler.
             //addmodelerror iki parametre alır; ilki key (hatanın hangi parametre ile ilgili olduğu), ikincisi errormessage (kullanıcıya gösterilecek olan yazı).

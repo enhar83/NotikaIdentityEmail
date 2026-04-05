@@ -9,6 +9,7 @@ using Data_Access_Layer.Concrete;
 using Data_Access_Layer.Context;
 using Entity_Layer.DTOs.AppUserDtos.ConfirmUserDto;
 using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
+using Entity_Layer.DTOs.UserSecrets;
 using Entity_Layer.Entities;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -53,6 +54,9 @@ builder.Services.AddValidatorsFromAssemblyContaining<EditProfileDto>();
 builder.Services.AddValidatorsFromAssemblyContaining<ConfirmUserDto>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
+
+// DTOs/UserSecrets içerisindeki MailSettings sýnýfýný appsettings.json içerisindeki MailSettings bölümüne baðlar. böylece appsettings.json içerisindeki deðerler MailSettings sýnýfýna otomatik olarak atanýr.
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
 var app = builder.Build();
 
