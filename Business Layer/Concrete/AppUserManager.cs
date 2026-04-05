@@ -5,10 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Business_Layer.Abstract;
-using Entity_Layer.DTOs.LoginDtos;
-using Entity_Layer.DTOs.RegisterDtos;
+using Business_Layer.Exceptions;
+using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
+using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
+using Entity_Layer.DTOs.AppUserDtos.RegisterDtos;
 using Entity_Layer.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business_Layer.Concrete
 {
@@ -28,6 +31,43 @@ namespace Business_Layer.Concrete
             _userManager = userManager; 
             _mapper = mapper;
             _signInManager = signInManager;
+        }
+
+        public async Task<IdentityResult> EditProfileAsync(Guid userId, EditProfileDto editProfileDto)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+                throw new LogicException("", "Güncellenecek kullanıcı bulunamadı.");
+
+            if (user.Email != editProfileDto.Email)
+            {
+                var existingUser = await _userManager.FindByEmailAsync(editProfileDto.Email);
+                if (existingUser != null)
+                    throw new LogicException("Email", "Bu e-posta adresi başka bir kullanıcı tarafından kullanılıyor.");
+            }
+
+            if (user.PhoneNumber != editProfileDto.PhoneNumber)
+            {
+                var existingUser = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == editProfileDto.PhoneNumber);
+                if (existingUser != null)
+                    throw new LogicException("PhoneNumber", "Bu telefon numarası başka bir kullanıcı tarafından kullanılıyor.");
+            }
+
+            if (user.UserName != editProfileDto.UserName)
+            {
+                var existingUser = await _userManager.FindByNameAsync(editProfileDto.UserName);
+                if (existingUser != null)
+                    throw new LogicException("UserName", "Bu kullanıcı adı başka bir kullanıcı tarafından kullanılıyor.");
+            }
+
+            _mapper.Map(editProfileDto, user);
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+                await _userManager.UpdateSecurityStampAsync(user);
+
+            return result;
         }
 
         //SıgnInResult: Identity doğrudan giriş başarılı mı, şifre yanlış mı hesap kilitlendi mi gibi tüm bilgileri bu hazır nesneyle döner. Biz de controllerda buna göre işlem yaparız.

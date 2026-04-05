@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entity_Layer.DTOs.RegisterDtos
+namespace Entity_Layer.DTOs.AppUserDtos.RegisterDtos
 {
     public class UserRegisterDto
     {

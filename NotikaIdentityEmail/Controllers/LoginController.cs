@@ -1,5 +1,5 @@
 ﻿using Business_Layer.Abstract;
-using Entity_Layer.DTOs.LoginDtos;
+using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace NotikaIdentityEmail.Controllers

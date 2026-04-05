@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entity_Layer.DTOs.LoginDtos
+namespace Entity_Layer.DTOs.AppUserDtos.LoginDtos
 {
     public class UserLoginDto
     {

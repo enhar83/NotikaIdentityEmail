@@ -7,7 +7,7 @@ using Business_Layer.ValidationRules.MessageValidationRules;
 using Data_Access_Layer.Abstract;
 using Data_Access_Layer.Concrete;
 using Data_Access_Layer.Context;
-using Entity_Layer.DTOs.ProfileDtos;
+using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using Entity_Layer.Entities;
 using FluentValidation;
 using FluentValidation.AspNetCore;

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Entity_Layer.DTOs.LoginDtos;
-using Entity_Layer.DTOs.RegisterDtos;
+using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
+using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
+using Entity_Layer.DTOs.AppUserDtos.RegisterDtos;
 using Microsoft.AspNetCore.Identity;
 
 namespace Business_Layer.Abstract
@@ -13,5 +14,6 @@ namespace Business_Layer.Abstract
     {
         Task<IdentityResult> RegisterAsync(UserRegisterDto userRegisterDto);
         Task<SignInResult> LoginAsync(UserLoginDto userLoginDto);
+        Task<IdentityResult> EditProfileAsync(Guid userId, EditProfileDto editProfileDto);
     }
 }

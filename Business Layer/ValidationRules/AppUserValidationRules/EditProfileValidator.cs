@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Entity_Layer.DTOs.ProfileDtos;
+using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using FluentValidation;
 
-namespace Business_Layer.ValidationRules.ProfileValidationRules
+namespace Business_Layer.ValidationRules.AppUserValidationRules
 {
     public class EditProfileValidator:AbstractValidator<EditProfileDto>
     {
@@ -18,7 +18,7 @@ namespace Business_Layer.ValidationRules.ProfileValidationRules
             RuleFor(x => x.Surname)
                 .NotEmpty().WithMessage("Soyad alanı boş geçilemez");
 
-            RuleFor(x => x.Username)
+            RuleFor(x => x.UserName)
                 .NotEmpty().WithMessage("Kullanıcı adı alanı boş geçilemez");
 
             RuleFor(x => x.Email)
