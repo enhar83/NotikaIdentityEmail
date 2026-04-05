@@ -62,3 +62,57 @@ namespace Business_Layer.Concrete
         }
     }
 }
+
+/*
+    ACTIVATION İŞ AKIŞI
+
+        1. Kayıt Sistemi ve Kodun Üretilmesi
+            - RegisterController.Signup (Post): Formdan gelen verileri alır. eğer veriler geçerliyse _appUserService.RegisterAsync metodunu çağırır.
+
+            - AppUserManager.RegisterAsync
+                * Random sınıfı ile 6 haneli kod benzersiz bir kod üretilir.
+                * Automapper ile Dto, AppUser nesnesine dönüşür.
+                * Üretilen kod, dbye kaydedilmek üzere kullanıcı nesnesine eklenir.
+                * _userManager.CreateAsync ile kullanıcı şifresi hashlenerek dbye yazılır.
+
+
+        2. Email Gönderim Süreci
+            - Kullanıcı dbye kaydedildiği an sistem mail trafiğini başlatır.
+
+            - Eğer AppUserManager.RegisterAsync'de kayıt başarılıysa _emailActivationService.SendConfirmEmailAsync metoduna kullanıcının maili ve üretilen kod gönderilir.
+                * MaillSettings (UserSecrets'tan gelen) bilgilerini kullanarak SMTP sunucusuna (Gmail) bğağlanır.
+                * İçerisinde hazırlanan HTML şablonu olan bir MimeMessage oluşturulur.
+                * Kodu bu şablonun içine yerleştirir ve maili gönderir.
+
+
+        3. Aktivasyon Sayfasına Yönlendirme
+            - Mail gönderildikten sonra kullanıcıyı boş bir ekranda bırakamayız.
+                * RegisterController.Signup (Dönüş): RegisterAsync metodundan başarılı cevap gelince, RedirectToAction ile kullanıcıyı ActivationController'ın UserActivation (GET) metoduna yollar.
+                * Parametre Taşıma: Bu yölendirme yapılırken new {email = userRegisterDto.Email} diyerek mail adresini URL üzerinden bir sonraki sayfaya taşırız.
+                * ActivationController.UserActivation (GET): URL'den gelen öail adresini alır ve bir ConfirmUserDto içine koyarak view'a basar. Bu sayede kullanıcı aktivasyon sayfasını açtığında kendi mail adresini görür.
+
+
+        4. Kodun Doğrulanması ve Onay
+            - Kullanıcı mail kutusuna gider, kodu kopyalar ve aktivasyon sayfasına girer.
+                * ActivationController.UserActivation (POST): Kullanıcı kodu girip butona bastığında bu metot çalışır. İçinde mail adresi (hidden inputtan gelir) ve kullanıcının girdiği kod bulunur.
+                * AppUserManager.ConfirmEmailAsync: Final kısmı burasıdır.
+                    -> Sistem gelen mail adresiyle dbdeki kullanıcıyı bulur.
+                    -> Kullanıcının girdiği kod ile dbde o an duran ActivationCode karşılaştırılır.
+                    -> Eşleşme varsa kullanıcının EmailConfirmed alanı true yapılır ve _userManager.UpdateAsync ile kaydedilir.
+                    -> Eşleşme yoksa yazılan LogicException fırlatılır ve ekrana kod hatalı mesajı düşer.
+
+
+        5. Başarı Mesajı ve Login
+            - ActivationController.UserActivation: İşlem başarılıysa TempData["SuccessMessage"] içerisinde "Hesabınız Onaylandı" yazar.
+            - Kullanıcı Login sayfasına yönlendirilir ve son adımda eklenen @if (TempData["SuccessMessage"] != null) kontrolü ile kullanıcı yeşil kutuuğu görür.
+
+
+    ÖZET
+        * ConfirmUserDto: Sayfalar arası veri taşıyan bir kağıt parçası.
+        * ReigsterController: Kayıt sürecini başlatan kapı görevlisi
+        * AppUserManager: Tüm iş mantığını (kod üretme, dbye yazma, kod kontrolü) döndüğü beyin.
+        * EmailActivationManager: Maili paketleyip gönderen postacı.
+        * ActivationController: Kullanıcının kod girdiği arayüzü yöneten panel.
+            
+                
+*/

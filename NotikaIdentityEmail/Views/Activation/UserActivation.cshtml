@@ -29,10 +29,7 @@
         <div class="container-login100" style="background-image: url('/Login_v4/images/bg-01.jpg');">
             <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
 
-                @* Form metodu POST olmalı *@
                 <form class="login100-form validate-form" method="post" asp-action="UserActivation">
-
-                    @* KRİTİK: Email bilgisini kullanıcı görmeden sunucuya geri gönderiyoruz *@
                     <input type="hidden" asp-for="Email" />
 
                     <span class="login100-form-title p-b-30">
@@ -45,19 +42,16 @@
                         </span>
                     </div>
 
-                    @* Genel hataları (LogicException'dan gelenler) göstermek için *@
                     <div asp-validation-summary="ModelOnly" class="text-danger p-b-20"></div>
 
                     <div class="wrap-input100 validate-input m-b-23">
                         <span class="label-input100">Aktivasyon Kodu</span>
 
-                        @* asp-for="ActivationCode" ile DTO'daki alanla bağlıyoruz *@
                         <input class="input100" type="text" asp-for="ActivationCode" placeholder="6 Haneli Kod..." maxlength="6">
 
                         <span class="focus-input100" data-symbol="&#xf206;"></span>
                     </div>
 
-                    @* Kod ile ilgili spesifik hata mesajı buraya düşer *@
                     <div class="p-b-20">
                         <span asp-validation-for="ActivationCode" class="text-danger"></span>
                     </div>

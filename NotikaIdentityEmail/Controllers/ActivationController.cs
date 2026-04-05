@@ -24,7 +24,7 @@ namespace NotikaIdentityEmail.Controllers
                 return RedirectToAction("Signup", "Register");
             }
 
-            // View'a boş olmayan bir DTO gönderiyoruz
+            // view'a email bilgisini yolluyoruz. 
             var model = new ConfirmUserDto { Email = email };
             return View(model);
         }
@@ -32,28 +32,23 @@ namespace NotikaIdentityEmail.Controllers
         [HttpPost]
         public async Task<IActionResult> UserActivation(ConfirmUserDto confirmUserDto)
         {
-            // 1. Model kurallara uyuyor mu? (Boş mu, 6 hane mi vb.)
+            // modelin uygunluğu kontrol edilir.
             if (!ModelState.IsValid)
-            {
                 return View(confirmUserDto);
-            }
 
             try
             {
-                // 2. Business Layer'daki doğrulama metodunu çağırıyoruz
-                // Bu metodu birazdan AppUserManager içine ekleyeceğiz
+                // appUser içerisindeki confirmEmailAsync metodu çağrılır.
                 var result = await _appUserService.ConfirmEmailAsync(confirmUserDto);
 
                 if (result)
                 {
-                    // 3. Başarılıysa kullanıcıyı giriş sayfasına yönlendir
                     TempData["SuccessMessage"] = "Hesabınız başarıyla onaylandı. Giriş yapabilirsiniz.";
                     return RedirectToAction("Signin", "Login");
                 }
             }
             catch (LogicException ex)
             {
-                // 4. Eğer kod yanlışsa veya kullanıcı bulunamadıysa hatayı yakala
                 ModelState.AddModelError(ex.PropertyName, ex.Message);
             }
             catch (Exception)

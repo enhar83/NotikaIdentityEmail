@@ -39,25 +39,24 @@ namespace Business_Layer.Concrete
 
         public async Task<bool> ConfirmEmailAsync(ConfirmUserDto confirmUserDto)
         {
-            // Kullanıcıyı emaili ile buluyoruz
+            // kullanıcının emaili buluyoruz.
             var user = await _userManager.FindByEmailAsync(confirmUserDto.Email);
 
             if (user == null)
-            {
                 throw new LogicException("Email", "Kullanıcı bulunamadı.");
-            }
 
-            // Veritabanındaki kod ile kullanıcının girdiği kodu karşılaştırıyoruz
+            // dbdeki activationcode ile kullanıcının girdiği activation code karşılaştırlıyor.
             if (user.ActivationCode == confirmUserDto.ActivationCode)
             {
-                // Kod doğruysa Identity'nin onay alanını true yapıyoruz
+                //eşleşme varsa email confirmed alanı true oluyor.
                 user.EmailConfirmed = true;
 
+                //değişiklikleri kaydediyoruz.
                 var result = await _userManager.UpdateAsync(user);
                 return result.Succeeded;
             }
 
-            // Kod yanlışsa hata fırlatıyoruz
+            // kod eşleşmemişse hata fırlatıyoruz
             throw new LogicException("ActivationCode", "Girdiğiniz aktivasyon kodu hatalı.");
         }
 
@@ -133,6 +132,22 @@ namespace Business_Layer.Concrete
                 await _emailActivationService.SendConfirmEmailAsync(appUser.Email, code.ToString());
             
             return result;
-        } 
+        }
+
+        public async Task ResendConfirmEmailAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user==null)
+                throw new LogicException("Email", "Kullanıcı bulunamadı.");
+
+            Random rnd = new Random();
+            int newCode = rnd.Next(100000, 1000000);
+
+            user.ActivationCode = newCode;
+            await _userManager.UpdateAsync(user);
+
+            await _emailActivationService.SendConfirmEmailAsync(user.Email, newCode.ToString());
+        }
     }
 }
