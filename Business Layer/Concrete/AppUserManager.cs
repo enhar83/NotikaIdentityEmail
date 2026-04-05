@@ -26,11 +26,14 @@ namespace Business_Layer.Concrete
         //automapper interfaceidir. dto ve entity arasındaki veri köprüsünü kurar.
         private readonly IMapper _mapper;
 
-        public AppUserManager(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper)
+        private readonly IEmailActivationService _emailActivationService;
+
+        public AppUserManager(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, IEmailActivationService emailActivationService)
         {
             _userManager = userManager; 
             _mapper = mapper;
             _signInManager = signInManager;
+            _emailActivationService = emailActivationService;
         }
 
         public async Task<IdentityResult> EditProfileAsync(Guid userId, EditProfileDto editProfileDto)
@@ -102,6 +105,8 @@ namespace Business_Layer.Concrete
             var result = await _userManager.CreateAsync(appUser, userRegisterDto.Password);
 
             if (result.Succeeded)
+                await _emailActivationService.SendConfirmEmailAsync(appUser.Email, code.ToString());
+            
             return result;
         } 
     }
