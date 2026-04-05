@@ -36,6 +36,19 @@
                         E-Mail Validasyon
                     </span>
 
+                    @if (TempData["SuccessResendMessage"] != null)
+                    {
+                        <div class="alert alert-success text-center" role="alert">
+                            @TempData["SuccessResendMessage"]
+                        </div>
+					}
+                    @if (TempData["ErrorResendMessage"] != null)
+                    {
+                        <div class="alert alert-danger text-center" role="alert">
+                            @TempData["ErrorResendMessage"]
+                        </div>
+					}
+
                     <div class="p-b-30 text-center">
                         <span style="font-size: 14px; color: #666;">
                             <strong>@Model.Email</strong> adresine gönderilen 6 haneli doğrulama kodunu giriniz.
@@ -69,9 +82,21 @@
                         <span class="txt1 p-b-17">
                             Kod gelmedi mi?
                         </span>
-                        <a href="#" class="txt2">
-                            Tekrar Gönder (Yakında)
+                        <a asp-action="ResendCode" asp-controller="Activation" asp-route-email="@Model.Email" class="txt2">
+                            Tekrar Kod Gönder
                         </a>
+
+                        @* Form İçinde (POST): Formun içinde emaili input type="hidden" asp-for="Email" diyerek taşıdık. Hesabı Doğrula butonuna basılınca tarayıcı formun içindeki tüm kutucukları (hidden olan dahil) paketler ve sunucuya gönderir. Bu yüzden URL'de bir şey görmeye gerek kalmaz.
+                        Link ile (GET): Tekrar Gönder bir butondan ziyade bir linktir. Linklere tıklandığında form paketlemesi yapmaz, doğrudan bir URL'ye gitmeye çalışır. *@
+
+                        @* asp-rote-helper tag helperı, dinamik bir URL oluşturur. bu kod yazıldığında ASP.NET Core arka planda şunu üretir.
+                            href="/Activation/ResendCode?email=enharyrlmz@gmail.com" (ya da hangi mail adresiyse)
+                        Eğer bu asp-route-email kısmı yazılmazsa link sadece /Activation/ResendCode adresine gider ve string mail parametresi null gelir. Sunucuda hangi kullanıcıya kod göndereceğini bilemez. *@
+                    
+                        @* Form (POST): Veri input (hidden veya normal) ile taşınır.
+                        Link (GET): Veri asp-route-degeriismi olarak taşınır.
+
+                        Yani kısacası asp-route-isimi ike aslında URL'nin sonunda hangi eposta varsa linke o mühürlenmiş olur. *@
                     </div>
                 </form>
             </div>

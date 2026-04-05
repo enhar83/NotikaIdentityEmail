@@ -134,7 +134,7 @@ namespace Business_Layer.Concrete
             return result;
         }
 
-        public async Task ResendConfirmEmailAsync(string email)
+        public async Task ResendActivationCodeAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
 

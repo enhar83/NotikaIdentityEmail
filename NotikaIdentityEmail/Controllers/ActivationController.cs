@@ -58,5 +58,21 @@ namespace NotikaIdentityEmail.Controllers
 
             return View(confirmUserDto);
         }
+
+        public async Task<IActionResult> ResendCode(string email)
+        {
+            try
+            {
+                await _appUserService.ResendActivationCodeAsync(email);
+                TempData["SuccessResendMessage"] = "Yeni kod başarıyla gönderildi. Lütfen mailinizi kontrol edin.";
+            }
+            catch (Exception)
+            {
+                TempData["ErrorResendMessage"] = "Kod gönderilirken bir hata oluştu.";
+            }
+
+            //mail parametresi ile tekrardan UserActivation sayfasına yölendirme yapılıyor.
+            return RedirectToAction("UserActivation", new { email = email });
+        }
     }
 }

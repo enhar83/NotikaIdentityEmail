@@ -17,6 +17,6 @@ namespace Business_Layer.Abstract
         Task<SignInResult> LoginAsync(UserLoginDto userLoginDto);
         Task<IdentityResult> EditProfileAsync(Guid userId, EditProfileDto editProfileDto);
         Task<bool> ConfirmEmailAsync(ConfirmUserDto confirmUserDto);
-        Task ResendConfirmEmailAsync(string email);
+        Task ResendActivationCodeAsync(string email);
     }
 }
