@@ -7,6 +7,7 @@ using AutoMapper;
 using Entity_Layer.DTOs.CategoryDtos;
 using Entity_Layer.DTOs.LoginDtos;
 using Entity_Layer.DTOs.MessageDtos;
+using Entity_Layer.DTOs.ProfileDtos;
 using Entity_Layer.DTOs.RegisterDtos;
 using Entity_Layer.Entities;
 using Microsoft.AspNetCore.Routing.Constraints;
@@ -70,6 +71,8 @@ namespace Business_Layer.Mappings
                 .ForMember(dest => dest.SenderId, opt => opt.Ignore())
                 .ForMember(dest => dest.ReceiverId, opt => opt.Ignore())
                 .ReverseMap();
+
+            CreateMap<EditProfileDto, AppUser>().ReverseMap();
         }
     }
 }
