@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Business_Layer.Abstract;
 using Business_Layer.Exceptions;
+using Entity_Layer.DTOs.AppUserDtos.ConfirmUserDto;
 using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
 using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using Entity_Layer.DTOs.AppUserDtos.RegisterDtos;
@@ -34,6 +35,30 @@ namespace Business_Layer.Concrete
             _mapper = mapper;
             _signInManager = signInManager;
             _emailActivationService = emailActivationService;
+        }
+
+        public async Task<bool> ConfirmEmailAsync(ConfirmUserDto confirmUserDto)
+        {
+            // Kullanıcıyı emaili ile buluyoruz
+            var user = await _userManager.FindByEmailAsync(confirmUserDto.Email);
+
+            if (user == null)
+            {
+                throw new LogicException("Email", "Kullanıcı bulunamadı.");
+            }
+
+            // Veritabanındaki kod ile kullanıcının girdiği kodu karşılaştırıyoruz
+            if (user.ActivationCode == confirmUserDto.ActivationCode)
+            {
+                // Kod doğruysa Identity'nin onay alanını true yapıyoruz
+                user.EmailConfirmed = true;
+
+                var result = await _userManager.UpdateAsync(user);
+                return result.Succeeded;
+            }
+
+            // Kod yanlışsa hata fırlatıyoruz
+            throw new LogicException("ActivationCode", "Girdiğiniz aktivasyon kodu hatalı.");
         }
 
         public async Task<IdentityResult> EditProfileAsync(Guid userId, EditProfileDto editProfileDto)
