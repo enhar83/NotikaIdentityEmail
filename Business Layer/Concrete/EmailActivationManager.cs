@@ -112,7 +112,5 @@ namespace Business_Layer.Concrete
         * ReigsterController: Kayıt sürecini başlatan kapı görevlisi
         * AppUserManager: Tüm iş mantığını (kod üretme, dbye yazma, kod kontrolü) döndüğü beyin.
         * EmailActivationManager: Maili paketleyip gönderen postacı.
-        * ActivationController: Kullanıcının kod girdiği arayüzü yöneten panel.
-            
-                
+        * ActivationController: Kullanıcının kod girdiği arayüzü yöneten panel.       
 */

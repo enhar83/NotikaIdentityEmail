@@ -60,9 +60,9 @@ namespace Business_Layer.Concrete
             throw new LogicException("ActivationCode", "Girdiğiniz aktivasyon kodu hatalı.");
         }
 
-        public async Task<IdentityResult> EditProfileAsync(Guid userId, EditProfileDto editProfileDto)
+        public async Task<IdentityResult> EditProfileAsync(string userName, EditProfileDto editProfileDto)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var user = await _userManager.FindByNameAsync(userName);
             if (user == null)
                 throw new LogicException("", "Güncellenecek kullanıcı bulunamadı.");
 
@@ -95,6 +95,16 @@ namespace Business_Layer.Concrete
                 await _userManager.UpdateSecurityStampAsync(user);
 
             return result;
+        }
+
+        public async Task<EditProfileDto> GetProfileByUserNameAsync(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+
+            if (user == null)
+                throw new LogicException("", "Kullanıcı bulunamadı.");
+
+            return _mapper.Map<EditProfileDto>(user);
         }
 
         //SıgnInResult: Identity doğrudan giriş başarılı mı, şifre yanlış mı hesap kilitlendi mi gibi tüm bilgileri bu hazır nesneyle döner. Biz de controllerda buna göre işlem yaparız.

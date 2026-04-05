@@ -15,7 +15,8 @@ namespace Business_Layer.Abstract
     {
         Task<IdentityResult> RegisterAsync(UserRegisterDto userRegisterDto);
         Task<SignInResult> LoginAsync(UserLoginDto userLoginDto);
-        Task<IdentityResult> EditProfileAsync(Guid userId, EditProfileDto editProfileDto);
+        Task<IdentityResult> EditProfileAsync(string userName, EditProfileDto editProfileDto);
+        Task<EditProfileDto> GetProfileByUserNameAsync(string userName);
         Task<bool> ConfirmEmailAsync(ConfirmUserDto confirmUserDto);
         Task ResendActivationCodeAsync(string email);
     }
