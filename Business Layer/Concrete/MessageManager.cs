@@ -76,9 +76,9 @@ namespace Business_Layer.Concrete
                 .ToListAsync();
         }
 
-        public async Task<List<MessageListSendboxDto>> TGetMessageListForSendboxAsync()
+        public async Task<List<MessageListSendboxDto>> TGetMessageListForSendboxAsync(Guid senderId)
         {
-            var query = _uow.Messages.GetWhere();
+            var query = _uow.Messages.GetWhere(m=>m.SenderId == senderId);
 
             return await query
                 .ProjectTo<MessageListSendboxDto>(_mapper.ConfigurationProvider)

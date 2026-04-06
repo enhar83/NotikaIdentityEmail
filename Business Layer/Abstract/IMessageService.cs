@@ -12,7 +12,7 @@ namespace Business_Layer.Abstract
     public interface IMessageService:IGenericService<Message>
     {
         Task<List<MessageListInboxDto>> TGetMessageListForInboxAsync(Guid receiverId);
-        Task<List<MessageListSendboxDto>> TGetMessageListForSendboxAsync();
+        Task<List<MessageListSendboxDto>> TGetMessageListForSendboxAsync(Guid senderId);
         Task<MessageDetailDto> TGetMessageDetailAsync(Guid id);
         Task TSendMessageAsync(ComposeMessageDto composeMessageDto);
     }
