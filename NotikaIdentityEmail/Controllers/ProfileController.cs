@@ -18,12 +18,15 @@ namespace NotikaIdentityEmail.Controllers
         [HttpGet]
         public async Task<IActionResult> EditProfile()
         {
-            string currentUserName = User.Identity.Name;
+            //giriş yapan kullanıcının adını alır. 
+            string currentUserName = User.Identity.Name; //kimin bilgilerini getireyim sorusuna yanıt vermek içindir.
 
+            //service'ten kullanıcı bilgileri alınır. 
             var model = await _appUserService.GetProfileByUserNameAsync(currentUserName);
             if (model == null)
                 return NotFound("Kullanıcı bilgileri bulunamadı.");
 
+            //model (EditProfileDto) html sayfasındaki inputlara yerleşmek üzere view'e gönderilir.
             return View(model);
         }
 
@@ -33,14 +36,17 @@ namespace NotikaIdentityEmail.Controllers
             if (!ModelState.IsValid)
                 return View(editProfileDto);
 
-            string currentUserName = User.Identity.Name;
+            //güvenlik için güncellenecek kişinin adını session/cookie üzerinden tekrar alır.
+            //Htpp stateless bir protokol olmasındaı dolayı GET isteği bittikten sonra POST isteği geldiğinde kullanıcı bilgilerini unutur.
+            string currentUserName = User.Identity.Name; //kullanıcı formu bitirip yolladığında bu formu gönderen kişi o mu? kontrolü yapılır. User.Identity.Name sistemdeki güvenli oturumdan gelir yani manipüle edilemez.
 
+            //dto ve kullanıcı adı service' gönderilir. Service db kontrollerini, mappinlgeri tamamlar ve IdentityResult döner. 
             var result = await _appUserService.EditProfileAsync(currentUserName, editProfileDto);
 
             if (result.Succeeded)
             {
                 TempData["SuccessMessage"] = "Profiliniz başarıyla güncellendi.";
-                return RedirectToAction("EditProfile");
+                return RedirectToAction("EditProfile"); //sayfa tazelensin diye aynı metodun get haline gönderilir.
             }
 
             foreach (var error in result.Errors)

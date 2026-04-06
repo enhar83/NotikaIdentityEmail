@@ -62,7 +62,7 @@ namespace Business_Layer.Concrete
 
         public async Task<IdentityResult> EditProfileAsync(string userName, EditProfileDto editProfileDto)
         {
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(userName); //güncellenecek olan kullanıcıyı dbden çeker.
             if (user == null)
                 throw new LogicException("", "Güncellenecek kullanıcı bulunamadı.");
 
@@ -87,16 +87,17 @@ namespace Business_Layer.Concrete
                     throw new LogicException("UserName", "Bu kullanıcı adı başka bir kullanıcı tarafından kullanılıyor.");
             }
 
-            _mapper.Map(editProfileDto, user);
+            _mapper.Map(editProfileDto, user); //dtodaki (ekrandan gelen) yeni değerleri, dbde çekilen user nesnesinin üzerine yazar.
 
-            var result = await _userManager.UpdateAsync(user);
+            var result = await _userManager.UpdateAsync(user); //tüm değişiklikleri sql'e yansıtır.
 
             if (result.Succeeded)
-                await _userManager.UpdateSecurityStampAsync(user);
+                await _userManager.UpdateSecurityStampAsync(user); //kullanıcı kritik bilgilerini (email vs.) değiştirdiğinde güvenlik damgasını günceller. bilgiler değişince tüm cihazlardan çıkış yapmasını ve oturumun tazelenmesini sağlar.
 
             return result;
         }
 
+        //kullanıcının mevcut bilgilerini bulur ve ekrana dolu bir şekilde gelmesi için Dto'ya çevirir.
         public async Task<EditProfileDto> GetProfileByUserNameAsync(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
