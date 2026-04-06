@@ -27,7 +27,7 @@
                     @* Genel hataları en üstte topluca göstermek için *@
                     <div asp-validation-summary="ModelOnly" class="text-danger m-b-20"></div>
 
-                    <form asp-action="ChangePassword" asp-controller="Profile" method="post">
+                    <form asp-action="EditProfile" asp-controller="Profile" method="post">
                         @* Güncelleme işlemi için kullanıcının ID'sini hidden olarak taşımalıyız *@
                         <input type="hidden" asp-for="Id" />
 
