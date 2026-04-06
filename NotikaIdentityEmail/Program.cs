@@ -53,6 +53,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<UserLoginValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<ComposeMessageValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<EditProfileDto>();
 builder.Services.AddValidatorsFromAssemblyContaining<ConfirmUserDto>();
+builder.Services.AddValidatorsFromAssemblyContaining<ChangePasswordDto>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 

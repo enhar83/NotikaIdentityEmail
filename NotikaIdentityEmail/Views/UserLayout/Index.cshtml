@@ -22,6 +22,8 @@
 
     @await Component.InvokeAsync("_UserLayoutFooterComponentPartial")
 
+    @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 
 </html>

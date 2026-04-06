@@ -55,5 +55,34 @@ namespace NotikaIdentityEmail.Controllers
             }
             return View(editProfileDto);
         }
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
+        {
+            if (!ModelState.IsValid)
+                return View(changePasswordDto);
+
+            string currentUserName = User.Identity.Name;
+
+            var result = await _appUserService.ChangePasswordAsync(currentUserName, changePasswordDto);
+
+            if (result.Succeeded)
+            {
+                TempData["SuccessChangePasswordMessage"] = "Şifreniz başarıyla güncellendi. Lütfen tekrar giriş yapınız.";
+                return RedirectToAction("Signin","Login"); //sayfa tazelensin diye aynı metodun get haline gönderilir.
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+            return View(changePasswordDto);
+        }
     }
 }

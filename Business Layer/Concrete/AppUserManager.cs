@@ -37,6 +37,23 @@ namespace Business_Layer.Concrete
             _emailActivationService = emailActivationService;
         }
 
+        public async Task<IdentityResult> ChangePasswordAsync(string userName, ChangePasswordDto changePasswordDto)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+                throw new LogicException("", "Şifresi güncellenecek kullanıcı bulunamadı.");
+
+            //updateasync kullanmak tavsiye edilmez. çünkü öyle yapılırsa şifre açık metin olarak kaydedilirdi, changepasswordasync ile hashlenere gitti.
+
+            //ChangePasswordAsync: CurrentPassword'ün doğruluğuna bakar, NewPassword'ü alır ve hashler, dbdeki PasswordHash alanını günceller.
+            var result = await _userManager.ChangePasswordAsync(user,changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
+
+            if (result.Succeeded)
+                await _userManager.UpdateSecurityStampAsync(user);
+
+            return result;
+        }
+
         public async Task<bool> ConfirmEmailAsync(ConfirmUserDto confirmUserDto)
         {
             // kullanıcının emaili buluyoruz.
