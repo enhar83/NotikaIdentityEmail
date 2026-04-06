@@ -57,9 +57,14 @@ namespace NotikaIdentityEmail.Controllers
         }
 
         [HttpGet]
-        public IActionResult ChangePassword()
+        public async Task<IActionResult> ChangePassword()
         {
-            return View();
+            //burada userName'i almazsak Data Persistence eksikliği oluşur. Get metodundan Post'a giden Dto'da ID alanı boş kalır ve hangi kullanıcının şifresinin güncelleneceği bilinmez.
+            string currentUserName = User.Identity.Name;
+            var user = await _appUserService.GetProfileByUserNameAsync(currentUserName);
+
+            var model = new ChangePasswordDto { Id = user.Id }; // ID'yi dolduruyoruz
+            return View(model);
         }
 
         [HttpPost]
