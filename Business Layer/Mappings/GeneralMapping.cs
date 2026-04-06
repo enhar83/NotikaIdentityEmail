@@ -65,6 +65,8 @@ namespace Business_Layer.Mappings
 
                 Ignore(): bu alanı şimdilik boş bırak, mapping yaparken buraya dokunma demektir. Message entitysi içerisinde bir SenderId, ReceiverId olmasından dolayı kullanılıyor.
                           eğer Ignore() kullanılmazsa, automapper orada bir veri bulamadığı için hata verebilir. bu kısım Controller içerisinde elle doldurulucak.
+                            
+                          Ancak eğer Message içerisinde SenderId ve ReceiverId olmasaydı otomatik olarak boş bırakılabilirdi. Zaten eşleşme olmadığından dolayı pas geçecekti.
             */
             CreateMap<ComposeMessageDto, Message>()
                 .ForSourceMember(src => src.SenderEmail, opt => opt.DoNotValidate())
@@ -76,6 +78,14 @@ namespace Business_Layer.Mappings
             CreateMap<EditProfileDto, AppUser>().ReverseMap();
 
             CreateMap<ConfirmUserDto, AppUser>().ReverseMap();
+
+            /*  PasswordHash ile NewPassword'ü ForMember ile eşlemeye kalkılırsa hata yapılır. 
+                    * Dtodaki veri: 123456 (açık metin)
+                    * Dbdeki veri: AQAAAAEAACcQAAAAE... (hashlenmiş karmaşık metin)
+                
+                Bu dönüşümü AutoMapper ile değil, Identity içerisinde bulunan ChangePasswordAsync metodu ile yap. 
+            */
+            CreateMap<ChangePasswordDto, AppUser>().ReverseMap();
         }
     }
 }
