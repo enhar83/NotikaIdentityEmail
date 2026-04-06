@@ -8,11 +8,6 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        @* 1. Sütun: Seçim Kutusu *@
-                        <td style="width: 40px; vertical-align: middle;">
-                            <label><input type="checkbox" class="i-checks"></label>
-                        </td>
-
                         @* 2. Sütun: Alıcı Adı (Sendbox olduğu için ReceiverName kullanıldı) *@
                         <td style="width: 200px; vertical-align: middle;">
                             <a href="/Message/MessageDetails/@item.Id">@item.ReceiverName</a>
@@ -25,8 +20,8 @@
 
                         @* 4. Sütun: Mesaj Konusu *@
                         <td style="vertical-align: middle;">
-                            <a href="/Message/MessageDetails/@item.Id">
-                                <strong>@item.Subject</strong>
+                            <a href="/Message/MessageDetails/@item.Id" class="subject-link">
+                                <strong class="truncate-text" title="@item.Subject">@item.Subject</strong>
                             </a>
                         </td>
 
@@ -53,3 +48,19 @@
         </tbody>
     </table>
 </div>
+
+<style>
+    .truncate-text {
+        display: block;
+        max-width: 250px; /* Burayı ekranındaki boşluğa göre 200px veya 300px yapabilirsin */
+        white-space: nowrap; /* Kelimelerin alt satıra geçmesini engeller (Üst üste binme biter) */
+        overflow: hidden; /* Sığmayan kısmı gizler */
+        text-overflow: ellipsis; /* Gizlenen yerin sonuna ... koyar */
+        line-height: 1.4; /* Harflerin birbirine girmemesi için dikey boşluk */
+    }
+
+    /* Tablonun diğer sütunlarının kaymaması için */
+    .table-inbox td {
+        white-space: nowrap;
+    }
+</style>
