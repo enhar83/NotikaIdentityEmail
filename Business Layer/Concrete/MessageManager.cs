@@ -85,5 +85,20 @@ namespace Business_Layer.Concrete
                 .OrderByDescending(m => m.SendDate)
                 .ToListAsync();
         }
+
+        public async Task<bool> TChangeMessageReadStatusAsync(Guid Id)
+        {
+            var message = await  _uow.Messages.GetByIdAsync(Id);
+
+            if (message == null) 
+                throw new LogicException("Id", "Böyle bir mesaj bulunamadı.");
+
+            message.IsRead = !message.IsRead; //okunmamışsa okunmuş, okunmuşsa okunmamış yapar.
+
+            _uow.Messages.Update(message);
+            var result = await _uow.SaveAsync();
+
+            return result > 0;
+        }
     }
 }
