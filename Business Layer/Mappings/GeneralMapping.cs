@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Entity_Layer.DTOs.AppRoleDtos;
 using Entity_Layer.DTOs.AppUserDtos.ConfirmUserDto;
 using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
 using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
@@ -11,6 +12,7 @@ using Entity_Layer.DTOs.AppUserDtos.RegisterDtos;
 using Entity_Layer.DTOs.CategoryDtos;
 using Entity_Layer.DTOs.MessageDtos;
 using Entity_Layer.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing.Constraints;
 
 namespace Business_Layer.Mappings
@@ -85,6 +87,10 @@ namespace Business_Layer.Mappings
                 
                 Bu dönüşümü AutoMapper ile değil, Identity içerisinde bulunan ChangePasswordAsync metodu ile yap. 
             */
+
+            CreateMap<CreateRoleDto, IdentityRole>()
+                .ForMember(dest=>dest.Name, opt=>opt.MapFrom(src=>src.RoleName))
+                .ReverseMap();
         }
     }
 }
