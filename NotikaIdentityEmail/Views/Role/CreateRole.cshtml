@@ -1,0 +1,72 @@
+﻿@using Entity_Layer.DTOs.AppRoleDtos
+@model CreateRoleDto
+
+@{
+    ViewData["Title"] = "CreateRole";
+    Layout = "~/Views/UserLayout/Index.cshtml";
+}
+
+<div class="form-element-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="form-element-list">
+                    <div class="basic-tb-hd">
+                        <h2>Rol Ekleme</h2>
+                        <p>Lütfen rol bilgilerini eksiksiz olarak doldurup ekleme işlemini yapınız.</p>
+                    </div>
+
+                    @* Genel hataları en üstte topluca göstermek için *@
+                    <div asp-validation-summary="ModelOnly" class="text-danger m-b-20"></div>
+
+                    <form asp-action="CreateRole" asp-controller="Role" method="post">
+
+                        <div class="row">
+                            @* Rol Adı *@
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label>Rol Adı</label>
+                                    <div class="nk-int-st">
+                                        <input type="text" asp-for="RoleName" class="form-control" placeholder="Rol Adı">
+                                    </div>
+                                    <span asp-validation-for="RoleName" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            @* Açıklaması *@
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label>Rol Açıklaması</label>
+                                    <div class="nk-int-st">
+                                        <input type="text" asp-for="Description" class="form-control" placeholder="Rol Açıklaması">
+                                    </div>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            @* Güncelleme Butonu *@
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <div class="nk-int-st">
+                                        <button type="submit" class="btn btn-success">Rolü Ekle</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .text-danger {
+        color: #ff0000 !important;
+        font-size: 12px;
+        margin-top: 5px;
+        display: block;
+    }
+</style>
+

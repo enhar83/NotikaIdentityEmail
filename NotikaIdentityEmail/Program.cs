@@ -1,12 +1,14 @@
 using Business_Layer.Abstract;
 using Business_Layer.Concrete;
 using Business_Layer.Mappings;
+using Business_Layer.ValidationRules.AppRoleValidationRules;
 using Business_Layer.ValidationRules.AppUserValidationRules;
 using Business_Layer.ValidationRules.IdentityErrorMessages;
 using Business_Layer.ValidationRules.MessageValidationRules;
 using Data_Access_Layer.Abstract;
 using Data_Access_Layer.Concrete;
 using Data_Access_Layer.Context;
+using Entity_Layer.DTOs.AppRoleDtos;
 using Entity_Layer.DTOs.AppUserDtos.ConfirmUserDto;
 using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using Entity_Layer.DTOs.UserSecrets;
@@ -52,9 +54,10 @@ builder.Services.AddAutoMapper(typeof(GeneralMapping)); //AutoMapper.Extensions.
 builder.Services.AddValidatorsFromAssemblyContaining<UserRegisterValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UserLoginValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<ComposeMessageValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<EditProfileDto>();
-builder.Services.AddValidatorsFromAssemblyContaining<ConfirmUserDto>();
-builder.Services.AddValidatorsFromAssemblyContaining<ChangePasswordDto>();
+builder.Services.AddValidatorsFromAssemblyContaining<EditProfileValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<ActivationValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<ChangePasswordValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateRoleValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 
