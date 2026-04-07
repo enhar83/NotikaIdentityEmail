@@ -3,6 +3,15 @@
 
 <div class="table-responsive">
     <table class="table table-hover table-inbox">
+
+        <tr>
+            <th>#</th>
+            <th>Gönderen Kişi</th>
+            <th>Kategori</th>
+            <th>Mesaj Konusu</th>
+            <th>Tarih</th>
+            <th>Mesaj Detayı</th>
+        </tr>
         <tbody>
             @if (Model != null && Model.Any())
             {
@@ -35,7 +44,7 @@
 
                         @* 5. Sütun: Tarih *@
                         <td class="text-right mail-date" style="width: 120px; vertical-align: middle;">
-                            @item.SendDate.ToString("dd.MM.yyyy")
+                            @item.SendDate.ToString("dd MMM yyyy")
                         </td>
 
                         @* 6. Sütun: Mesajı Görüntüle Butonu *@

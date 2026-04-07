@@ -1,4 +1,5 @@
 ﻿@model MessageDetailDto
+@using Business_Layer.Helpers
 
 @{
 	ViewData["Title"] = "MessageDetails";
@@ -18,17 +19,20 @@
 							<h2>Mesaj Detayları</h2>
 						</div>
 						<div class="view-ml-rl">
-							<p>08:26 PM (2 hours ago)</p>
+							<p>
+								<strong>Gönderim Saati:</strong> @Model.SendDate.ToString("HH:mm")
+								<span class="text-muted">(@DateHelper.GetTimeAgo(Model.SendDate))</span>
+							</p>
 						</div>
 					</div>
 					<div class="mail-ads mail-vw-ph">
 						<p class="first-ph"><b>Konu: </b>@Model.Subject</p>
 						<p><b>Gönderen Kişi:</b> <a href="#">@Model.SenderName</a></p>
 						<p><b>Alıcı Kişi:</b> <a href="#">@Model.ReceiverName</a></p>
-						<p class="last-ph"><b>Tarih:</b> @Model.SendDate</p>
+						<p class="last-ph"><b>Tarih:</b> @Model.SendDate.ToString("dd MMM yyyy")</p>
 					</div>
 					<div class="view-mail-atn">
-						<p>@Model.MessageDetail</p>
+						<p>@Html.Raw(Model.MessageDetail)</p> @* Html.Raw ifadesiSQLden çekerken html ifadesi nasıl o formatta çekmeye yarar.  *@
 					</div>
 
 					<div class="vw-ml-action-ls text-right mg-t-20">
