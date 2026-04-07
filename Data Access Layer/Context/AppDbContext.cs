@@ -12,7 +12,7 @@ namespace Data_Access_Layer.Context
 {
     //adı direkt olarak DbContext yapılınca migration atarken more than one DbContext found hatası gelir, bundan dolayı AppDbContext yapıldı
     //eğer ileride Identity kullanmaktan vazgeçilirse IdentityDbContext yerine direkt olarak DbContext yapıp migration atılırsa sistem onaylar.
-    public class AppDbContext:IdentityDbContext<AppUser,IdentityRole<Guid>,Guid> 
+    public class AppDbContext:IdentityDbContext<AppUser,AppRole,Guid> 
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

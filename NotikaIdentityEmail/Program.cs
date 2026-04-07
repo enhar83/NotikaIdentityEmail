@@ -29,7 +29,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 //identity sistemi bir servisler bütünüdür ve bu servislerin DI container'a eklenmesi gerekiyor. 
 //ctor içerisinde kullansan da program.cs kayýdý yapýlmazsa hata alýrsýn. nesneyi üretemez ve invalid operations exception hatasý gelir.
 //AppUser'ý ekliyoruz, ileride AppRole eklenince o da buraya gelecek. 
-builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
+builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
     options.User.RequireUniqueEmail = true;
 })

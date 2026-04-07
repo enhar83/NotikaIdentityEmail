@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Entity_Layer.Entities
 {
-    public class AppRole:IdentityUser<Guid>
+    public class AppRole:IdentityRole<Guid>
     {
         public string Description { get; set; }
     }
