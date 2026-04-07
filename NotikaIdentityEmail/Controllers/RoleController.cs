@@ -13,6 +13,12 @@ namespace NotikaIdentityEmail.Controllers
             _appRoleService = appRoleService;
         }
 
+        public async Task<IActionResult> RoleList()
+        {
+            var roles = await _appRoleService.GetAllRolesAsync();
+            return View(roles);
+        }
+
         [HttpGet]
         public IActionResult CreateRole()
         {

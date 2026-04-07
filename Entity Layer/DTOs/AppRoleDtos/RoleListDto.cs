@@ -9,6 +9,7 @@ namespace Entity_Layer.DTOs.AppRoleDtos
 {
     public class RoleListDto
     {
+        public Guid Id { get; set; }
         public string RoleName { get; set; }
         public string Description { get; set; }
     }
