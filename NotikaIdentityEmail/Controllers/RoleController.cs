@@ -40,5 +40,16 @@ namespace NotikaIdentityEmail.Controllers
 
             return View(createRoleDto);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteRole(Guid id)
+        {
+            var result = await _appRoleService.DeleteRoleAsync(id);
+            if (result.Succeeded)
+                return Json(new { success = true, message = "Rol başarıyla silindi." });
+
+            var error = result.Errors.FirstOrDefault()?.Description ?? "Bir hata oluştu.";
+            return Json(new { success = false, message = error });
+        }
     }
 }

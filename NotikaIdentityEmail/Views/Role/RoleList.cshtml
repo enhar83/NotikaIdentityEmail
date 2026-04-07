@@ -2,56 +2,103 @@
 @model List<RoleListDto>
 
 @{
-	ViewData["Title"] = "RoleList";
-	Layout = "~/Views/UserLayout/Index.cshtml";
-	int count = 0;
+    ViewData["Title"] = "Rol Listesi";
+    Layout = "~/Views/UserLayout/Index.cshtml";
+    int count = 0;
 }
 
 <div class="form-element-area">
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-				<div class="form-element-list">
-					<div class="basic-tb-hd">
-						<h2>Rol Listesi</h2>
-						<p>Tüm roller ve açıklamaları aşağıda listelenmektedir.</p>
-					</div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="form-element-list">
 
-					<div class="row">
+                    <div class="basic-tb-hd">
+                        <h2>Rol Listesi</h2>
+                        <p>Sistemde tanımlı olan tüm rolleri buradan yönetebilirsiniz.</p>
+                    </div>
 
-						<table class="table table-bordered">
-							<tr>
-								<th>#</th>
-								<th>Rol Adı</th>
-								<th>Rol Açıklaması</th>
-								<th>Rolü Güncelle</th>
-								<th>Rolü Sil</th>
-							</tr>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Rol Adı</th>
+                                    <th>Açıklama</th>
+                                    <th style="width: 200px;">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    count++;
+                                    <tr id="role-row-@item.Id">
+                                        <td>@count</td>
+                                        <td>@item.RoleName</td>
+                                        <td>@item.Description</td>
+                                        <td>
+                                            <a href="/Role/UpdateRole/@item.Id" class="btn btn-success btn-sm">Güncelle</a>
+                                            <button class="btn btn-danger btn-sm btn-delete"
+                                                    data-id="@item.Id"
+                                                    data-name="@item.RoleName">
+                                                Sil
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
 
+                    <div class="form-example-int mg-t-15">
+                        <a href="/Role/CreateRole" class="btn btn-primary">Yeni Rol Oluştur</a>
+                    </div>
 
-							@foreach (var item in Model)
-							{
-								count++;
-								<tr>
-									<td>@count</td>
-									<td>@item.RoleName</td>
-									<td>@item.Description</td>
-									<td>
-										<a href="/Role/UpdateRole/@item.Id" class="btn btn-success">Güncelle</a>
-									</td>
-									<td>
-										<a href="/Role/DeleteRole/@item.Id" class="btn btn-danger">Sil</a>
-									</td>
-								</tr>
-							}
-						</table>
-
-						<a href="/Role/CreateRole" class="btn btn-primary">Rol Oluştur</a>
-
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            $(document).on("click", ".btn-delete", function () {
+                const roleId = $(this).data("id");
+                const roleName = $(this).data("name");
+                const currentRow = $(this).closest("tr");
+
+                Swal.fire({
+                    title: 'Emin misiniz?',
+                    text: `"${roleName}" rolü kalıcı olarak silinecektir!`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Evet, Sil!',
+                    cancelButtonText: 'Vazgeç'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/Role/DeleteRole/",
+                            data: { id: roleId },
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire('Başarılı!', response.message, 'success');
+                                    currentRow.fadeOut(600, function() {
+                                        $(this).remove();
+                                    });
+                                } else {
+                                    Swal.fire('Hata!', response.message, 'error');
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

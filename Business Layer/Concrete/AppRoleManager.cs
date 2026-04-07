@@ -39,6 +39,17 @@ namespace Business_Layer.Concrete
             return result;
         }
 
+        public async Task<IdentityResult> DeleteRoleAsync(Guid Id)
+        {
+            var role = await _roleManager.FindByIdAsync(Id.ToString());
+
+            if (role == null)
+                return IdentityResult.Failed(new IdentityError { Description = "Silinmek istenen rol bulunamadı." });
+
+            var result = await _roleManager.DeleteAsync(role);
+            return result;
+        }
+
         public async Task<List<RoleListDto>> GetAllRolesAsync()
         {
             //rolemanager üzerinden tüm rolleri dbden alıyoruz.

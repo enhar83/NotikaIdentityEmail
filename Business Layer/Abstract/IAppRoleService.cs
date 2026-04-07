@@ -12,5 +12,6 @@ namespace Business_Layer.Abstract
     {
         Task<IdentityResult> CreateRoleAsync(CreateRoleDto createRoleDto);
         Task<List<RoleListDto>> GetAllRolesAsync();
+        Task<IdentityResult> DeleteRoleAsync(Guid Id);
     }
 }
