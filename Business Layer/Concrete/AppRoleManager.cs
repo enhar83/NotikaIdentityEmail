@@ -14,11 +14,11 @@ namespace Business_Layer.Concrete
     public class AppRoleManager : IAppRoleService
     {
 
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<AppRole> _roleManager;
         private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
 
-        public AppRoleManager(RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager, IMapper mapper)
+        public AppRoleManager(RoleManager<AppRole> roleManager, UserManager<AppUser> userManager, IMapper mapper)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -34,7 +34,7 @@ namespace Business_Layer.Concrete
                     * NormalizedName: Rol adının büyük harfe dönüştürülmüş adıdır. 
                     * ConcurrencyStamp: Aynı anda iki farklı işlem aynı rolü güncelemeye çalışırsa, veri tutarsızlığını önlemek için kullanıılır.
              */
-            var role = _mapper.Map<IdentityRole>(createRoleDto);
+            var role = _mapper.Map<AppRole>(createRoleDto);
 
             var result = await _roleManager.CreateAsync(role);
             return result;

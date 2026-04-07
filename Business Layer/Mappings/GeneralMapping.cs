@@ -88,7 +88,7 @@ namespace Business_Layer.Mappings
                 Bu dönüşümü AutoMapper ile değil, Identity içerisinde bulunan ChangePasswordAsync metodu ile yap. 
             */
 
-            CreateMap<CreateRoleDto, IdentityRole>()
+            CreateMap<CreateRoleDto, AppRole>()
                 .ForMember(dest=>dest.Name, opt=>opt.MapFrom(src=>src.RoleName))
                 .ReverseMap();
         }
