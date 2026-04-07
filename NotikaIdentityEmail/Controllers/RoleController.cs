@@ -33,12 +33,46 @@ namespace NotikaIdentityEmail.Controllers
 
             var result = await _appRoleService.CreateRoleAsync(createRoleDto);
             if (result.Succeeded)
+            {
+                TempData["SuccessCreateMessage"] = "Rol başarıyla eklendi.";
                 return RedirectToAction("RoleList", "Role");
+            }
 
             foreach (var error in result.Errors)
                 ModelState.AddModelError("", error.Description);
 
             return View(createRoleDto);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditRole(Guid id)
+        {
+            var role = await _appRoleService.GetRoleByIdAsync(id);
+            if (role == null)
+                return RedirectToAction("RoleList");
+
+            return View(role);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditRole(UpdateRoleDto updateRoleDto)
+        {
+            if (!ModelState.IsValid)
+                return View(updateRoleDto);
+
+            var result = await _appRoleService.UpdateRoleAsync(updateRoleDto);
+
+            if (result.Succeeded)
+            {
+                TempData["SuccessUpdateMessage"] = "Rol bilgileri başarıyla güncellendi.";
+                return RedirectToAction("RoleList");
+            }
+
+
+            foreach (var error in result.Errors)
+                ModelState.AddModelError("", error.Description);
+
+            return View(updateRoleDto);
         }
 
         [HttpPost]
