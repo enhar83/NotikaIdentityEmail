@@ -114,6 +114,12 @@ namespace Business_Layer.Concrete
             return result;
         }
 
+        public async Task<string> GetEmailByUserNameAsync(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            return user?.Email ?? "";
+        }
+
         //kullanıcının mevcut bilgilerini bulur ve ekrana dolu bir şekilde gelmesi için Dto'ya çevirir.
         public async Task<EditProfileDto> GetProfileByUserNameAsync(string userName)
         {

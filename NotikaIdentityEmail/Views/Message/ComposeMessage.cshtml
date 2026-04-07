@@ -21,7 +21,7 @@
                         </div>
 
                         <div class="cmp-int mg-t-20">
-                            @* Gönderen Email (Şimdilik Manuel) *@
+                            @* Gönderen Email (Readonly hale getirildi) *@
                             <div class="row">
                                 <div class="col-lg-1 col-md-2 col-sm-2 col-xs-12">
                                     <div class="cmp-int-lb cmp-int-lb1 text-right">
@@ -31,7 +31,8 @@
                                 <div class="col-lg-11 col-md-10 col-sm-10 col-xs-12">
                                     <div class="form-group">
                                         <div class="nk-int-st cmp-int-in">
-                                            <input type="email" asp-for="SenderEmail" class="form-control" placeholder="Senin e-posta adresin" />
+                                            @* readonly attribute'u ve gri arka plan stili eklendi *@
+                                            <input type="email" asp-for="SenderEmail" class="form-control" readonly style="background-color: #f5f5f5; cursor: not-allowed;" />
                                             <span asp-validation-for="SenderEmail" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -97,10 +98,7 @@
                             <div class="form-group">
                                 <label>Mesaj Detayı</label>
                                 <div class="nk-int-st">
-                                    @* Sunucuya gidecek asıl veri alanı (Gizli) *@
                                     <textarea asp-for="MessageDetail" id="MessageDetail" style="display:none;"></textarea>
-
-                                    @* Görsel olarak görünecek Summernote editörü *@
                                     <div class="html-editor-cm"></div>
                                 </div>
                                 <span asp-validation-for="MessageDetail" class="text-danger"></span>

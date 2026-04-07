@@ -28,25 +28,22 @@ namespace Business_Layer.Concrete
             _userManager = userManager;
         }
 
-        public async Task TSendMessageAsync(ComposeMessageDto composeMessageDto)
+        public async Task TSendMessageAsync(string senderUserName, ComposeMessageDto composeMessageDto)
         {
             var receiverId = await _userManager.Users
             .Where(u => u.Email == composeMessageDto.ReceiverEmail)
             .Select(u => u.Id)
             .FirstOrDefaultAsync();
 
-            var senderId = await _userManager.Users
-                .Where(u => u.Email == composeMessageDto.SenderEmail)
-                .Select(u => u.Id)
-                .FirstOrDefaultAsync();
+            var sender = await _userManager.FindByNameAsync(senderUserName);
 
             if (receiverId == Guid.Empty) throw new LogicException("ReceiverEmail", "Sistemde bu mail bulunamadı.");
-            if (senderId == Guid.Empty) throw new LogicException("SenderEmail", "Sistemde bu mail bulunamadı.");
-            if (senderId == receiverId) throw new LogicException("ReceiverEmail", "Kendinize mail yollayamazsınız.");
+            if (sender == null) throw new LogicException("SenderEmail", "Sistemde bu mail bulunamadı.");
+            if (sender.Id == receiverId) throw new LogicException("ReceiverEmail", "Kendinize mail yollayamazsınız.");
 
             var message = _mapper.Map<Message>(composeMessageDto);
             message.ReceiverId = receiverId;
-            message.SenderId = senderId;
+            message.SenderId = sender.Id;
             message.SendDate = DateTime.Now;
             message.IsRead = false;
 

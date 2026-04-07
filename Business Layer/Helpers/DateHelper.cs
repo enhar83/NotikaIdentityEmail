@@ -24,7 +24,7 @@ namespace Business_Layer.Helpers
             if (timeSpan.TotalDays < 30)
                 return $"{(int)timeSpan.TotalDays} gün önce";
 
-            return dateTime.ToString("dd.MM.yyyy");
+            return dateTime.ToString("dd MMM yyyy");
         }
     }
 }

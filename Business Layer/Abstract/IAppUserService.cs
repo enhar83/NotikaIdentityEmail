@@ -20,5 +20,6 @@ namespace Business_Layer.Abstract
         Task<EditProfileDto> GetProfileByUserNameAsync(string userName);
         Task<bool> ConfirmEmailAsync(ConfirmUserDto confirmUserDto);
         Task ResendActivationCodeAsync(string email);
+        Task<string> GetEmailByUserNameAsync(string userName);
     }
 }

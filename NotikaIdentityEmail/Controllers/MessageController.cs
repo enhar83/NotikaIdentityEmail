@@ -16,14 +16,14 @@ namespace NotikaIdentityEmail.Controllers
     {
         private readonly IMessageService _messageService;
         private readonly ICategoryService _categoryService; //categorylist dropwdown için eklendi.
-        private readonly UserManager<AppUser> _userManager;
+        private readonly IAppUserService _appUserService;
         private readonly IMapper _mapper;
 
-        public MessageController(IMessageService messageService, ICategoryService categoryService, UserManager<AppUser> userManager, IMapper mapper)
+        public MessageController(IMessageService messageService, ICategoryService categoryService, IAppUserService appUserService, IMapper mapper)
         {
             _messageService = messageService;
             _categoryService = categoryService;
-            _userManager = userManager;
+            _appUserService = appUserService;
             _mapper = mapper;
         }
 
@@ -44,8 +44,16 @@ namespace NotikaIdentityEmail.Controllers
         [HttpGet]
         public async Task<IActionResult> ComposeMessage()
         {
+            var currentUserName = User.Identity.Name;
+            var userEmail = await _appUserService.GetEmailByUserNameAsync(currentUserName);
+
+            var model = new ComposeMessageDto
+            {
+                SenderEmail = userEmail
+            };
+
             await GetCategoryListAsync();
-            return View();
+            return View(model);
         }
 
         [HttpPost]
@@ -59,7 +67,8 @@ namespace NotikaIdentityEmail.Controllers
 
             try
             {
-                await _messageService.TSendMessageAsync(composedMessage);
+                var currentUserName = User.Identity.Name;
+                await _messageService.TSendMessageAsync(currentUserName, composedMessage);
                 return RedirectToAction("Sendbox");
             }
             catch (LogicException ex)
