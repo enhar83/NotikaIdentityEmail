@@ -130,9 +130,42 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.js"></script>
 
 <script>
-    $(document).ready(function () {
+        $(document).ready(function () {
         $('.summernote').summernote({
             height: 250
         });
+
+        $('form').on('submit', function (e) {
+            // 1. Summernote içeriğini al
+            var code = $('.summernote').summernote('code');
+
+            // 2. HTML etiketlerini temizle (Sadece saf metni kontrol et)
+            var plainText = $("<div style='display:none;'>").html(code).text().trim();
+
+            // 3. Eğer saf metin boşsa veya sadece boşluktan ibaretse
+            if (plainText.length === 0) {
+                // Textarea'yı temizle ki [Required] tetiklensin
+                $('#MessageDetail').val('');
+            } else {
+                // Doluysa içeriği textarea'ya aktar
+                $('#MessageDetail').val(code);
+            }
+        });
     });
 </script>
+
+<style>
+    /* ASP.NET Validation mesajını zorla kırmızı yap */
+    .text-danger.field-validation-error {
+        color: #e74c3c !important; /* Bootstrap Danger kırmızısı */
+        display: block;
+        margin-top: 5px;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    /* Summernote çerçevesi hata anında kırmızı görünsün istersen (opsiyonel) */
+    .field-validation-error ~ .note-editor {
+        border: 1px solid #e74c3c !important;
+    }
+</style>
