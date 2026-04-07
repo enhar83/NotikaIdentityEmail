@@ -31,7 +31,7 @@
 						<p><b>Alıcı Kişi:</b> <a href="#">@Model.ReceiverName</a></p>
 						<p class="last-ph"><b>Tarih:</b> @Model.SendDate.ToString("dd MMM yyyy")</p>
 					</div>
-					<div class="view-mail-atn">
+					<div class="view-mail-atn message-content-container">
 						<p>@Html.Raw(Model.MessageDetail)</p> @* Html.Raw ifadesiSQLden çekerken html ifadesi nasıl o formatta çekmeye yarar.  *@
 					</div>
 
@@ -48,4 +48,42 @@
 		</div>
 	</div>
 </div>
+
+<style>
+	/* Mesaj içeriğindeki tüm etiketlerin blok olmasını engelle */
+	.message-content-container * {
+		display: inline; /* Tüm etiketleri yan yana akmaya zorlar */
+		margin: 0;
+		padding: 0;
+	}
+
+	/* Paragraflar ve satır başları için istisna tanı */
+	.message-content-container p,
+	.message-content-container div,
+	.message-content-container br {
+		display: block; /* Sadece gerçek paragraflar ve satır başları alt satıra geçsin */
+		margin-bottom: 10px;
+	}
+
+	/* Summernote'tan gelen listelerin bozulmaması için */
+	.message-content-container ul,
+	.message-content-container ol {
+		display: block;
+		padding-left: 20px;
+	}
+
+	.message-content-container li {
+		display: list-item;
+	}
+
+	/* Bold ve Italic gibi vurguların yanındaki metni itmesini engelle */
+	.message-content-container strong,
+	.message-content-container b,
+	.message-content-container span,
+	.message-content-container i,
+	.message-content-container u {
+		display: inline !important;
+		white-space: normal;
+	}
+</style>
 
