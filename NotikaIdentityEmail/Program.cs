@@ -45,6 +45,7 @@ builder.Services.AddScoped<IAppUserService, AppUserManager>();
 builder.Services.AddScoped<ICategoryService, CategoryManager>();
 builder.Services.AddScoped<IMessageService, MessageManager>();
 builder.Services.AddScoped<IEmailActivationService, EmailActivationManager>();
+builder.Services.AddScoped<IAppRoleService, AppRoleManager>();
 
 builder.Services.AddAutoMapper(typeof(GeneralMapping)); //AutoMapper.Extensions.Microsoft.DependencyInjection paketi kurulmazsa hata alýnýr.
 
