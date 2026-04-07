@@ -58,6 +58,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<EditProfileValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<ActivationValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<ChangePasswordValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateRoleValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateRoleValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 

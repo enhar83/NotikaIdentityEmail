@@ -39,9 +39,9 @@ namespace Business_Layer.Concrete
             return result;
         }
 
-        public async Task<IdentityResult> DeleteRoleAsync(Guid Id)
+        public async Task<IdentityResult> DeleteRoleAsync(Guid id)
         {
-            var role = await _roleManager.FindByIdAsync(Id.ToString());
+            var role = await _roleManager.FindByIdAsync(id.ToString());
 
             if (role == null)
                 return IdentityResult.Failed(new IdentityError { Description = "Silinmek istenen rol bulunamadı." });
@@ -59,6 +59,34 @@ namespace Business_Layer.Concrete
             var mappedRoles = _mapper.Map<List<RoleListDto>>(roles);
 
             return mappedRoles;
+        }
+
+        public async Task<UpdateRoleDto> GetRoleByIdAsync(Guid id)
+        {
+            var role = await _roleManager.FindByIdAsync(id.ToString());
+
+            if (role == null)
+                return null;
+
+            return _mapper.Map<UpdateRoleDto>(role);
+        }
+
+        public async Task<IdentityResult> UpdateRoleAsync(UpdateRoleDto updateRoleDto)
+        {
+            var role = await _roleManager.FindByIdAsync(updateRoleDto.Id.ToString());
+
+            if (role == null)
+                return IdentityResult.Failed(new IdentityError { Description = "Güncellenmek istenen rol bulunamadı." });
+
+            /*
+             _mapper.Map<UpdateRoleDto>(role): yeni bir nesne yarat demektir. Listeleme ve detay getirme işlemlerinde bu kullanılır. dbden gelen entityi bir dtoya çevirme işlemidir.
+             _mapper.Map(updateRoleDto, role): mevcut bir nesnesinin üzerini yaz demektir. 2.sıradakinin içerisine gider ve birinci sıradakinin içindekilerle değiştirir.
+             */
+            _mapper.Map(updateRoleDto, role); 
+
+            var result = await _roleManager.UpdateAsync(role);
+
+            return result;
         }
     }
 }
