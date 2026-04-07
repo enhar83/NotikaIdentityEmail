@@ -183,5 +183,11 @@ namespace Business_Layer.Concrete
 
             await _emailActivationService.SendConfirmEmailAsync(user.Email, newCode.ToString());
         }
+
+        public async Task<Guid> TGetUserIdByUserNameAsync(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            return user.Id;
+        }
     }
 }

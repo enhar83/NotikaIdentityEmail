@@ -82,5 +82,15 @@ namespace Business_Layer.Concrete
                 .OrderByDescending(m => m.SendDate)
                 .ToListAsync();
         }
+
+        public async Task<int> TGetIncomingMessagesCount(Guid receiverId)
+        {
+            return await _uow.Messages.GetWhere(m => m.ReceiverId == receiverId).CountAsync();
+        }
+
+        public async Task<int> TGetOutcomingMessagesCount(Guid senderId)
+        {
+            return await _uow.Messages.GetWhere(m => m.SenderId == senderId).CountAsync();
+        }
     }
 }

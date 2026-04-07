@@ -21,5 +21,6 @@ namespace Business_Layer.Abstract
         Task<bool> ConfirmEmailAsync(ConfirmUserDto confirmUserDto);
         Task ResendActivationCodeAsync(string email);
         Task<string> GetEmailByUserNameAsync(string userName);
+        Task<Guid> TGetUserIdByUserNameAsync(string userName);
     }
 }
