@@ -8,6 +8,7 @@ using Business_Layer.Abstract;
 using Entity_Layer.DTOs.AppRoleDtos;
 using Entity_Layer.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business_Layer.Concrete
 {
@@ -15,12 +16,10 @@ namespace Business_Layer.Concrete
     {
 
         private readonly RoleManager<AppRole> _roleManager;
-        private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
 
-        public AppRoleManager(RoleManager<AppRole> roleManager, UserManager<AppUser> userManager, IMapper mapper)
+        public AppRoleManager(RoleManager<AppRole> roleManager, IMapper mapper)
         {
-            _userManager = userManager;
             _roleManager = roleManager;
             _mapper = mapper;
         }
@@ -38,6 +37,17 @@ namespace Business_Layer.Concrete
 
             var result = await _roleManager.CreateAsync(role);
             return result;
+        }
+
+        public async Task<List<RoleListDto>> GetAllRolesAsync()
+        {
+            //rolemanager üzerinden tüm rolleri dbden alıyoruz.
+            var roles = await _roleManager.Roles.ToListAsync();
+
+            //çekilen listeyi rolelistdto'ya mapliyoruz. 
+            var mappedRoles = _mapper.Map<List<RoleListDto>>(roles);
+
+            return mappedRoles;
         }
     }
 }

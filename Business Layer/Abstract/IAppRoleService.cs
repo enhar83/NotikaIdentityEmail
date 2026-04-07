@@ -11,5 +11,6 @@ namespace Business_Layer.Abstract
     public interface IAppRoleService
     {
         Task<IdentityResult> CreateRoleAsync(CreateRoleDto createRoleDto);
+        Task<List<RoleListDto>> GetAllRolesAsync();
     }
 }
