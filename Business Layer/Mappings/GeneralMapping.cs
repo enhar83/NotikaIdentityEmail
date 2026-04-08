@@ -9,6 +9,7 @@ using Entity_Layer.DTOs.AppUserDtos.ConfirmUserDto;
 using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
 using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using Entity_Layer.DTOs.AppUserDtos.RegisterDtos;
+using Entity_Layer.DTOs.AppUserDtos.UserListDtos;
 using Entity_Layer.DTOs.CategoryDtos;
 using Entity_Layer.DTOs.MessageDtos;
 using Entity_Layer.Entities;
@@ -99,6 +100,8 @@ namespace Business_Layer.Mappings
             CreateMap<UpdateRoleDto, AppRole>()
                 .ForMember(dest=>dest.Name, opt=>opt.MapFrom(src=>src.RoleName))
                 .ReverseMap();
+
+            CreateMap<AppUser, UserListDto>().ReverseMap();
         }
     }
 }

@@ -22,5 +22,6 @@ namespace Business_Layer.Abstract
         Task ResendActivationCodeAsync(string email);
         Task<string> GetEmailByUserNameAsync(string userName);
         Task<Guid> TGetUserIdByUserNameAsync(string userName);
+        
     }
 }
