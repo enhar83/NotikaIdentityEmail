@@ -1,0 +1,112 @@
+﻿JWT NEDİR?
+
+	- Json Web Token, web uygulamalarında taraflar arası güvenli bir şekilde bilgi alışverişi yapılmasını sağlayan JSON tabanlı bir açık standrarttır.
+	- Özellikle ASP.NET Core ile kullanıldığında session yönetiminde harika bir alternatif sunar.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Yapısı Nasıldır?
+	
+	- Noktalarla ayrılmış üç ana parçadan oluşur: Header, Payload ve Signature.
+	- Header . Payload . Signature
+
+	1. Header
+		
+		* Token'ın türünü ve kullanılan algoritmaya belirtir. 
+		* JSON formatındadır. base64 ile encode edilmiştir. 
+
+		{
+			"alg": "HS256", //tokenın hangi algoritma ile imzalandığını belirtir.
+			"typ": "JWT" //token tipini belirtir. Genelde JWT olur. 
+		}
+
+	2. Payload
+
+		* Burada Claim denilen kullanıcı bilgileri bulunur (User Id, Email, Roller vs.).
+		* Ancak JWT şifrelenmiş değil, kodlanmıştır. Yani buraya şifre gibi hassas veriler asla yazılmamalıdır.
+		* Herkes okuyabilir ama imza olmadan değiştirilemez.
+
+		* Standart Claim alanları şunlardır:
+			- sub: Subject (token kimin için oluşturuldu?)
+			- iss: Issuer (tokenı kim oluşturdu?)
+			- exp: Expiration (tokenın son kullanma tarihi - Unix timestamp)
+			- iat: Issued At (token ne zaman oluşturuldu?)
+			- aud: Audience (token kimler için geçerli?)
+
+		* Token içerisine istenilen alanlar eklenebilir. (Custom Claims)
+
+
+	3. Signature
+		
+		* Bu token sahte mi? Kurcalanmış mı? Gerçekten biz mi verdik? kontrolüdür.
+		* Geleneksel Identity yapısında bir Session Id oluşturur ve bunu cookie içerisine atar. Sunucu, bu ID'nin kime ait olduğunu RAM'de veya dbde tutar (stateful).
+		* Signature; header + payload'ın birleşiminden ve gizli bir anahtardan (secret) üretilir. 
+
+		* Token birisi tarafından değiştirildiyse, signature artık eşleşmez.
+		* Yani payload içerisindeki role: admin alanını birisi değiştirip role: user yaparsa imza bozulur.
+		* Böylece backend bu token oynanmış diyip rejectler. 
+
+		* JWT ise Stateles (durumsuz) çalışır:
+			-> Sunucu kullanıcıyı bir kez doğrular ve eline bir JWT verir.
+			-> Sunucu bu tokenı kendi içerisinde saklamaz.
+			-> Kullanıcı her istekte bu tokenı gönderir. Sunucu sadece imzayı kontrol eder; "imza benim anahtarımla mı atılmış? Evet. O zaman bu kullanıcı geçerlidir" der.
+
+		* Signature Kontrolü Nasıl Olur?
+			-> Header ve payload'ı alır.
+			-> Aynı secret ile yeniden imza oluşturulur.
+			-> Token'ın sonundaki Signature ile yeniden karşılaştırılır.
+			-> Eğer eşleşiyorsa token geçerli der.
+			-> Eşleşmiyorsa kurcalanmış deyip reddeder.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ASP.NET Core Identity'e Katkıları Nelerdir?
+
+	* Identity normalde Cookie tabanlı çalışacak şekilde tasarlanmıştır. Ancak JWT eklemek şu avantajları sağlar.
+		- Mobil Uygulama Uyumluluğu: JWT her platformda standarttır.
+		- Scalability: 10 tane sunucu varsa, her sunucunun sessiondan haberdar olması gerekmez. Sadece aynı Secret Key'e sahip olması yeterlidir.
+		- Cross-Domain: API farklı bir domainde, frontend ayrı bir domainde ise JWT ile yetkilendirme yapmak çok daha kolaydır.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Akış Nasıl İşler?
+	* Giriş: Kullanıcı LoginDto ile API'ye istek atar.
+	* Doğrulama: Identity UserManager ile kullanıcıyı kontrol eder.
+	* Token Oluşturma: Eğer bilgiler doğruysa sunucu bu kullanıcıya özel bir JWT üretir. (İçine Roles, Email gibi claimler ekler.)
+	* İstemeci Saklama: Frontend bu tokenı alır ve localStorage veya sessionStorage içinde saklar.
+	* Yetkili İstek: Kullanıcı Profili Düzenle dediğinde, isteğin Header kısmına şu eklenir.
+		-> Authorization: Bearer <token_buraya>
+	* Sunucu Kontrolü: API, [Authoriza] attribute'u olan metotlarda gelen imza geçerli mi diye bakar. Eğer geçerliyse işlemi yapar.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+EditProfileAsync Örneği
+
+	* JWT kullanıldığında, EditProfikeAsync metodundaki userName parametresini dışarıdan (URL'den) almaya gerek kalmaz.
+	* Token içindeki Claimden otomatik olarak okunur. Bu da güvenliği artırır; bir kullanıcı başkasının ID'sini göndererek onun profilini güncelleyemez.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Dikkat Edilmesi Gerekenler
+
+	* Token Expiration: Token süresi çok uzun olmamalı.
+	* Refresh Token: Kullanıcının sürekli login olmaması için kısa süreli JWT'nin yanında uzun süreli bir Refresh Token yapısı kurulmalıdır.
+	* Secret Key: Bu anahtar asla GitHub'a yüklenmemelidir veya kodun içerisine gömülmemelidir. (appsettings.json veya Environment Variables kullanılmalıdır.)
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Otel Kartı Örneği
+
+	* Otele giriş yapıyorsun, resepsiyon sana bir kart veriyor. Bu kart;
+		- Hangi odada kalacağını bilir. 
+		- Hangi saatte çıkış yapman gerektiğini bilir.
+		- Belki kahvaltı dahil mi değil mi bilgisi de içindedir.
+
+	* JWT ile Benzerlik
+		- Kart = JWT Token
+		- İçindeki Bilgiler: JWT Payload
+		- Kartın üzerinde oynama yapamazsın: Signature kısmı
+		- Süresi dolunca çalışmaz: exp (expiration)
+
+
+

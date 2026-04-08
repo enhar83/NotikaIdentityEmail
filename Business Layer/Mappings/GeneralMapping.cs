@@ -12,6 +12,7 @@ using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using Entity_Layer.DTOs.AppUserDtos.RegisterDtos;
 using Entity_Layer.DTOs.AppUserDtos.UserListDtos;
 using Entity_Layer.DTOs.CategoryDtos;
+using Entity_Layer.DTOs.JwtDtos;
 using Entity_Layer.DTOs.MessageDtos;
 using Entity_Layer.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -115,6 +116,9 @@ namespace Business_Layer.Mappings
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Name + " " + src.Surname))
                 .ReverseMap();
+
+            CreateMap<AppUser, SimpleUserDto>()
+                .ForMember(dest => dest.Token, opt => opt.Ignore()); //token maplenmesin, elle atanacak. çünkü token dbden gelen bir değer değil, login anında otomatik olarak üretiliyor.
         }
     }
 }
