@@ -14,5 +14,6 @@ namespace Entity_Layer.DTOs.AppUserDtos.UserListDtos
         public string Email { get; set; }
         public string ImageUrl { get; set; }
         public bool EmailConfirmed { get; set; }
+        public List<string> Roles { get; set; }
     }
 }

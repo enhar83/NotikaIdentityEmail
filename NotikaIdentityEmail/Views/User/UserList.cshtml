@@ -28,6 +28,7 @@
                                     <th>Kullanıcı Adı</th>
                                     <th>Email</th>
                                     <th>Mail Onayı</th>
+                                    <th>Roller</th>
                                     <th style="width: 120px; text-align:center;">İşlemler</th>
                                 </tr>
                             </thead>
@@ -59,6 +60,21 @@
                                             else
                                             {
                                                 <span class="text-danger"><i class="fa fa-times-circle"></i> Onaysız</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (item.Roles != null && item.Roles.Any())
+                                            {
+                                                @foreach (var role in item.Roles)
+                                                {
+                                                    <span class="badge" style="background-color: #00c292; color: white; padding: 5px 10px; border-radius: 4px; font-size: 11px; margin-right: 2px;">
+                                                        @role
+                                                    </span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted" style="font-size: 11px;">Rol Atanmadı</span>
                                             }
                                         </td>
                                         <td style="text-align:center;">

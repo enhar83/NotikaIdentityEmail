@@ -136,7 +136,19 @@ namespace Business_Layer.Concrete
         {
             var users = await _userManager.Users.ToListAsync();
 
-            return _mapper.Map<List<UserListDto>>(users);
+            var userListDtos = new List<UserListDto>();
+
+            foreach (var user in users)
+            {
+                var dto = _mapper.Map<UserListDto>(user);
+
+                var roles = await _userManager.GetRolesAsync(user); //kullanıcı rolleri çekiliyor.
+                dto.Roles = roles.ToList();
+
+                userListDtos.Add(dto); //çekilen roller dto içerisine ekleniyor.
+            }
+
+            return userListDtos;
         }
 
         //SıgnInResult: Identity doğrudan giriş başarılı mı, şifre yanlış mı hesap kilitlendi mi gibi tüm bilgileri bu hazır nesneyle döner. Biz de controllerda buna göre işlem yaparız.
