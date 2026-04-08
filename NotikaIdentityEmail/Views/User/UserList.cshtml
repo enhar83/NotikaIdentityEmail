@@ -1,0 +1,79 @@
+﻿@using Entity_Layer.DTOs.AppUserDtos.UserListDtos
+@model List<UserListDto>
+
+@{
+    ViewData["Title"] = "UserList";
+    Layout = "~/Views/UserLayout/Index.cshtml";
+	int count = 0;
+}
+
+<div class="form-element-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="form-element-list">
+
+                    <div class="basic-tb-hd">
+                        <h2>Rol Listesi</h2>
+                        <p>Sistemde tanımlı olan tüm kullanıcıları buradan yönetebilirsiniz.</p>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>İsim</th>
+                                    <th>Soyisim</th>
+                                    <th>Kullanıcı Adı</th>
+                                    <th>Email</th>
+                                    <th>Mail Onayı</th>
+                                    <th style="width: 200px;">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    count++;
+                                    <tr id="role-row-@item.Id">
+                                        <td>@count</td>
+                                        <td>@item.Name</td>
+                                        <td>@item.Surname</td>
+                                        <td>@item.UserName</td>
+                                        <td>@item.Email</td>
+                                        <td>
+                                            @if (item.EmailConfirmed)
+                                            {
+                                                <span class="btn btn-success btn-xs" style="border-radius: 50%; padding: 2px 6px;">
+                                                    <i class="fa fa-check"></i>
+                                                </span>
+                                                <span class="text-success" style="margin-left:5px;">Onaylı</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="btn btn-danger btn-xs" style="border-radius: 50%; padding: 2px 7px;">
+                                                    <i class="fa fa-times"></i>
+                                                </span>
+                                                <span class="text-danger" style="margin-left:5px;">Onaylanmamış</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a href="/User/EditUser/@item.Id" class="btn btn-success btn-sm">Güncelle</a>
+                                            <button class="btn btn-danger btn-sm btn-delete"
+                                                    data-id="@item.Id"
+                                                    data-name="@item.Name @item.Surname">
+                                                Sil
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

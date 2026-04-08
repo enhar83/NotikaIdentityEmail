@@ -10,6 +10,7 @@ using Entity_Layer.DTOs.AppUserDtos.ConfirmUserDto;
 using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
 using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using Entity_Layer.DTOs.AppUserDtos.RegisterDtos;
+using Entity_Layer.DTOs.AppUserDtos.UserListDtos;
 using Entity_Layer.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -129,6 +130,13 @@ namespace Business_Layer.Concrete
                 throw new LogicException("", "Kullanıcı bulunamadı.");
 
             return _mapper.Map<EditProfileDto>(user);
+        }
+
+        public async Task<List<UserListDto>> GetUserListAsync()
+        {
+            var users = await _userManager.Users.ToListAsync();
+
+            return _mapper.Map<List<UserListDto>>(users);
         }
 
         //SıgnInResult: Identity doğrudan giriş başarılı mı, şifre yanlış mı hesap kilitlendi mi gibi tüm bilgileri bu hazır nesneyle döner. Biz de controllerda buna göre işlem yaparız.

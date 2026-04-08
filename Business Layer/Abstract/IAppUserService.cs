@@ -7,6 +7,7 @@ using Entity_Layer.DTOs.AppUserDtos.ConfirmUserDto;
 using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
 using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using Entity_Layer.DTOs.AppUserDtos.RegisterDtos;
+using Entity_Layer.DTOs.AppUserDtos.UserListDtos;
 using Microsoft.AspNetCore.Identity;
 
 namespace Business_Layer.Abstract
@@ -22,6 +23,6 @@ namespace Business_Layer.Abstract
         Task ResendActivationCodeAsync(string email);
         Task<string> GetEmailByUserNameAsync(string userName);
         Task<Guid> TGetUserIdByUserNameAsync(string userName);
-        
+        Task<List<UserListDto>> GetUserListAsync();
     }
 }
