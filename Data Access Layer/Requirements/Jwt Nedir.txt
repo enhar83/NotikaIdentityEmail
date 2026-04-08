@@ -108,5 +108,82 @@ Otel Kartı Örneği
 		- Kartın üzerinde oynama yapamazsın: Signature kısmı
 		- Süresi dolunca çalışmaz: exp (expiration)
 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+AppSetting.Json İçerisinde Kullanım
 
+	"JwtSettings": {
+        "Key": "notikaidentityPROJECORE+-*123456007989CoreMVC",
+        "Issuer": "localhost",
+        "Audience": "localhost",
+        "ExpireMinutes": 5
+    },
+
+	* Bu ayarlar, JWT sisteminin kimlik kartı basma makinesi için gerekli olan ayarlardır.
+	* Bir devlet kimlik basarken kafasına göre basmaz; belli bir mühür kullanır, kimin bastığı bellidir ve kartın bir son kullanma tarihi vardır.
+
+		- Key (Gizli Mühür)
+			-> JWT'nin en önemli kısmı olan Signature bu anahtar kullanılarak oluşturulur.
+			-> Mantığı: Sunucu, token üretirken bu anahtarı kullanarak bir imza atar. Token geri geldiğinde yine bu anahtar ile kontrol eder.
+			-> Neden appsettings.json: Bu anahtarın gizli kalması gerekir. Eğer bir başkası bu anahtarı ele geçirirse, senin adına Admin yetkisine sahip sahte tokenler üretebilir.
+
+		- Issuer
+			-> Bu tokenı kim oluşturdu sorusunun cevabıdır.
+			-> Mantığı: Genellikle API'nin URL'si yazılır.
+			-> Güvenlik: API gelen tokenın içindeki Issuer kısmına bakar. Eğer orada localhost yazmıyorsa, bu benim bastığım bir kimlik değil diyerek reddeder.
+
+		- Audience
+			-> Bu token kimler tarafından kullanılabilir sorusunun cevabıdır.
+			-> Mantığı: Genelde token'ı kullanacka olan Client URL'si yazılır.
+			-> Örnek: Bir token basıyorsun ve diyorsun ki bu token sadece localhost üzerinden gelen isteklerde geçerlidir.
+
+		- ExpireMinutes
+			-> JWT, sunucuda tutulmadığı için (stateless), bir token çalınırsa hırsız onu sonsuza dek kullanabilir.
+			-> Mantığı: Bu riski azaltmak için token'a kısa ömürler veirlir. 5 dakika bittiğinde o token artık bir kağıt parçasından farksız hale gelir. Kullanıcının tekrar login olması veya Refresh Token kullanması gerekir. 
+
+	* Ardından Business katmanı içerisinde Configurations klasörü açıp, onun içerisine JwtSettings sınıfını oluştur.
+	* AppSettings.json içerisindeki alanları burada tanımla ve program.cs tarafına geç.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Program.cs Kodları
+
+	builder.Services.AddAuthentication(options =>
+	{
+		options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+		options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+	}).AddJwtBearer(opt =>
+	{
+		var jwtSettings = builder.Configuration.GetSection("Key").Get<JwtSettings>();
+
+		opt.TokenValidationParameters = new TokenValidationParameters
+		{
+			ValidateIssuer = true,
+			ValidateAudience = true,
+			ValidateLifetime = true,
+			ValidateIssuerSigningKey = true,
+			ValidIssuer = jwtSettings.Issuer,
+			ValidAudience = jwtSettings.Audience,
+			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+		};
+	});
+
+	* ASP.NET Core uygulamasında JWT ile kimlik doğrulama yapmak için gerekli olan Authentication yapılandırmasını içeriyor.
+
+	* AddAuthentication Kısmı (Sistemi Seçmek)
+		- Bu kısım uygulamaya kimlik doğrulama yapacağız ama yöntemi şu olacak denilen yerdir.
+
+		- DefaultAuthenticateScheme: Uygulamaya gelen her istekte, kullanıcının kim olduğunu anlamak için hangi yönteme bakması gerektiğini söyker. Biz burada Bearer (yani JWT) şemasına bak diyoruz. JWT Bearer Token ile doğrulama yapılacak. 
+		- DefaultChallengeScheme: Eğer kullanıcı yetkisi olmayan bir yere girmeye çalışırsa (örneğin [Authorize] plan bir yere giriş yapmadan gelirse), sunucunun kullanıcıya nasıl bir meydan okuma (challenge) yapacağını belrler. Burada da JWT şemasını kullanarak "Hata:401 Unauthorized" dönmesini sağlarız.
+
+	* AddJwtBearer Kısmı (Muhafıza Talimat Vermek)
+		- En kritik nokta burasıdır. Burası, gelen JWWT'nin sahte mi yoksa gerçek mi olduğunu kontrol eden filtredir.
+		- Appsettings.json dosyasındaki ayarları alıp, Business katmanındaki JwtSettings sınıfına otomatik olarak aktaran köprüdür.
+
+	* TokenValidationParameters Kısmı (JWT Token'ının doğrulama kriterlerini tanımlar)
+		- ValidateIssuer = true: Issuer bilgisinin geçerli olup olmadığını kontrol eder. (jwtSettings.Issuer ile uyuşmalı)
+		- ValidateAudience = true: Hedef kitlesi doğru mu diye kontrol eder. (jwtSettings.Audience ile uyuşmalı)
+		- ValidateLifetime = true: Token süresinin dolup dolmadığını kontrol eder (expiration). Güvenlik için olmazsa olmazdır.
+		- ValidateIssuerSigningKey: Tokenı imzalayan şifrelem anahtarının doğruluğu kontrol edilir. Bu sayede tokenın içeriği değiştirilmişse sistem bunu anlar.
+		- ValidIssuer ve ValidAudience: Hangi Issuer ve Audience geçerli kabul edilecek, burada belirtiliyor.
+		- IssuerSigningKey: Tokenın gerçekten senin sistemin tarafından mı üretildiği doğrulanır. Dışarıdan uydurulmuş tokenler reddedilir.

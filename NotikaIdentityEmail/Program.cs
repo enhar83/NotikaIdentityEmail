@@ -1,5 +1,7 @@
+using System.Text;
 using Business_Layer.Abstract;
 using Business_Layer.Concrete;
+using Business_Layer.Configurations;
 using Business_Layer.Mappings;
 using Business_Layer.ValidationRules.AppRoleValidationRules;
 using Business_Layer.ValidationRules.AppUserValidationRules;
@@ -15,8 +17,10 @@ using Entity_Layer.DTOs.UserSecrets;
 using Entity_Layer.Entities;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +52,7 @@ builder.Services.AddScoped<ICategoryService, CategoryManager>();
 builder.Services.AddScoped<IMessageService, MessageManager>();
 builder.Services.AddScoped<IEmailActivationService, EmailActivationManager>();
 builder.Services.AddScoped<IAppRoleService, AppRoleManager>();
+builder.Services.AddScoped<ITokenService, TokenManager>();
 
 builder.Services.AddAutoMapper(typeof(GeneralMapping)); //AutoMapper.Extensions.Microsoft.DependencyInjection paketi kurulmazsa hata alýnýr.
 
@@ -65,6 +70,26 @@ builder.Services.AddFluentValidationClientsideAdapters();
 // DTOs/UserSecrets içerisindeki MailSettings sýnýfýný appsettings.json içerisindeki MailSettings bölümüne baðlar. böylece appsettings.json içerisindeki deðerler MailSettings sýnýfýna otomatik olarak atanýr.
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(opt =>
+{
+    var jwtSettings = builder.Configuration.GetSection("Key").Get<JwtSettings>();
+
+    opt.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings.Issuer,
+        ValidAudience = jwtSettings.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+    };
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -78,7 +103,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
-app.UseAuthentication();
+app.UseAuthentication(); //bunun eklenmesi gerekmektedir. 
 app.UseAuthorization();
 
 app.MapStaticAssets();
