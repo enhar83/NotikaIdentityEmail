@@ -9,10 +9,10 @@ namespace Entity_Layer.DTOs.AppUserDtos.UserListDtos
     public class UserListDto
     {
         public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Surname { get; set; }
+        public string FullName { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
+        public string ImageUrl { get; set; }
         public bool EmailConfirmed { get; set; }
     }
 }

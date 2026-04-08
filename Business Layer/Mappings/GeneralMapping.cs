@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -101,7 +102,19 @@ namespace Business_Layer.Mappings
                 .ForMember(dest=>dest.Name, opt=>opt.MapFrom(src=>src.RoleName))
                 .ReverseMap();
 
-            CreateMap<AppUser, UserListDto>().ReverseMap();
+            CreateMap<AppUser, UserListDto>()
+                .ForMember(dest=>dest.FullName, opt=> opt.MapFrom(src=>src.Name +" " + src.Surname))
+                .ReverseMap();
+
+            CreateMap<AppRole, AssignRoleDto>()
+                .ForMember(dest=>dest.RoleId, opt=> opt.MapFrom(src=>src.Id))
+                .ForMember(dest=>dest.RoleName, opt=> opt.MapFrom(src=>src.Name))
+                .ReverseMap();
+
+            CreateMap<AppUser, UserRoleAssignDto>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Name + " " + src.Surname))
+                .ReverseMap();
         }
     }
 }
