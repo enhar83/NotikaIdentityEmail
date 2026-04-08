@@ -86,22 +86,22 @@ namespace Business_Layer.Concrete
 
             if (user.Email != editProfileDto.Email)
             {
-                var existingUser = await _userManager.FindByEmailAsync(editProfileDto.Email);
-                if (existingUser != null)
+                var isEmailTaken = await _userManager.Users.AnyAsync(u => u.Email == editProfileDto.Email && u.Id != user.Id);
+                if (isEmailTaken)
                     throw new LogicException("Email", "Bu e-posta adresi başka bir kullanıcı tarafından kullanılıyor.");
             }
 
             if (user.PhoneNumber != editProfileDto.PhoneNumber)
             {
-                var existingUser = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == editProfileDto.PhoneNumber);
-                if (existingUser != null)
+                var isPhoneNumberTaken = await _userManager.Users.AnyAsync(u=>u.PhoneNumber==editProfileDto.PhoneNumber && u.Id!=user.Id);
+                if (isPhoneNumberTaken)
                     throw new LogicException("PhoneNumber", "Bu telefon numarası başka bir kullanıcı tarafından kullanılıyor.");
             }
 
             if (user.UserName != editProfileDto.UserName)
             {
-                var existingUser = await _userManager.FindByNameAsync(editProfileDto.UserName);
-                if (existingUser != null)
+                var isUserNameTaken = await _userManager.Users.AnyAsync(u => u.UserName == editProfileDto.UserName && u.Id != user.Id);
+                if (isUserNameTaken)
                     throw new LogicException("UserName", "Bu kullanıcı adı başka bir kullanıcı tarafından kullanılıyor.");
             }
 
@@ -134,18 +134,19 @@ namespace Business_Layer.Concrete
 
         public async Task<List<UserListDto>> GetUserListAsync()
         {
-            var users = await _userManager.Users.ToListAsync();
+            // tüm kullanıcılar tek seferde çekildi.
+            var users = await _userManager.Users.AsNoTracking().ToListAsync();
 
-            var userListDtos = new List<UserListDto>();
+            var userListDtos = new List<UserListDto>(); //kullanıcı bilgilerinin rollerle birlikte atanacağı boş dto oluşturuldu.
 
             foreach (var user in users)
             {
-                var dto = _mapper.Map<UserListDto>(user);
+                var dto = _mapper.Map<UserListDto>(user); //user nesnesi UserListDto formatına çevrildi.
 
-                var roles = await _userManager.GetRolesAsync(user); //kullanıcı rolleri çekiliyor.
+                var roles = await _userManager.GetRolesAsync(user);
                 dto.Roles = roles.ToList();
 
-                userListDtos.Add(dto); //çekilen roller dto içerisine ekleniyor.
+                userListDtos.Add(dto);
             }
 
             return userListDtos;

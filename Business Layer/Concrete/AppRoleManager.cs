@@ -32,20 +32,16 @@ namespace Business_Layer.Concrete
             if (user == null)
                 return IdentityResult.Failed(new IdentityError { Description = "Kullanıcı bulunamadı." });
 
-            foreach (var item in userRoleAssignDto.RoleList)
-            {
-                if (item.RoleExists)
-                {
-                    await _userManager.AddToRoleAsync(user, item.RoleName); //kullanıcının gönderdiği dtoda tikliyse ekler.
-                }
-                else
-                {
-                    await _userManager.RemoveFromRoleAsync(user, item.RoleName); //kullanıcının gönderdiği dtoda tikli değilse siler.
-                }
-            }
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var selectedRoles = userRoleAssignDto.RoleList.Where(x => x.RoleExists).Select(y => y.RoleName).ToList();
+
+            var rolesToRemove = userRoles.Except(selectedRoles).ToList();
+            var rolesToAdd = selectedRoles.Except(userRoles).ToList();
+
+            if (rolesToRemove.Any()) await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
+            if (rolesToAdd.Any()) await _userManager.AddToRolesAsync(user, rolesToAdd);
 
             return IdentityResult.Success;
-
         }
 
         public async Task<IdentityResult> CreateRoleAsync(CreateRoleDto createRoleDto)
@@ -78,7 +74,7 @@ namespace Business_Layer.Concrete
         public async Task<List<RoleListDto>> GetAllRolesAsync()
         {
             //rolemanager üzerinden tüm rolleri dbden alıyoruz.
-            var roles = await _roleManager.Roles.ToListAsync();
+            var roles = await _roleManager.Roles.AsNoTracking().ToListAsync();
 
             //çekilen listeyi rolelistdto'ya mapliyoruz. 
             var mappedRoles = _mapper.Map<List<RoleListDto>>(roles);
