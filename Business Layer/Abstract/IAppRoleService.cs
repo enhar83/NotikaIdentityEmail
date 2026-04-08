@@ -15,5 +15,7 @@ namespace Business_Layer.Abstract
         Task<IdentityResult> DeleteRoleAsync(Guid id);
         Task<IdentityResult> UpdateRoleAsync(UpdateRoleDto updateRoleDto);
         Task<UpdateRoleDto> GetRoleByIdAsync(Guid id);
+        Task<UserRoleAssignDto> GetUserRolesAsync(Guid userId);
+        Task<IdentityResult> AssignRoleAsync(UserRoleAssignDto userRoleAssignDto);
     }
 }

@@ -1,0 +1,63 @@
+﻿@using Entity_Layer.DTOs.AppRoleDtos
+@model UserRoleAssignDto
+
+@{
+    ViewData["Title"] = "Rol Atama";
+    Layout = "~/Views/UserLayout/Index.cshtml";
+}
+
+<div class="form-element-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="form-element-list">
+
+                    <div class="basic-tb-hd">
+                        <h2>Rol Atama Ekranı</h2>
+                        <p><b>@Model.FullName</b> kullanıcısı için yetki düzenlemesi yapıyorsunuz.</p>
+                    </div>
+
+                    <form asp-action="AssignRole" method="post">
+                        <input type="hidden" asp-for="UserId" />
+
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="fm-checkbox">
+                                    @for (int i = 0; i < Model.RoleList.Count; i++)
+                                    {
+                                        <div class="form-group mg-b-15">
+                                            <input type="hidden" asp-for="@Model.RoleList[i].RoleId" />
+                                            <input type="hidden" asp-for="@Model.RoleList[i].RoleName" />
+                                            <input type="hidden" asp-for="@Model.RoleList[i].Description" />
+
+                                            @* Notika'nın çakışan class'larını (checkbox vb.) temizleyip manuel stil veriyoruz *@
+                                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                                <input type="checkbox"
+                                                       asp-for="@Model.RoleList[i].RoleExists"
+                                                       id="role_@i"
+                                                       style="width: 22px; height: 22px; cursor: pointer; -webkit-appearance: checkbox !important; position: static !important; opacity: 1 !important;">
+
+                                                <label for="role_@i" style="cursor:pointer; margin-left: 15px; margin-bottom: 0;">
+                                                    <span style="font-size: 16px;">
+                                                        <strong>@Model.RoleList[i].RoleName</strong>
+                                                        <span class="text-muted" style="margin-left: 5px;">(@Model.RoleList[i].Description)</span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-example-int mg-t-30">
+                            <button type="submit" class="btn btn-success">Değişiklikleri Kaydet</button>
+                            <a href="/User/UserList" class="btn btn-warning">İptal ve Listeye Dön</a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

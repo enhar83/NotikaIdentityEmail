@@ -13,3 +13,7 @@ namespace Entity_Layer.DTOs.AppRoleDtos
         public List<AssignRoleDto> RoleList { get; set; }
     }
 }
+
+/*
+    Burası ana dtodur. Sayfaya gönderilen paketin tamamıdır. İçinde hem kullanıcı bilgilerini hem de AssignRoleDto'yu bir liste olarak tutar. Tüm rolleri içerisinde barındırır.
+ */

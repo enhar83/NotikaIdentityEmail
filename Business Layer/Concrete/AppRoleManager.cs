@@ -16,13 +16,38 @@ namespace Business_Layer.Concrete
     {
 
         private readonly RoleManager<AppRole> _roleManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
 
-        public AppRoleManager(RoleManager<AppRole> roleManager, IMapper mapper)
+        public AppRoleManager(RoleManager<AppRole> roleManager, UserManager<AppUser> userManager, IMapper mapper)
         {
             _roleManager = roleManager;
+            _userManager = userManager;
             _mapper = mapper;
         }
+
+        public async Task<IdentityResult> AssignRoleAsync(UserRoleAssignDto userRoleAssignDto)
+        {
+            var user = await _userManager.FindByIdAsync(userRoleAssignDto.UserId.ToString());
+            if (user == null)
+                return IdentityResult.Failed(new IdentityError { Description = "Kullanıcı bulunamadı." });
+
+            foreach (var item in userRoleAssignDto.RoleList)
+            {
+                if (item.RoleExists)
+                {
+                    await _userManager.AddToRoleAsync(user, item.RoleName); //kullanıcının gönderdiği dtoda tikliyse ekler.
+                }
+                else
+                {
+                    await _userManager.RemoveFromRoleAsync(user, item.RoleName); //kullanıcının gönderdiği dtoda tikli değilse siler.
+                }
+            }
+
+            return IdentityResult.Success;
+
+        }
+
         public async Task<IdentityResult> CreateRoleAsync(CreateRoleDto createRoleDto)
         {
             /*
@@ -69,6 +94,35 @@ namespace Business_Layer.Concrete
                 return null;
 
             return _mapper.Map<UpdateRoleDto>(role);
+        }
+
+        public async Task<UserRoleAssignDto> GetUserRolesAsync(Guid userId)
+        {
+            //kullanıcı dbden çekilir.
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+                return null;
+
+            //sistemde bulunan tüm roller çekilir 
+            var allRoles = await _roleManager.Roles.ToListAsync();
+
+            //sadece kullanıcnın sahip olduğu rılleri getirir.
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            //kullanıcı bilgileri dtoya basılır. 
+            var dto = _mapper.Map<UserRoleAssignDto>(user);
+
+            //burada AutoMapper kullanılmadı çünkü veriler tek bir yerden gelmiyor. RoleManager ve UserManagerdan ayrı ayrı veriler geliyor. AutoMapper'a git birden fazla kaynaktan karşılaştır gibi bir şey denmez. Bundan dolayı bu şekilde yaptık.
+            //sistemdeki her bir rolü tek tek select ile döber ve sistemdeki bu role kullanıcı sahipse RoleExists'i true yapar.
+            dto.RoleList = allRoles.Select(x => new AssignRoleDto
+            {
+                RoleId = x.Id,
+                RoleName = x.Name,
+                Description = x.Description,
+                RoleExists = userRoles.Contains(x.Name) //böylelikle viewde kullanıcı bu role sahipse tikli olarak gelir.
+            }).ToList();
+
+            return dto;
         }
 
         public async Task<IdentityResult> UpdateRoleAsync(UpdateRoleDto updateRoleDto)

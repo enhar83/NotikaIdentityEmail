@@ -85,5 +85,22 @@ namespace NotikaIdentityEmail.Controllers
             var error = result.Errors.FirstOrDefault()?.Description ?? "Bir hata oluştu.";
             return Json(new { success = false, message = error });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> AssignRole(Guid id)
+        {
+            var values = await _appRoleService.GetUserRolesAsync(id);
+            return View(values);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AssignRole(UserRoleAssignDto assignRoleDto)
+        {
+            var result = await _appRoleService.AssignRoleAsync(assignRoleDto);
+            if (result.Succeeded)
+                return RedirectToAction("UserList", "User");
+
+            return View(assignRoleDto);
+        }
     }
 }
