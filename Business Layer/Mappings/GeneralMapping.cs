@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Entity_Layer.DTOs.AppRoleDtos;
 using Entity_Layer.DTOs.AppUserDtos.ConfirmUserDto;
+using Entity_Layer.DTOs.AppUserDtos.ForgotPasswordDtos;
 using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
 using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using Entity_Layer.DTOs.AppUserDtos.RegisterDtos;
@@ -119,6 +120,9 @@ namespace Business_Layer.Mappings
 
             CreateMap<AppUser, SimpleUserDto>()
                 .ForMember(dest => dest.Token, opt => opt.Ignore()); //token maplenmesin, elle atanacak. çünkü token dbden gelen bir değer değil, login anında otomatik olarak üretiliyor.
+
+            CreateMap<AppUser, ForgotPasswordDto>()
+                .ReverseMap();
         }
     }
 }
