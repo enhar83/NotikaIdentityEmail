@@ -1,4 +1,5 @@
-﻿using Business_Layer.Abstract;
+﻿using System.Security.Claims;
+using Business_Layer.Abstract;
 using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using Entity_Layer.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -19,7 +20,9 @@ namespace NotikaIdentityEmail.Controllers
         public async Task<IActionResult> EditProfile()
         {
             //giriş yapan kullanıcının adını alır. 
-            string currentUserName = User.Identity.Name; //kimin bilgilerini getireyim sorusuna yanıt vermek içindir.
+            var currentUserName = User.FindFirstValue(ClaimTypes.Name); //kimin bilgilerini getireyim sorusuna yanıt vermek içindir.
+            if (currentUserName == null)
+                return View();
 
             //service'ten kullanıcı bilgileri alınır. 
             var model = await _appUserService.GetProfileByUserNameAsync(currentUserName);
@@ -38,10 +41,15 @@ namespace NotikaIdentityEmail.Controllers
 
             //güvenlik için güncellenecek kişinin adını session/cookie üzerinden tekrar alır.
             //Htpp stateless bir protokol olmasındaı dolayı GET isteği bittikten sonra POST isteği geldiğinde kullanıcı bilgilerini unutur.
-            string currentUserName = User.Identity.Name; //kullanıcı formu bitirip yolladığında bu formu gönderen kişi o mu? kontrolü yapılır. User.Identity.Name sistemdeki güvenli oturumdan gelir yani manipüle edilemez.
+            var currentUserName = User.FindFirstValue(ClaimTypes.Name); //kullanıcı formu bitirip yolladığında bu formu gönderen kişi o mu? kontrolü yapılır. User.Identity.Name sistemdeki güvenli oturumdan gelir yani manipüle edilemez.
+            if (currentUserName == null)
+                return View();
 
             //dto ve kullanıcı adı service' gönderilir. Service db kontrollerini, mappinlgeri tamamlar ve IdentityResult döner. 
             var result = await _appUserService.EditProfileAsync(currentUserName, editProfileDto);
+            if (currentUserName == null)
+                return View();
+            
 
             if (result.Succeeded)
             {
@@ -60,7 +68,10 @@ namespace NotikaIdentityEmail.Controllers
         public async Task<IActionResult> ChangePassword()
         {
             //burada userName'i almazsak Data Persistence eksikliği oluşur. Get metodundan Post'a giden Dto'da ID alanı boş kalır ve hangi kullanıcının şifresinin güncelleneceği bilinmez.
-            string currentUserName = User.Identity.Name;
+            var currentUserName = User.FindFirstValue(ClaimTypes.Name); //kullanıcı formu bitirip yolladığında bu formu gönderen kişi o mu? kontrolü yapılır. User.Identity.Name sistemdeki güvenli oturumdan gelir yani manipüle edilemez.
+            if (currentUserName == null)
+                return View();
+
             var user = await _appUserService.GetProfileByUserNameAsync(currentUserName);
 
             var model = new ChangePasswordDto { Id = user.Id }; // ID'yi dolduruyoruz
@@ -73,7 +84,9 @@ namespace NotikaIdentityEmail.Controllers
             if (!ModelState.IsValid)
                 return View(changePasswordDto);
 
-            string currentUserName = User.Identity.Name;
+            var currentUserName = User.FindFirstValue(ClaimTypes.Name); //kullanıcı formu bitirip yolladığında bu formu gönderen kişi o mu? kontrolü yapılır. User.Identity.Name sistemdeki güvenli oturumdan gelir yani manipüle edilemez.
+            if (currentUserName == null)
+                return View();
 
             var result = await _appUserService.ChangePasswordAsync(currentUserName, changePasswordDto);
 

@@ -45,12 +45,11 @@ namespace NotikaIdentityEmail.Controllers
         [HttpGet]
         public async Task<IActionResult> ComposeMessage()
         {
-            var currentUserName = User.Identity.Name;
-            var userEmail = await _appUserService.GetEmailByUserNameAsync(currentUserName);
+            var email = User.FindFirstValue(ClaimValueTypes.Email);
 
             var model = new ComposeMessageDto
             {
-                SenderEmail = userEmail
+                SenderEmail = email
             };
 
             await GetCategoryListAsync();
@@ -68,7 +67,10 @@ namespace NotikaIdentityEmail.Controllers
 
             try
             {
-                var currentUserName = User.Identity.Name;
+                var currentUserName = User.FindFirstValue(ClaimTypes.Name);
+                if (currentUserName == null)
+                    return View(composedMessage);
+
                 await _messageService.TSendMessageAsync(currentUserName, composedMessage);
                 return RedirectToAction("Sendbox");
             }
