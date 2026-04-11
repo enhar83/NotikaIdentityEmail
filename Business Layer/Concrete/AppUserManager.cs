@@ -11,6 +11,7 @@ using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
 using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using Entity_Layer.DTOs.AppUserDtos.RegisterDtos;
 using Entity_Layer.DTOs.AppUserDtos.UserListDtos;
+using Entity_Layer.DTOs.JwtDtos;
 using Entity_Layer.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -29,13 +30,15 @@ namespace Business_Layer.Concrete
         private readonly IMapper _mapper;
 
         private readonly IEmailActivationService _emailActivationService;
+        private readonly ITokenService _tokenService;
 
-        public AppUserManager(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, IEmailActivationService emailActivationService)
+        public AppUserManager(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, IEmailActivationService emailActivationService, ITokenService tokenService)
         {
             _userManager = userManager; 
             _mapper = mapper;
             _signInManager = signInManager;
             _emailActivationService = emailActivationService;
+            _tokenService = tokenService;
         }
 
         public async Task<IdentityResult> ChangePasswordAsync(string userName, ChangePasswordDto changePasswordDto)
@@ -153,7 +156,7 @@ namespace Business_Layer.Concrete
         }
 
         //SıgnInResult: Identity doğrudan giriş başarılı mı, şifre yanlış mı hesap kilitlendi mi gibi tüm bilgileri bu hazır nesneyle döner. Biz de controllerda buna göre işlem yaparız.
-        public async Task<SignInResult> LoginAsync(UserLoginDto userLoginDto)
+        public async Task<SimpleUserDto?> LoginAsync(UserLoginDto userLoginDto)
         {
             //email adresine sahip kullancıyı dbde arar
             var user = await _userManager.FindByEmailAsync(userLoginDto.Email);
@@ -162,9 +165,18 @@ namespace Business_Layer.Concrete
             { 
                 //parametreler: email, password, benihatırla(bool), hatalıgiriştekilitlensinmi(bool)
                 var result = await _signInManager.PasswordSignInAsync(user.UserName, userLoginDto.Password, false, false);
-                return result;
+                
+                if (result.Succeeded)
+                {
+                    var userDto= _mapper.Map<SimpleUserDto>(user);
+
+                    var generatedToken = _tokenService.CreateToken(user);
+                    userDto.Token = generatedToken;
+
+                    return userDto;
+                }
             }
-            return SignInResult.Failed;
+            return null;
         }
 
         //Task<IdentityResult>: Controller katmanına, ben kayıt işlemini denedim, işte sonuç burada der. eğer başarılıysa kullanıcıyı giriş sayfasına yönlendir, başarısızsa hata mesajlarını kullanıcıya göster.

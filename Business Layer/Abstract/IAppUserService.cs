@@ -8,6 +8,7 @@ using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
 using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using Entity_Layer.DTOs.AppUserDtos.RegisterDtos;
 using Entity_Layer.DTOs.AppUserDtos.UserListDtos;
+using Entity_Layer.DTOs.JwtDtos;
 using Microsoft.AspNetCore.Identity;
 
 namespace Business_Layer.Abstract
@@ -15,7 +16,7 @@ namespace Business_Layer.Abstract
     public interface IAppUserService
     {
         Task<IdentityResult> RegisterAsync(UserRegisterDto userRegisterDto);
-        Task<SignInResult> LoginAsync(UserLoginDto userLoginDto);
+        Task<SimpleUserDto?> LoginAsync(UserLoginDto userLoginDto);
         Task<IdentityResult> EditProfileAsync(string userName, EditProfileDto editProfileDto);
         Task<IdentityResult> ChangePasswordAsync(string userName, ChangePasswordDto changePasswordDto);
         Task<EditProfileDto> GetProfileByUserNameAsync(string userName);
