@@ -123,6 +123,9 @@ namespace Business_Layer.Mappings
 
             CreateMap<AppUser, ForgotPasswordDto>()
                 .ReverseMap();
+
+            CreateMap<AppUser, ResetPasswordDto>()
+                .ReverseMap();
         }
     }
 }
