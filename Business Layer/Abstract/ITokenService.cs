@@ -9,6 +9,6 @@ namespace Business_Layer.Abstract
 {
     public interface ITokenService
     {
-        string CreateToken(AppUser user);
+        Task<string> CreateToken(AppUser user);
     }
 }

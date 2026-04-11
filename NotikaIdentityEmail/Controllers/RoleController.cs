@@ -1,9 +1,11 @@
 ﻿using Business_Layer.Abstract;
 using Entity_Layer.DTOs.AppRoleDtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace NotikaIdentityEmail.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class RoleController : Controller
     {
         private readonly IAppRoleService _appRoleService;

@@ -28,7 +28,6 @@ namespace Business_Layer.Concrete
 
         //automapper interfaceidir. dto ve entity arasındaki veri köprüsünü kurar.
         private readonly IMapper _mapper;
-
         private readonly IEmailActivationService _emailActivationService;
         private readonly ITokenService _tokenService;
 
@@ -171,7 +170,11 @@ namespace Business_Layer.Concrete
                 if (result.Succeeded)
                 {
                     var userDto= _mapper.Map<SimpleUserDto>(user); //mapping yapılır.
-                    var generatedToken = _tokenService.CreateToken(user); //token üreitlir.
+
+                    var roles = await _userManager.GetRolesAsync(user); //kullanıcının rolleri de jwt içerisine eklenir.
+                    userDto.Roles = roles.ToList();
+
+                    var generatedToken = await _tokenService.CreateToken(user); //token üreitlir.
                     userDto.Token = generatedToken; //üretilen token simpleuserdto içerisine aktarılır.
 
                     return userDto;

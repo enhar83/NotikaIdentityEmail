@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using Business_Layer.Abstract;
 using Business_Layer.Configurations;
 using Entity_Layer.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -16,16 +18,18 @@ namespace Business_Layer.Concrete
     public class TokenManager:ITokenService
     {
         private readonly JwtSettings _jwtSettings;
+        private readonly UserManager<AppUser> _userManager;
 
         //IOptions<JwtSettings> sayesinde appsettings içerisindeki verileri buraya otomatik gelir.
         //ayarları doğrudan okumak yerine wrapper yapısı kullanılıyor. .Value ile Key,Issuer gibi verilere ulaşılır.
-        public TokenManager(IOptions<JwtSettings> jwtSettings)
+        public TokenManager(IOptions<JwtSettings> jwtSettings, UserManager<AppUser> userManager)
         {
             _jwtSettings = jwtSettings.Value;
+            _userManager = userManager;
         }
 
         //bir kullanıcı alır ve ona karşılık bir Token (string) verir.
-        public string CreateToken(AppUser user)
+        public async Task<string> CreateToken(AppUser user)
         {
             //ilk olarak claimler hazırlanır. bir API endpointidir ve görevi kullanıcının gönderdiği bilgileri JWT claimlerine çevirmektir.
             //Claim: bu kullanıcı kim sorusunun cevabıdır. 
@@ -44,10 +48,17 @@ namespace Business_Layer.Concrete
                 new Claim("surname",user.Surname ?? ""),
                 new Claim("city",user.City ?? ""),
 
-                //JTI: her tokena özel benzersiz bir id verir. güvenlik için önemlidir.
-                //aynı saniyede iki token üretilise bile birbirinden farklı olmalarını sağlamak içindir. replay ttack denilen saldırılar zorlaşır.
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            //JTI: her tokena özel benzersiz bir id verir. güvenlik için önemlidir.
+            //aynı saniyede iki token üretilise bile birbirinden farklı olmalarını sağlamak içindir. replay ttack denilen saldırılar zorlaşır.
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
+            {
+                // ClaimTypes.Role olarak eklemek [Authorize(Roles="Admin")] için şarttır.
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             //şifreleme anahtarı oluşturulur.
             //appsettings içerisindeki Key stringini byte dizisine çevirip simetrik bir anahtar yapma işlemidir.

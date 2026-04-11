@@ -1,11 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace NotikaIdentityEmail.Controllers
 {
+    [AllowAnonymous] //sistemin hata sayfasını göstermek için bile kullanıcıdan yetki istememesi için.
     public class ErrorPageController : Controller
     {
         [Route("Error/404")]
         public IActionResult Page404()
+        {
+            return View();
+        }
+
+        [Route("Error/401")]
+        public IActionResult Page401()
         {
             return View();
         }
@@ -15,9 +23,14 @@ namespace NotikaIdentityEmail.Controllers
         {
             if (statusCode == 404) //404 gelirse page404'ü döndürür.
             {
-                return RedirectToAction("Page404");
+                return View("Page404");
             }
-            return View(statusCode);
+
+            if (statusCode == 401) //401 gelirse page404'ü döndürür.
+            {
+                return View("Page401");
+            }
+            return View("Page404");
         }
     }
 }

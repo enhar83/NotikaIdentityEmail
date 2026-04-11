@@ -100,7 +100,8 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true, //key doðru mu 
         ValidIssuer = jwtSettings.Issuer,
         ValidAudience = jwtSettings.Audience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+        ClockSkew = TimeSpan.Zero
     };
 
     //normalde jwt, http header içerisinde aranýr ancak cookie kullanýldýðýndan dolayý sisteme bu yolu tarif etmek gerekir.
@@ -109,6 +110,17 @@ builder.Services.AddAuthentication(options =>
         OnMessageReceived = context => //bir istek geldiðinde þu iþlemi yap der.
         {
             context.Token = context.Request.Cookies["JwtToken"]; //tokený header içerisinde arama JwtToken isimli coookieye bak der.
+            return Task.CompletedTask;
+        },
+        OnChallenge = context =>
+        {
+            context.HandleResponse(); // Standart 401 cevabýný durdur
+            context.Response.Redirect("/Error/401");
+            return Task.CompletedTask;
+        },
+        OnForbidden = context =>
+        {
+            context.Response.Redirect("/Error/403");
             return Task.CompletedTask;
         }
     };
