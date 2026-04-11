@@ -9,5 +9,6 @@ namespace Business_Layer.Abstract
     public interface IEmailActivationService
     {
         Task SendConfirmEmailAsync(string receiverEmail, string code);
+        Task SendPasswordResetEmailAsync(string receiverEmail, string resetTokenLink);
     }
 }

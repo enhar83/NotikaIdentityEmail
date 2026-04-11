@@ -7,6 +7,7 @@ using AutoMapper;
 using Business_Layer.Abstract;
 using Business_Layer.Exceptions;
 using Entity_Layer.DTOs.AppUserDtos.ConfirmUserDto;
+using Entity_Layer.DTOs.AppUserDtos.ForgotPasswordDtos;
 using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
 using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using Entity_Layer.DTOs.AppUserDtos.RegisterDtos;
@@ -15,6 +16,7 @@ using Entity_Layer.DTOs.JwtDtos;
 using Entity_Layer.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace Business_Layer.Concrete
 {
@@ -115,6 +117,28 @@ namespace Business_Layer.Concrete
                 await _userManager.UpdateSecurityStampAsync(user); //kullanıcı kritik bilgilerini (email vs.) değiştirdiğinde güvenlik damgasını günceller. bilgiler değişince tüm cihazlardan çıkış yapmasını ve oturumun tazelenmesini sağlar.
 
             return result;
+        }
+
+        //scheme: protokoldür. projenin şu an http mi yoksa https üzerinde mi çalıştığının bilgisini verir.
+        //host: sunucu adresidir. projenin şu anki adresinin ne olduğunu belirler.
+        //bu ikisi olmazsa link çalıştığında tarayıcı bu linki hangi internet sitesi üzerinde arayacağını karıştırır bundan dolayı sitenin adı ve scheme önemlidir.
+        public async Task ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDto,string scheme, string host)
+        {
+            var user = await _userManager.FindByEmailAsync(forgotPasswordDto.Email); //kullanıcı dbde bulur.
+
+            if (user == null)
+                throw new LogicException("Email", "Bu e-posta adresine kayıtlı bir kullanıcı bulunamadı.");
+
+            //sadece kullanıcıya özel tahmin edilemez ve süreli bir güvenlik anahtarı (token) üretir.
+            string resetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            //hangi protokol ve adreste olduğunu alır.
+            //kullanıcı maildeki butona basınca gideceği Controller ve action adresini içerir.
+            //gelen kişinin kim olduğunu user.Id ile alır.
+            //en son ise üretilen anahtarı linke ekler. EscapeDataString ise token içindeki özel karakterlerin tarayıcıda bozulmamasını sağlamaktır.
+            var resetLink = $"{scheme}://{host}/Login/ResetPassword?userId={user.Id}&token={Uri.EscapeDataString(resetPasswordToken)}";
+
+            await _emailActivationService.SendPasswordResetEmailAsync(user.Email, resetLink);
         }
 
         public async Task<string> GetEmailByUserNameAsync(string userName)

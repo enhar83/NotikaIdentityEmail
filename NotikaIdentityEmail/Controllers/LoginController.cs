@@ -1,6 +1,8 @@
 ﻿using Business_Layer.Abstract;
+using Entity_Layer.DTOs.AppUserDtos.ForgotPasswordDtos;
 using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 
 namespace NotikaIdentityEmail.Controllers
 {
@@ -46,6 +48,18 @@ namespace NotikaIdentityEmail.Controllers
             }
 
             return View(userLoginDto);
+        }
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ForgotPassword(ForgotPasswordDto forgotPasswordDto)
+        {
+            return View();
         }
     }
 }

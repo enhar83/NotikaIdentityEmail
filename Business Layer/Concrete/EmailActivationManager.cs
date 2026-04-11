@@ -60,6 +60,47 @@ namespace Business_Layer.Concrete
                 await client.DisconnectAsync(true); //sunucu bağlantısının kapatır. true parametresi bağlantıyı kapatırlen sunucuya QUIT konutu gönderilmesini sağlar. 
             }
         }
+
+        public async Task SendPasswordResetEmailAsync(string receiverEmail, string resetTokenLink)
+        {
+            var mimeMessage = new MimeMessage();
+
+            MailboxAddress mailboxAddressFrom = new MailboxAddress(_mailSettings.SenderName, _mailSettings.SenderEmail);
+            mimeMessage.From.Add(mailboxAddressFrom);
+
+            MailboxAddress mailboxAddressTo = new MailboxAddress("Sayın Kullanıcı", receiverEmail);
+            mimeMessage.To.Add(mailboxAddressTo);
+
+            mimeMessage.Subject = "Notika Identity Şifre Yenileme";
+
+            //içerisindeki resetTokenLink AppUserManager içerisindeki token linkidir. Kullanıcı butona basınca bu linke yönlendirilir.
+            var bodyBuilder = new BodyBuilder();
+            bodyBuilder.HtmlBody = $@"
+            <div style='font-family: Arial, sans-serif;'>
+                <h2>Hoş Geldiniz!</h2>
+                <p>Merhaba, hesabınız için şifre sıfırlama talebinde bulundunuz.</p>
+                <p>Aşağıdaki butona basarak yeni şifrenizi belirleyebilirsiniz.</p>
+                <div style='margin: 30px 0;'>
+                        <a href='{resetTokenLink}' 
+                           style='background-color: #27ae60; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px;'>
+                           Şifremi Sıfırla
+                        </a>
+                    </div>
+                <p>Eğer bu işlemi siz yapmadıysanız lütfen bu e-postayı dikkate almayın.</p>
+                <hr>
+                <small>Bu bağlantı güvenliğiniz için tek kullanımlıktır.</small>
+            </div>";
+
+            mimeMessage.Body = bodyBuilder.ToMessageBody();
+
+            using (var client = new SmtpClient())
+            {
+                await client.ConnectAsync(_mailSettings.Server, _mailSettings.Port, SecureSocketOptions.StartTls); //gmail suncusuna bağlanır, 587 portunu ve StartTls güvenliği ile verilerin şifreli gitmesini sağlar.
+                await client.AuthenticateAsync(_mailSettings.SenderEmail, _mailSettings.Password); //gmail hesbaına giriş yapar. burada secrets.json içerisine yazılan uygulama şifresi kullanılır ve gmail bu şifreyle doğrulama yapar.
+                await client.SendAsync(mimeMessage); //hazırlanan email paketini sunucu üzerinden alıcıya yollar.
+                await client.DisconnectAsync(true); //sunucu bağlantısının kapatır. true parametresi bağlantıyı kapatırlen sunucuya QUIT konutu gönderilmesini sağlar. 
+            }
+        }
     }
 }
 
