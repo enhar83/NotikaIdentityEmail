@@ -71,9 +71,9 @@ namespace Business_Layer.Concrete
             MailboxAddress mailboxAddressTo = new MailboxAddress("Sayın Kullanıcı", receiverEmail);
             mimeMessage.To.Add(mailboxAddressTo);
 
-            mimeMessage.Subject = "Notika Identity Şifre Yenileme";
+            mimeMessage.Subject = "Notika Identity Şifre Yenileme Talebi";
 
-            //içerisindeki resetTokenLink AppUserManager içerisindeki token linkidir. Kullanıcı butona basınca bu linke yönlendirilir.
+            //içerisindeki resetTokenLink AppUserManager içerisindeki token linkidir . Kullanıcı butona basınca bu linke yönlendirilir.
             var bodyBuilder = new BodyBuilder();
             bodyBuilder.HtmlBody = $@"
             <div style='font-family: Arial, sans-serif;'>

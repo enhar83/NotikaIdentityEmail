@@ -1,4 +1,5 @@
 ﻿using Business_Layer.Abstract;
+using Business_Layer.Exceptions;
 using Entity_Layer.DTOs.AppUserDtos.ForgotPasswordDtos;
 using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
 using Microsoft.AspNetCore.Mvc;
@@ -57,9 +58,38 @@ namespace NotikaIdentityEmail.Controllers
         }
 
         [HttpPost]
-        public IActionResult ForgotPassword(ForgotPasswordDto forgotPasswordDto)
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDto forgotPasswordDto)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    //Request.Scheme: http veya https bilgisini verir
+                    //Request.Host: localhost:7234 bilgisini verir
+                    var scheme = Request.Scheme;
+                    var host = Request.Host.ToString();
+
+                    //managere tüm bilgiler paslanır
+                    await _appUserService.ForgotPasswordAsync(forgotPasswordDto, scheme, host);
+
+                    //kullanıcıya başarı mesajı gider.
+                    TempData["SuccessMessage"] = "Şifre sıfırlama bağlantısı başarıyla mail adresinize gönderildi. Lütfen gelen kutunuzu kontrol edin.";
+
+                    return View();
+                }
+                catch (LogicException ex)
+                {
+                    //eğer mail adresi bulunamazsa veya başka bir mantıksal hata olursa
+                    ModelState.AddModelError("", ex.Message);
+                }
+                catch (Exception)
+                {
+                    //beklenmedik bir sistem hatası (smtp sunucusuna bağlanılamadı gibi)
+                    ModelState.AddModelError("", "Mail gönderimi sırasında bir sorun oluştu. Lütfen daha sonra tekrar deneyiniz.");
+                }
+            }
+
+            return View(forgotPasswordDto);
         }
     }
 }
