@@ -126,6 +126,11 @@ namespace Business_Layer.Mappings
 
             CreateMap<AppUser, ResetPasswordDto>()
                 .ReverseMap();
+
+            CreateMap<Message, MessageListInHeaderDto>()
+                .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => src.Sender.Name + " " + src.Sender.Surname))
+                .ForMember(dest => dest.SenderImageUrl, opt => opt.MapFrom(src => src.Sender.ImageUrl))
+                .ReverseMap();
         }
     }
 }
