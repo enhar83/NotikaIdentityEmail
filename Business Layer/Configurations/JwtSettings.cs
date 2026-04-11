@@ -14,3 +14,5 @@ namespace Business_Layer.Configurations
         public int ExpireMinutes { get; set; }
     }
 }
+
+//bu sınıf IOptions ile bu verileri c# tarafından strongly type olarak kullanmayı sağlar. 

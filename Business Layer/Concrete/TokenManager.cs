@@ -18,6 +18,7 @@ namespace Business_Layer.Concrete
         private readonly JwtSettings _jwtSettings;
 
         //IOptions<JwtSettings> sayesinde appsettings içerisindeki verileri buraya otomatik gelir.
+        //ayarları doğrudan okumak yerine wrapper yapısı kullanılıyor. .Value ile Key,Issuer gibi verilere ulaşılır.
         public TokenManager(IOptions<JwtSettings> jwtSettings)
         {
             _jwtSettings = jwtSettings.Value;
@@ -27,27 +28,30 @@ namespace Business_Layer.Concrete
         public string CreateToken(AppUser user)
         {
             //ilk olarak claimler hazırlanır. bir API endpointidir ve görevi kullanıcının gönderdiği bilgileri JWT claimlerine çevirmektir.
-            //Claim: Kullanıcıya dair iddia edilen bilgilerdir.
+            //Claim: bu kullanıcı kim sorusunun cevabıdır. 
             //Token çözüldüğünde bu bilgiler dbye gitmeden okunabilir.
 
             var claims = new List<Claim>
             {
-                //standart .net clamileri (authorize attributeları bunlar otomatil tanır)
+                //standart .net clamileri (authorize attributeları bunlar otomatik tanır)
+                // ?? "" kullanılmasının sebebi boş bir prop varsa, uygulamanın çokmesi engellenmek içindir. NullReferenceException önlemek için boş string ataması yapılıyor.
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email!),
-                new Claim(ClaimTypes.Name, user.UserName!),
+                new Claim(ClaimTypes.Email, user.Email ?? ""),
+                new Claim(ClaimTypes.Name, user.UserName ?? ""),
 
-                //custom claimler.
-                new Claim("name",user.Name),
-                new Claim("surname",user.Surname),
-                new Claim("city",user.City!),
+                //custom claimler. kullanıcı tarafından tanımlanan özel proplardır. 
+                new Claim("name",user.Name ?? ""),
+                new Claim("surname",user.Surname ?? ""),
+                new Claim("city",user.City ?? ""),
 
                 //JTI: her tokena özel benzersiz bir id verir. güvenlik için önemlidir.
+                //aynı saniyede iki token üretilise bile birbirinden farklı olmalarını sağlamak içindir. replay ttack denilen saldırılar zorlaşır.
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
             //şifreleme anahtarı oluşturulur.
             //appsettings içerisindeki Key stringini byte dizisine çevirip simetrik bir anahtar yapma işlemidir.
+            //simetrik denme sebebi aynı anahtarın hem tokenı imzalamak hem de sunucuya geri geldiğinde doğrulamak içim kullanılmasıdır.
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
 
             //bu anahtarı kullanarak HMAC-SHA256 algortmasıyla bir imzalama kimliği oluşturuluyor. Böylece JWT web token dijital olarak imzalanır. 

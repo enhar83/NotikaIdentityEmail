@@ -24,10 +24,22 @@ namespace NotikaIdentityEmail.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _appUserService.LoginAsync(userLoginDto);
+                //manager şifreyi kontrol eder ve her şey doğruysa içerisinde bir token olan userDto döner.
+                var userDto = await _appUserService.LoginAsync(userLoginDto);
 
-                if (result.Succeeded)
+                if (userDto != null)
+                {
+                    var cookieOptions = new CookieOptions
+                    {
+                        HttpOnly = true, // js ile okunamaması içimdir. kötü niyetli bir xss saldırısı kullanıcı tokenını çalamaz.     
+                        Expires = DateTime.Now.AddMinutes(60),
+                        Secure = true, // https (güvenli) bağlantılar üzerinden gönderilmesi içindir.
+                        SameSite = SameSiteMode.Strict //çerezin sadece bu site üzerinden gelen isteklerde gönderilmesini sağlar. csrf (siteler arası istek sahteciliği) saldırılarını engeller.
+                    };
+
+                    Response.Cookies.Append("JwtToken", userDto.Token, cookieOptions); //hazırlanan tüm güvenlik ayarları ile birlikte jwttoken ismindeki kutunun içerisine tokenı koyup kullanıcının tarayıcısına fırlatılır.
                     return RedirectToAction("Inbox", "Message");
+                }
 
                 else
                     ModelState.AddModelError("", "Email veya Şifre hatalı");

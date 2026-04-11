@@ -155,7 +155,8 @@ namespace Business_Layer.Concrete
             return userListDtos;
         }
 
-        //SıgnInResult: Identity doğrudan giriş başarılı mı, şifre yanlış mı hesap kilitlendi mi gibi tüm bilgileri bu hazır nesneyle döner. Biz de controllerda buna göre işlem yaparız.
+        //UserLoginDtı: kullanıcının form doldurarak sana gönderdiği pakettir. içerisinde sadece Email ve Password bulunur. amacı ise kullanıcıyı doğrulamaktır ve içerisinde asla token veya hassas idler bulunmaz.
+        //SimpleUserDto: sunucunun kullanıcıyı tanıdıktan sonra ona geri verdiği başarı belgesidir. amacı kullanıcı giriş yaptıktan sonra kullanıcıya özel tokenı controllera iletmektir.
         public async Task<SimpleUserDto?> LoginAsync(UserLoginDto userLoginDto)
         {
             //email adresine sahip kullancıyı dbde arar
@@ -163,15 +164,15 @@ namespace Business_Layer.Concrete
 
             if (user != null)
             { 
+                //hashlenmiş sifre ile kullanıcının girdiği açık metin şifreyi karşılaştırır.
                 //parametreler: email, password, benihatırla(bool), hatalıgiriştekilitlensinmi(bool)
                 var result = await _signInManager.PasswordSignInAsync(user.UserName, userLoginDto.Password, false, false);
                 
                 if (result.Succeeded)
                 {
-                    var userDto= _mapper.Map<SimpleUserDto>(user);
-
-                    var generatedToken = _tokenService.CreateToken(user);
-                    userDto.Token = generatedToken;
+                    var userDto= _mapper.Map<SimpleUserDto>(user); //mapping yapılır.
+                    var generatedToken = _tokenService.CreateToken(user); //token üreitlir.
+                    userDto.Token = generatedToken; //üretilen token simpleuserdto içerisine aktarılır.
 
                     return userDto;
                 }

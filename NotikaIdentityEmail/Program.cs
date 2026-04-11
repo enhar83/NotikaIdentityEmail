@@ -67,26 +67,50 @@ builder.Services.AddValidatorsFromAssemblyContaining<UpdateRoleValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 
-// DTOs/UserSecrets içerisindeki MailSettings sýnýfýný appsettings.json içerisindeki MailSettings bölümüne baðlar. böylece appsettings.json içerisindeki deðerler MailSettings sýnýfýna otomatik olarak atanýr.
+// Configurations/UserSecrets içerisindeki MailSettings sýnýfýný appsettings.json içerisindeki MailSettings bölümüne baðlar. böylece appsettings.json içerisindeki deðerler MailSettings sýnýfýna otomatik olarak atanýr.
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+// Configurations/JwtSettings içerisindeki JwtSettings sýnýfýný appsettings.json içerisindeki JwtSettings bölümüne baðlar. böylece appsettings.json içerisindeki deðerler JwtSettings sýnýfýna otomatik olarak atanýr.
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
+
+//addauthentication ile uygulamaya kimlik doðrulama yapýlacak denir.
 builder.Services.AddAuthentication(options =>
 {
+    //jwtbearerdefaults.authenticationscheme ile varsayýlan yöntemin jwt olduðu belirtilir. yani sistem birisi ben kimim dediðinde ilk olarak jwt kurallarýna bakýlýr.
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(opt =>
 {
-    var jwtSettings = builder.Configuration.GetSection("Key").Get<JwtSettings>();
+    //appsettings.json içerisindeki bilgileri çekip JwtSettings sýnýfýna doldurur. 
+    var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
 
+    //eðer ayar dosyasýnda bu bölüm yoksa uygulama hiç baþlatmaz, bu saðlýklý olandýr çünkü anahtar olmadan güvenlik çalýþmaz.
+    if (jwtSettings == null)
+    {
+        throw new Exception("HATA: appsettings.json içerisinde JwtSettings bölümü bulunamadý!");
+    }
+
+    //iþte gelen token (çerezin içindeki string) sahte olup olmadýðýný anlayan kýsým burasýdýr.
+    ////burada her true gelen deðer token için bir testtir. eðer uyuþmayan bir deðer olursa .net isteði reddeder ve kullanýcýya 401 unauthorized döner.
     opt.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
+        ValidateIssuer = true, //kim gönderdi
+        ValidateAudience = true, //kime gönderildi
+        ValidateLifetime = true, //süresi doldu mu
+        ValidateIssuerSigningKey = true, //key doðru mu 
         ValidIssuer = jwtSettings.Issuer,
         ValidAudience = jwtSettings.Audience,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+    };
+
+    //normalde jwt, http header içerisinde aranýr ancak cookie kullanýldýðýndan dolayý sisteme bu yolu tarif etmek gerekir.
+    opt.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context => //bir istek geldiðinde þu iþlemi yap der.
+        {
+            context.Token = context.Request.Cookies["JwtToken"]; //tokený header içerisinde arama JwtToken isimli coookieye bak der.
+            return Task.CompletedTask;
+        }
     };
 });
 
@@ -103,7 +127,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
-app.UseAuthentication(); //bunun eklenmesi gerekmektedir. 
+app.UseAuthentication(); //bunun eklenmesi gerekmektedir. ve her zaman authorizationdan önce gelmelidir. 
 app.UseAuthorization();
 
 app.MapStaticAssets();
