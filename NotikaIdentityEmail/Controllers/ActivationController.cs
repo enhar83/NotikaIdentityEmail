@@ -2,6 +2,7 @@
 using Business_Layer.Exceptions;
 using Entity_Layer.DTOs.AppUserDtos.ConfirmUserDto;
 using Entity_Layer.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 

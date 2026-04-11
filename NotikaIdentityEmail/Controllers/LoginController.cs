@@ -5,6 +5,7 @@ using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace NotikaIdentityEmail.Controllers
 {
@@ -26,7 +27,10 @@ namespace NotikaIdentityEmail.Controllers
         [HttpPost]
         public async Task<IActionResult> Signin(UserLoginDto userLoginDto)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(userLoginDto);
+
+            try
             {
                 //manager şifreyi kontrol eder ve her şey doğruysa içerisinde bir token olan userDto döner.
                 var userDto = await _appUserService.LoginAsync(userLoginDto);
@@ -48,7 +52,11 @@ namespace NotikaIdentityEmail.Controllers
                 else
                     ModelState.AddModelError("", "Email veya Şifre hatalı");
             }
-
+            catch (LogicException)
+            {
+                TempData["ActivationMessage"] = "Email adresiniz onaylanmamış. Mail adresinize bir onay kodu gönderdik, lütfen aşağıya giriniz.";
+                return RedirectToAction("UserActivation", "Activation", new { email = userLoginDto.Email });
+            }
             return View(userLoginDto);
         }
 

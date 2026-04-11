@@ -36,6 +36,12 @@
                         E-Mail Validasyon
                     </span>
 
+                    @if (TempData["ActivationMessage"] != null)
+                    {
+                        <div class="alert alert-warning text-center m-b-20" style="background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 12px; border-radius: 5px; font-size: 13px; line-height: 1.5;">
+                            <i class="fa fa-info-circle m-r-5"></i> @TempData["ActivationMessage"]
+                        </div>
+                    }
                     @if (TempData["SuccessResendMessage"] != null)
                     {
                         <div class="alert alert-success text-center" role="alert">

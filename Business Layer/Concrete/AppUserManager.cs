@@ -17,6 +17,7 @@ using Entity_Layer.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using MimeKit.Encodings;
 
 namespace Business_Layer.Concrete
 {
@@ -198,7 +199,20 @@ namespace Business_Layer.Concrete
                 //hashlenmiş sifre ile kullanıcının girdiği açık metin şifreyi karşılaştırır.
                 //parametreler: email, password, benihatırla(bool), hatalıgiriştekilitlensinmi(bool)
                 var result = await _signInManager.PasswordSignInAsync(user.UserName, userLoginDto.Password, false, false);
-                
+
+                if (!user.EmailConfirmed)
+                {
+                    Random rnd = new Random();
+                    int code = rnd.Next(100000, 1000000);
+                    user.ActivationCode=code;
+
+                    await _userManager.UpdateAsync(user);
+
+                    await _emailActivationService.SendConfirmEmailAsync(user.Email,code.ToString());
+                    throw new LogicException("Email", "Email adresiniz onaylanmamış, mail adresinize bir onay maili gönderdik, lütfen kodu giriniz.");
+                }
+                    
+
                 if (result.Succeeded)
                 {
                     var userDto= _mapper.Map<SimpleUserDto>(user); //mapping yapılır.
