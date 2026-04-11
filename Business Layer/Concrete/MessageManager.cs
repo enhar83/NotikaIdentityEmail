@@ -102,5 +102,11 @@ namespace Business_Layer.Concrete
                 .Take(5)
                 .ToListAsync();
         }
+
+        public async Task<int> TGetUnreadMessageCountForHeaderAsync(Guid receiverId)
+        {
+            return await _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.IsRead == false).CountAsync();
+        }
     }
 }
+
