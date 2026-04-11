@@ -65,7 +65,7 @@ namespace Business_Layer.Concrete
 
         public async Task<List<MessageListInboxDto>> TGetMessageListForInboxAsync(Guid receiverId)
         {
-            var query = _uow.Messages.GetWhere(m=>m.ReceiverId==receiverId);
+            var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId);
 
             return await query
                 .ProjectTo<MessageListInboxDto>(_mapper.ConfigurationProvider)
@@ -75,7 +75,7 @@ namespace Business_Layer.Concrete
 
         public async Task<List<MessageListSendboxDto>> TGetMessageListForSendboxAsync(Guid senderId)
         {
-            var query = _uow.Messages.GetWhere(m=>m.SenderId == senderId);
+            var query = _uow.Messages.GetWhere(m => m.SenderId == senderId);
 
             return await query
                 .ProjectTo<MessageListSendboxDto>(_mapper.ConfigurationProvider)
@@ -91,6 +91,16 @@ namespace Business_Layer.Concrete
         public async Task<int> TGetOutcomingMessagesCount(Guid senderId)
         {
             return await _uow.Messages.GetWhere(m => m.SenderId == senderId).CountAsync();
+        }
+
+        public async Task<List<MessageListInHeaderDto>> TGetMessageListForHeaderAsync(Guid receiverId)
+        {
+            var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.IsRead == false);
+            return await query
+                .ProjectTo<MessageListInHeaderDto>(_mapper.ConfigurationProvider)
+                .OrderByDescending(m => m.SendDate)
+                .Take(5)
+                .ToListAsync();
         }
     }
 }

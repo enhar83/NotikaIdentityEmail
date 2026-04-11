@@ -20,9 +20,13 @@ namespace NotikaIdentityEmail.ViewComponents.MessageViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var user = await _appUserService.GetProfileByUserNameAsync(User.Identity.Name);
+            var userIdString = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdString == null)
+                return View();
 
-            var messages = await _messageService.TGetMessageListForInboxAsync(user.Id);
+            var userId = Guid.Parse(userIdString);
+
+            var messages = await _messageService.TGetMessageListForInboxAsync(userId);
 
             return View(messages);
         }

@@ -1,21 +1,42 @@
-﻿<div role="menu" class="dropdown-menu message-dd animated zoomIn">
-    <div class="hd-mg-tt">
-        <h2>Okunmamış Son Mesajlar</h2>
-    </div>
-    <div class="hd-message-info">
-        <a href="#">
-            <div class="hd-message-sn">
-                <div class="hd-message-img">
-                    <img src="img/post/1.jpg" alt="" />
-                </div>
-                <div class="hd-mg-ctn">
-                    <h3>David Belle</h3>
-                    <p>Cum sociis natoque penatibus et magnis dis parturient montes</p>
-                </div>
-            </div>
-        </a>
-    </div>
-    <div class="hd-mg-va">
-        <a href="/Message/Inbox">Hepsini Gör</a>
-    </div>
+﻿@model List<MessageListInHeaderDto>
+
+<div role="menu" class="dropdown-menu message-dd animated zoomIn">
+	<div class="hd-mg-tt">
+		<h2>Okunmamış Son Mesajlar</h2>
+	</div>
+	@if (Model != null && Model.Any())
+	{
+		@foreach (var item in Model)
+		{
+			<div class="hd-message-info">
+				<a href="/Message/MessageDetails/@item.Id">
+					<div class="hd-message-sn">
+						<div class="hd-message-img">
+							<img src="@item.SenderImageUrl" alt="" />
+						</div>
+						<div class="hd-mg-ctn">
+							<h3>@item.SenderName</h3>
+							<p>
+								@{
+									var plainText = System.Text.RegularExpressions.Regex.Replace(item.MessageDetail ?? "", "<.*?>", string.Empty);
+									var displayText = plainText.Length > 40 ? plainText.Substring(0, 37) + "..." : plainText;
+								}
+								@displayText
+							</p>
+						</div>
+					</div>
+				</a>
+			</div>
+		}
+	}
+	else
+	{
+		<div class="text-center p-3">
+			<span style="font-size: 13px; color: #999;">Yeni mesajınız bulunmuyor.</span>
+		</div>
+	}
+
+	<div class="hd-mg-va">
+		<a href="/Message/Inbox">Hepsini Gör</a>
+	</div>
 </div>
