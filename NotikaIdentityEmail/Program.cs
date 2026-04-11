@@ -116,6 +116,11 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+//reexecute: bu metod tarayýcýya hata oldu þu sayfaya git (redirect) demez. Bunun yerine sunucu kendi içinde isteði /Error/404 gibi gibi bir adrese yeniden yönlendirir. (internal re-execute)
+//kullanýcýnýn adres çubuðundaki url deðiþmez. örneðin olmayan bir sayfaya (/deneme) gidildiðinde url hala /deneme kalýr ama ekranda 404 sayfasý gözükür. bu seo ve kullanýcý deneyimi için iyidir.
+//{0} parametresi ile .net oluþan hata kodunu otomatik olarak bu sýfýrýn yerine koyar.
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
