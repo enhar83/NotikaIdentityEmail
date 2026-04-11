@@ -12,7 +12,7 @@
 				<a href="/Message/MessageDetails/@item.Id">
 					<div class="hd-message-sn">
 						<div class="hd-message-img">
-							<img src="@item.SenderImageUrl" alt="" />
+							<img src="@item.SenderImageUrl" class="header-msg-img" alt="@item.SenderName" />
 						</div>
 						<div class="hd-mg-ctn">
 							<h3>@item.SenderName</h3>
@@ -40,3 +40,20 @@
 		<a href="/Message/Inbox">Hepsini Gör</a>
 	</div>
 </div>
+
+<style>
+	/* Mesaj resimlerini sabitleyen CSS */
+	.header-msg-img {
+		width: 40px !important; /* Genişliği sabitle */
+		height: 40px !important; /* Yüksekliği sabitle */
+		object-fit: cover; /* Resmi bozmadan alanı doldurur */
+		border-radius: 50%; /* Tam daire yapar */
+	}
+
+	/* Eğer resimlerin yanındaki alanın genişliği de farklıysa burayı da sabitleyebiliriz */
+	.hd-message-img {
+		width: 40px;
+		height: 40px;
+		flex-shrink: 0; /* Resmin küçülmesini engeller */
+	}
+</style>

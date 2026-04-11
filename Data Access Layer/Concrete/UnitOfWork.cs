@@ -13,6 +13,7 @@ namespace Data_Access_Layer.Concrete
     {
         public IGenericRepository<Category> Categories { get; private set; }
         public IGenericRepository<Message> Messages { get; private set; }
+        public IGenericRepository<Notification> Notifications { get; private set; }
 
         private readonly AppDbContext _db;
 
@@ -22,6 +23,7 @@ namespace Data_Access_Layer.Concrete
 
             Categories = new GenericRepository<Category>(_db);
             Messages = new GenericRepository<Message>(_db);
+            Notifications = new GenericRepository<Notification>(_db);
         }
 
         //db bağlantıları maliyetli işlerdir. işlemler bitince o kapıyı kapatmak gerekir.
