@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace NotikaIdentityEmail.Controllers
 {
+    [Authorize(Roles="Admin,Employee")]
     public class MessageController : Controller
     {
         private readonly IMessageService _messageService;

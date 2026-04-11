@@ -18,6 +18,12 @@ namespace NotikaIdentityEmail.Controllers
             return View();
         }
 
+        [Route("Error/403")]
+        public IActionResult Page403()
+        {
+            return View();
+        }
+
         [Route("Error/{statusCode}")]
         public IActionResult HandleError(int statusCode)
         {
@@ -26,10 +32,16 @@ namespace NotikaIdentityEmail.Controllers
                 return View("Page404");
             }
 
-            if (statusCode == 401) //401 gelirse page404'ü döndürür.
+            if (statusCode == 401) //401 gelirse page401'i döndürür.
             {
                 return View("Page401");
             }
+
+            if (statusCode == 403) //403 gelirse page403'ü döndürür.
+            {
+                return View("Page403");
+            }
+
             return View("Page404");
         }
     }
