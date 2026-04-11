@@ -2,6 +2,7 @@
 using Business_Layer.Exceptions;
 using Entity_Layer.DTOs.AppUserDtos.ForgotPasswordDtos;
 using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 
@@ -88,8 +89,50 @@ namespace NotikaIdentityEmail.Controllers
                     ModelState.AddModelError("", "Mail gönderimi sırasında bir sorun oluştu. Lütfen daha sonra tekrar deneyiniz.");
                 }
             }
-
             return View(forgotPasswordDto);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ResetPassword(Guid userId, string token)
+        {
+            if (userId==Guid.Empty || string.IsNullOrEmpty(token))
+                return RedirectToAction("Signin");
+
+            var email = await _appUserService.GetEmailByUserIdAsync(userId);
+            if (email == null) return RedirectToAction("Signin");
+
+            var model = new ResetPasswordDto
+            {
+                Id = userId,
+                Token = token,
+                Email = email
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _appUserService.ResetPasswordAsync(resetPasswordDto);
+
+                    TempData["SuccessResetPasswordMessage"] = "Şifreniz başarıyla değiştirildi. Yeni şifrenizle giriş yapabilirsiniz.";
+                    return RedirectToAction("Signin");
+                }
+                catch (LogicException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError("", "İşlem sırasında bir hata oluştu. Lütfen tekrar deneyiniz.");
+                }
+            }
+            return View(resetPasswordDto);
         }
     }
 }

@@ -23,9 +23,11 @@ namespace Business_Layer.Abstract
         Task<EditProfileDto> GetProfileByUserNameAsync(string userName);
         Task<bool> ConfirmEmailAsync(ConfirmUserDto confirmUserDto);
         Task ResendActivationCodeAsync(string email);
+        Task<string> GetEmailByUserIdAsync(Guid id);
         Task<string> GetEmailByUserNameAsync(string userName);
         Task<Guid> TGetUserIdByUserNameAsync(string userName);
         Task<List<UserListDto>> GetUserListAsync();
         Task ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDto,string scheme, string host);
+        Task ResetPasswordAsync(ResetPasswordDto resetPasswordDto);
     }
 }

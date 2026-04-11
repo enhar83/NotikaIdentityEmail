@@ -158,6 +158,14 @@ namespace Business_Layer.Concrete
             return _mapper.Map<EditProfileDto>(user);
         }
 
+        public async Task<string> GetEmailByUserIdAsync(Guid id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null) return null;
+
+            return user.Email;
+        }
+
         public async Task<List<UserListDto>> GetUserListAsync()
         {
             // tüm kullanıcılar tek seferde çekildi.
@@ -249,6 +257,23 @@ namespace Business_Layer.Concrete
         {
             var user = await _userManager.FindByNameAsync(userName);
             return user.Id;
+        }
+
+        public async Task ResetPasswordAsync(ResetPasswordDto resetPasswordDto)
+        {
+            var user = await _userManager.FindByIdAsync(resetPasswordDto.Id.ToString());
+            if (user == null)
+                throw new LogicException("Hata", "Kullanıcı sistemde bulunamadı.");
+
+            var result = await _userManager.ResetPasswordAsync(user, resetPasswordDto.Token, resetPasswordDto.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                var error = result.Errors.FirstOrDefault()?.Description ?? "Şifre sıfırlama işlemi başarısız oldu.";
+                throw new LogicException("Hata", error);
+            }
+
+            await _userManager.UpdateSecurityStampAsync(user);
         }
     }
 }
