@@ -145,6 +145,11 @@ namespace Business_Layer.Mappings
 
             CreateMap<ComposeNotificationDto, Notification>()
                 .ReverseMap();
+
+            CreateMap<Message, MessageListByCategoryDto>()
+                .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => src.Sender.Name + " " + src.Sender.Surname))
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
+                .ReverseMap();
         }
     }
 }
