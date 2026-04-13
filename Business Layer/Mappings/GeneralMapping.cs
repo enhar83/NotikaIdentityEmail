@@ -42,7 +42,11 @@ namespace Business_Layer.Mappings
 
             CreateMap<UserRegisterDto, AppUser>().ReverseMap();
             CreateMap<UserLoginDto, AppUser>().ReverseMap();
-            CreateMap<Category, CategorySidebarDto>().ReverseMap();
+
+            Guid currentUserId = Guid.Empty;
+            CreateMap<Category, CategorySidebarDto>()
+                .ForMember(dest => dest.MessageCount, opt => opt.MapFrom(src =>
+                    src.Messages.Count(m => m.ReceiverId == currentUserId)));
 
             /*
                 normalde automapper isimleri aynı olan alanları otomatik eşler, ancak isimler farklıysa formember ile bu işlem tamamlanır.

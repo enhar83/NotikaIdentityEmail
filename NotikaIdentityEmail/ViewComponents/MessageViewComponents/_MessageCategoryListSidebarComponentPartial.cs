@@ -1,4 +1,5 @@
-﻿using Business_Layer.Abstract;
+﻿using System.Security.Claims;
+using Business_Layer.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
 namespace NotikaIdentityEmail.ViewComponents.MessageViewComponents
@@ -11,12 +12,17 @@ namespace NotikaIdentityEmail.ViewComponents.MessageViewComponents
         {
             _categoryService = categoryService;
         }
-        public async Task<IViewComponentResult> InvokeAsync() // 1. async ve Task ekledik
+        public async Task<IViewComponentResult> InvokeAsync() 
         {
-            // 2. await ekleyerek verinin veritabanından gelmesini bekledik
-            var values = await _categoryService.TGetCategoryListForSidebarAsync();
+            var receiverIdToString = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (receiverIdToString == null)
+                return View();
 
-            return View(values); // Artık 'values' bir Task değil, gerçek bir List.
+            var receiverId = Guid.Parse(receiverIdToString);
+
+            var values = await _categoryService.TGetCategoryListForSidebarAsync(receiverId);
+
+            return View(values); 
         }
     }
 }

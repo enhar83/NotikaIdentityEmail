@@ -35,7 +35,7 @@ namespace Business_Layer.Concrete
             return await _uow.Categories.GetByIdAsync(id);
         }
 
-        public async Task<List<CategorySidebarDto>> TGetCategoryListForSidebarAsync()
+        public async Task<List<CategorySidebarDto>> TGetCategoryListForSidebarAsync(Guid receiverId)
         {
             //IQueryable olarak status'u aktif olan categoryleri alıyoruz.
             var query = _uow.Categories.GetWhere(x => x.CategoryStatus == true);
@@ -43,7 +43,7 @@ namespace Business_Layer.Concrete
             //ProjectTo ile SQL'den sadece Dto içerisinde bulunan alanlar istenir (Id ve Name)
             //ToList() ile de çağrılıyor. 
             return await query
-                .ProjectTo<CategorySidebarDto>(_mapper.ConfigurationProvider)
+                .ProjectTo<CategorySidebarDto>(_mapper.ConfigurationProvider, new { currentUserId = receiverId })
                 .ToListAsync();
 
             // normal map kullanılsaydı: SELECT *FROM Categories sorgusu dbye gidecekti. böylelikle ne kadar sütun varsa hepsi RAM'e dolardı.

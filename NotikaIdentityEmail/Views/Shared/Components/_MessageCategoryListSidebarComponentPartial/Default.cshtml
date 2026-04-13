@@ -1,20 +1,26 @@
 ﻿@model List<CategorySidebarDto>
 
 <div class="inbox-status">
-	<ul class="inbox-st-nav">
-		@if (Model != null && Model.Any())
-		{
-			@foreach (var item in Model)
-			{
-				<li><a href="/Message/MessageListByCategory/@item.Id"><i class="@item.CategoryIconUrl"></i> @item.CategoryName</a></li>
-			}
-		}
-		else
-		{
-			<li class="alert alert-info" style="list-style: none; padding: 10px;">
-				<i class="notika-icon notika-info"></i> Şu an aktif kategori bulunmamaktadır.
-			</li>
-		}
-
-	</ul>
+    <ul class="inbox-st-nav">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <li>
+                    <a href="/Message/MessageListByCategory/@item.Id">
+                        <i class="@item.CategoryIconUrl"></i> @item.CategoryName
+                        <span class="pull-right">
+                            (@item.MessageCount)
+                        </span>
+                    </a>
+                </li>
+            }
+        }
+        else
+        {
+            <li class="alert alert-info" style="list-style: none; padding: 10px;">
+                <i class="notika-icon notika-info"></i> Şu an aktif kategori bulunmamaktadır.
+            </li>
+        }
+    </ul>
 </div>

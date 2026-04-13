@@ -112,6 +112,8 @@ namespace Business_Layer.Concrete
         {
             var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.CategoryId == categoryId);
 
+
+
             return await query
                 .ProjectTo<MessageListByCategoryDto>(_mapper.ConfigurationProvider)
                 .OrderByDescending(m => m.SendDate)

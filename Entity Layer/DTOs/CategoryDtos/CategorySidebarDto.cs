@@ -10,6 +10,7 @@ namespace Entity_Layer.DTOs.CategoryDtos
     {
         public Guid Id { get; set; }
         public string CategoryName { get; set; }
+        public int MessageCount { get; set; }
         public string CategoryIconUrl { get; set; }
     }
 }
