@@ -1,0 +1,66 @@
+﻿@using Entity_Layer.DTOs.NotificationDtos
+@model List<NotificationListDto>
+
+
+<div class="table-responsive">
+    <table class="table table-hover table-inbox">
+
+        <tr>
+            <th>#</th>
+            <th>Bildirim İçeriği</th>
+            <th>Tarih</th>
+            <th>Bildirim Detayı</th>
+        </tr>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr class="@(item.Status ? "" : "unread")">
+                        <td style="width: 40px; vertical-align: middle;">
+                            <label><input type="checkbox" class="i-checks"></label>
+                        </td>
+
+                        <td style="vertical-align: middle;">
+                            <a href="/Notification/NotificationDetails/@item.Id" class="subject-link">
+                                <strong class="truncate-text" title="@item.NotificationDetail">@item.NotificationDetail</strong>
+                            </a>
+                        </td>
+
+                        <td class="text-right mail-date" style="width: 120px; vertical-align: middle;">
+                            @item.Date.ToString("dd MMM yyyy")
+                        </td>
+
+                        <td class="text-right" style="width: 150px; vertical-align: middle;">
+                            <a href="/Notification/NotificationDetails/@item.Id" class="btn btn-sm btn-info">
+                                Mesaj İçeriği
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center">Gelen bildirim bulunamadı.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .truncate-text {
+        display: block;
+        max-width: 500px; /* Burayı ekranındaki boşluğa göre 200px veya 300px yapabilirsin */
+        white-space: nowrap; /* Kelimelerin alt satıra geçmesini engeller (Üst üste binme biter) */
+        overflow: hidden; /* Sığmayan kısmı gizler */
+        text-overflow: ellipsis; /* Gizlenen yerin sonuna ... koyar */
+        line-height: 1.4; /* Harflerin birbirine girmemesi için dikey boşluk */
+    }
+
+    /* Tablonun diğer sütunlarının kaymaması için */
+    .table-inbox td {
+        white-space: nowrap;
+    }
+</style>

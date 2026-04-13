@@ -67,5 +67,15 @@ namespace Business_Layer.Concrete
             _uow.Notifications.Update(entity);
             _uow.SaveAsync();
         }
+
+        public async Task<List<NotificationListDto>> GetNotificationListAsync(Guid userId)
+        {
+            var query = _uow.Notifications.GetWhere(n => n.AppUserId == userId)
+                .OrderByDescending(n => n.Date);
+
+            return await query
+                .ProjectTo<NotificationListDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+        }
     }
 }

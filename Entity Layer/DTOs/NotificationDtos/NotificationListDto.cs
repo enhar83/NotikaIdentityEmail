@@ -10,7 +10,6 @@ namespace Entity_Layer.DTOs.NotificationDtos
     {
         public Guid Id { get; set; }
         public string NotificationDetail { get; set; }
-        public string NotificationImageUrl { get; set; }
         public DateTime Date { get; set; }
         public bool Status { get; set; }
     }
