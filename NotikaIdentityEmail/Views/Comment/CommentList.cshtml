@@ -1,0 +1,146 @@
+﻿@using Entity_Layer.DTOs.CommentDtos
+@model List<CommentListDto>
+
+@{
+    ViewData["Title"] = "Yorum Listesi";
+    Layout = "~/Views/UserLayout/Index.cshtml";
+    int count = 0;
+}
+
+<div class="form-element-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="form-element-list">
+
+                    <div class="basic-tb-hd">
+                        <h2>Yorum Listesi</h2>
+                        <p>Sistemde yapmış olduğunuz tüm yorumları buradan görebilirsiniz.</p>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Yorum Başlığı</th>
+                                    <th>Yorum Durumu</th>
+                                    <th>Tarih</th>
+                                    <th style="width: 200px;">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    count++;
+                                    <tr>
+                                        <td>@count</td>
+                                        <td>@item.Subject</td>
+                                        <td>
+                                            <span class="label @(item.CommentStatus ? "label-success" : "label-warning")">
+                                                @(item.CommentStatus ? "Onaylandı" : "Beklemede")
+                                            </span>
+                                        </td>
+                                        <td>@item.Date.ToString("dd MMM yyyy")</td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm btn-detail"
+                                                    data-subject="@item.Subject"
+                                                    data-detail="@item.CommentDetail"
+                                                    data-sender="@item.SenderName"
+                                                    data-date="@item.Date.ToString("dd MMMM yyyy HH:mm")">
+                                                Yorum Detayı
+                                            </button>
+
+                                            <button class="btn btn-danger btn-sm btn-delete"
+                                                    data-id="@item.Id"
+                                                    data-subject="@item.Subject">
+                                                Sil
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="form-example-int mg-t-15">
+                        <a href="/Comment/CreateComment" class="btn btn-primary">Yeni Yorum Yap</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Yorum Detayı Göster
+            $(document).on("click", ".btn-detail", function () {
+                const subject = $(this).data("subject");
+                const detail = $(this).data("detail");
+                const sender = $(this).data("sender");
+                const date = $(this).data("date");
+
+                Swal.fire({
+                    title: `<strong>${subject}</strong>`,
+                    icon: 'info',
+                    html: `
+                        <div style="text-align: left; border-top: 1px solid #eee; padding-top: 10px; font-family: 'Poppins', sans-serif;">
+                            <p style="margin-bottom: 5px;"><strong>Yazan:</strong> ${sender}</p>
+                            <p style="margin-bottom: 5px;"><strong>Tarih:</strong> ${date}</p>
+                            <hr style="margin: 10px 0;">
+                            <div style="max-height: 300px; overflow-y: auto; padding-right: 5px;">
+                                ${detail} @* Eğer HTML render edilecekse tırnaksız ve direkt koyulabilir *@
+                            </div>
+                        </div>
+                    `,
+                    showCloseButton: true,
+                    confirmButtonText: 'Anladım',
+                    confirmButtonColor: '#00c292'
+                });
+            });
+
+            // Silme İşlemi
+            $(document).on("click", ".btn-delete", function () {
+                const commentId = $(this).data("id");
+                const subject = $(this).data("subject");
+                const currentRow = $(this).closest("tr");
+
+                Swal.fire({
+                    title: 'Emin misiniz?',
+                    text: `"${subject}" konulu yorum kalıcı olarak silinecek!`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Evet, Sil!',
+                    cancelButtonText: 'Vazgeç'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/Comment/DeleteComment/", 
+                            data: { id: commentId },
+                            success: function (response) {
+                                // Burada response.success büyük-küçük harf duyarlılığına dikkat!
+                                if (response.success || response === true) { 
+                                    Swal.fire('Başarılı!', 'Yorum başarıyla silindi.', 'success');
+                                    currentRow.fadeOut(600, function() { $(this).remove(); });
+                                } else {
+                                    Swal.fire('Hata!', response.message || 'Bir hata oluştu.', 'error');
+                                }
+                            },
+                            error: function() {
+                                Swal.fire('Hata!', 'Sunucuyla iletişim kurulamadı.', 'error');
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

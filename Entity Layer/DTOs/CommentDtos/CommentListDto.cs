@@ -10,6 +10,7 @@ namespace Entity_Layer.DTOs.CommentDtos
     {
         public Guid Id { get; set; }
         public string Subject { get; set; }
+        public string CommentDetail { get; set; }
         public DateTime Date { get; set; }
         public bool CommentStatus { get; set; }
         public string SenderName { get; set; }
