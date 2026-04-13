@@ -32,7 +32,7 @@
 
                         </li>
                         <li class="nav-item">
-                            <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="nav-link dropdown-toggle"><span><i class="notika-icon notika-menus"></i></span><div class="spinner4 spinner-4"></div><div class="ntd-ctn"><span>2</span></div></a>
+                            @await Component.InvokeAsync("_UnreadNotificationCountForNavbarHeaderPartial")
                             <div role="menu" class="dropdown-menu message-dd task-dd animated zoomIn">
                                 <div class="hd-mg-tt">
                                     <h2>Tasks</h2>

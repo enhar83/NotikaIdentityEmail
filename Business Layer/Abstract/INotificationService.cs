@@ -11,6 +11,6 @@ namespace Business_Layer.Abstract
     public interface INotificationService:IGenericService<Notification>
     {
         Task<List<NotificationListInHeaderDto>> NotificationListInHeaderAsync(Guid userId);
-        Task<int> TGetUnreadNotificationCountForHeaderAsync(Guid userId);
+        Task<int> GetUnreadNotificationCountForHeaderAsync(Guid userId);
     }
 }

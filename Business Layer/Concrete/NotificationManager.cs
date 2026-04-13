@@ -51,7 +51,7 @@ namespace Business_Layer.Concrete
             return _uow.Notifications.GetListAsync();
         }
 
-        public async Task<int> TGetUnreadNotificationCountForHeaderAsync(Guid userId)
+        public async Task<int> GetUnreadNotificationCountForHeaderAsync(Guid userId)
         {
             return await _uow.Notifications.GetWhere(n => n.AppUserId == userId && n.Status == false).CountAsync();
         }
