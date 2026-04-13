@@ -15,6 +15,7 @@ using Entity_Layer.DTOs.AppUserDtos.UserListDtos;
 using Entity_Layer.DTOs.CategoryDtos;
 using Entity_Layer.DTOs.JwtDtos;
 using Entity_Layer.DTOs.MessageDtos;
+using Entity_Layer.DTOs.NotificationDtos;
 using Entity_Layer.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing.Constraints;
@@ -130,6 +131,9 @@ namespace Business_Layer.Mappings
             CreateMap<Message, MessageListInHeaderDto>()
                 .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => src.Sender.Name + " " + src.Sender.Surname))
                 .ForMember(dest => dest.SenderImageUrl, opt => opt.MapFrom(src => src.Sender.ImageUrl))
+                .ReverseMap();
+
+            CreateMap<Notification, NotificationListInHeaderDto>()
                 .ReverseMap();
         }
     }
