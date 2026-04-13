@@ -12,6 +12,7 @@ namespace Data_Access_Layer.Abstract
         IGenericRepository<Category> Categories { get; }
         IGenericRepository<Message> Messages { get; }
         IGenericRepository<Notification> Notifications { get; }
+        IGenericRepository<Comment> Comments { get; }
         Task<int> SaveAsync();
     }
 }
