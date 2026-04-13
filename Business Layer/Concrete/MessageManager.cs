@@ -107,6 +107,16 @@ namespace Business_Layer.Concrete
         {
             return await _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.IsRead == false).CountAsync();
         }
+
+        public async Task<List<MessageListByCategoryDto>> TGetMessageListByCategoryAsync(Guid receiverId, Guid categoryId)
+        {
+            var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.CategoryId == categoryId);
+
+            return await query
+                .ProjectTo<MessageListByCategoryDto>(_mapper.ConfigurationProvider)
+                .OrderByDescending(m => m.SendDate)
+                .ToListAsync();
+        }
     }
 }
 

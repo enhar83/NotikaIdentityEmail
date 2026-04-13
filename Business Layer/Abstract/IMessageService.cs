@@ -19,5 +19,6 @@ namespace Business_Layer.Abstract
         Task<int> TGetOutcomingMessagesCount(Guid senderId);
         Task<List<MessageListInHeaderDto>> TGetMessageListForHeaderAsync(Guid receiverId);
         Task<int> TGetUnreadMessageCountForHeaderAsync(Guid receiverId);
+        Task<List<MessageListByCategoryDto>> TGetMessageListByCategoryAsync(Guid receiverId, Guid categoryId);
     }
 }

@@ -1,0 +1,83 @@
+﻿@model List<MessageListByCategoryDto>
+@using Business_Layer.Helpers
+
+<div class="table-responsive">
+    <table class="table table-hover table-inbox">
+
+        <tr>
+            <th>#</th>
+            <th>Gönderen Kişi</th>
+            <th>Kategori</th>
+            <th>Mesaj Konusu</th>
+            <th>Tarih</th>
+            <th>Mesaj Detayı</th>
+        </tr>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr class="@(item.IsRead ? "" : "unread")">
+                        @* 1. Sütun: Seçim Kutusu *@
+                        <td style="width: 40px; vertical-align: middle;">
+                            <label><input type="checkbox" class="i-checks"></label>
+                        </td>
+
+                        @* 2. Sütun: Gönderici Adı (Sabit genişlik hizayı korur) *@
+                        <td style="width: 200px; vertical-align: middle;">
+                            <a href="/Message/MessageDetails/@item.Id">@item.SenderName</a>
+                        </td>
+
+                        @* 3. Sütun: Kategori (Sabit hizada başlar) *@
+                        <td style="width: 110px; vertical-align: middle;">
+                            <span class="label @CategoryColorHelperForInboxAndSendbox.GetLabelClass(item.CategoryName)">
+                                @item.CategoryName
+                            </span>
+                        </td>
+
+                        @* 4. Sütun: Mesaj Konusu (Strong/Kalın) *@
+                        <td style="vertical-align: middle;">
+                            <a href="/Message/MessageDetails/@item.Id" class="subject-link">
+                                <strong class="truncate-text" title="@item.Subject">@item.Subject</strong>
+                            </a>
+                        </td>
+
+                        @* 5. Sütun: Tarih *@
+                        <td class="text-right mail-date" style="width: 120px; vertical-align: middle;">
+                            @item.SendDate.ToString("dd MMM yyyy")
+                        </td>
+
+                        @* 6. Sütun: Mesajı Görüntüle Butonu *@
+                        <td class="text-right" style="width: 150px; vertical-align: middle;">
+                            <a href="/Message/MessageDetails/@item.Id" class="btn btn-sm btn-info">
+                                Mesaj İçeriği
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center">Gelen mesaj bulunamadı.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .truncate-text {
+        display: block;
+        max-width: 250px; /* Burayı ekranındaki boşluğa göre 200px veya 300px yapabilirsin */
+        white-space: nowrap; /* Kelimelerin alt satıra geçmesini engeller (Üst üste binme biter) */
+        overflow: hidden; /* Sığmayan kısmı gizler */
+        text-overflow: ellipsis; /* Gizlenen yerin sonuna ... koyar */
+        line-height: 1.4; /* Harflerin birbirine girmemesi için dikey boşluk */
+    }
+
+    /* Tablonun diğer sütunlarının kaymaması için */
+    .table-inbox td {
+        white-space: nowrap;
+    }
+</style>

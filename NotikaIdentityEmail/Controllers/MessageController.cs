@@ -87,6 +87,13 @@ namespace NotikaIdentityEmail.Controllers
                 return View(composedMessage);
             }
         }
+
+        public IActionResult MessageListByCategory(Guid id)
+        {
+            ViewBag.SelectedCategoryId = id;
+            return View();
+        }
+
         private async Task GetCategoryListAsync()
         {
             var categories = await _categoryService.TGetListAsync();
