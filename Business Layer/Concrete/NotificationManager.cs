@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Business_Layer.Abstract;
+using Business_Layer.Exceptions;
 using Data_Access_Layer.Abstract;
 using Entity_Layer.DTOs.NotificationDtos;
 using Entity_Layer.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MimeKit.Encodings;
 
 namespace Business_Layer.Concrete
 {
@@ -17,11 +20,13 @@ namespace Business_Layer.Concrete
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
+        private readonly UserManager<AppUser> _userManager;
 
-        public NotificationManager(IUnitOfWork uow, IMapper mapper)
+        public NotificationManager(IUnitOfWork uow, IMapper mapper, UserManager<AppUser> userManager)
         {
             _uow = uow;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         public async Task<List<NotificationListInHeaderDto>> NotificationListInHeaderAsync(Guid userId)
@@ -89,5 +94,22 @@ namespace Business_Layer.Concrete
                 .FirstOrDefaultAsync();
         }
 
+        public async Task SendNotificationAsync(ComposeNotificationDto composeNotificationDto)
+        {
+            var appUserId = await _userManager.Users
+                .Where(u => u.Id == composeNotificationDto.AppUserId)
+                .Select(u => u.Id)
+                .FirstOrDefaultAsync();
+
+            if (appUserId == Guid.Empty)
+                throw new LogicException("AppUserId", "Bildirim göndermek istediğiniz kullanıcı bulunamadı.");
+
+            var notification = _mapper.Map<Notification>(composeNotificationDto);
+            notification.Date = DateTime.Now;
+            notification.Status = false;
+
+            await _uow.Notifications.InsertAsync(notification);
+            await _uow.SaveAsync();
+        }
     }
 }

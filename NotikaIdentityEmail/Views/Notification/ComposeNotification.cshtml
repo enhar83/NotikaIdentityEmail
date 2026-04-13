@@ -1,0 +1,89 @@
+﻿@using Entity_Layer.DTOs.NotificationDtos
+@model ComposeNotificationDto
+
+@{
+    ViewData["Title"] = "ComposeNotification";
+    Layout = "~/Views/UserLayout/Index.cshtml";
+}
+
+<div class="form-element-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="form-element-list">
+                    <div class="basic-tb-hd">
+                        <h2>Bildirim Gönderim Sayfası</h2>
+                        <p>Lütfen bildirim bilgilerini eksiksiz olarak doldurunuz.</p>
+                    </div>
+                    
+
+                    @* Genel hataları en üstte topluca göstermek için *@
+                    <div asp-validation-summary="ModelOnly" class="text-danger m-b-20"></div>
+
+                    <form asp-action="ComposeNotification" asp-controller="Notification" method="post">
+
+                        <div class="row">
+                            <div class="row">
+                                <div class="col-lg-1 col-md-2 col-sm-2 col-xs-12">
+                                    <div class="cmp-int-lb text-right">
+                                        <span>Kime: </span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-11 col-md-10 col-sm-10 col-xs-12">
+                                    <div class="form-group">
+                                        <div class="nk-int-st">
+                                            <select asp-for="AppUserId" asp-items="ViewBag.UserList" class="form-control">
+                                                <option value="">Lütfen Bir Kullanıcı Seçiniz</option>
+                                            </select>
+                                            <span asp-validation-for="AppUserId" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label>Bildirim İçeriği</label>
+                                    <div class="nk-int-st">
+                                        <input type="text" asp-for="NotificationDetail" class="form-control" placeholder="Bildirim içeriği...">
+                                    </div>
+                                    <span asp-validation-for="NotificationDetail" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label>Bildirim Fotoğraf Url</label>
+                                    <div class="nk-int-st">
+                                        <input type="text" asp-for="NotificationImageUrl" class="form-control" placeholder="Bildirim fotoğraf url...">
+                                    </div>
+                                    <span asp-validation-for="NotificationImageUrl" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            @* Güncelleme Butonu *@
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <div class="nk-int-st">
+                                        <button type="submit" class="btn btn-success">Bildirimi Yolla </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .text-danger {
+        color: #ff0000 !important;
+        font-size: 12px;
+        margin-top: 5px;
+        display: block;
+    }
+</style>
+

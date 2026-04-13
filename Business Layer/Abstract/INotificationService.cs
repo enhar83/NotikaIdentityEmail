@@ -14,5 +14,6 @@ namespace Business_Layer.Abstract
         Task<int> GetUnreadNotificationCountForHeaderAsync(Guid userId);
         Task<List<NotificationListDto>> GetNotificationListAsync(Guid userId);
         Task<NotificationDetailDto> GetNotificationDetailAsync(Guid id);
+        Task SendNotificationAsync(ComposeNotificationDto composeNotificationDto);
     }
 }
