@@ -12,7 +12,14 @@
 				<a href="/Message/MessageDetails/@item.Id">
 					<div class="hd-message-sn">
 						<div class="hd-message-img">
-							<img src="@item.SenderImageUrl" class="header-msg-img" alt="@item.SenderName" />
+							@if (string.IsNullOrEmpty(item.SenderImageUrl) || item.SenderImageUrl == "test")
+							{
+								<img src="/notika-master/notika/green-horizotal/img/post/1.jpg" class="header-msg-img" alt="@item.SenderName" />
+							}
+							else
+							{
+								<img src="@item.SenderImageUrl" class="header-msg-img" alt="@item.SenderName" />
+							}
 						</div>
 						<div class="hd-mg-ctn">
 							<h3>@item.SenderName</h3>

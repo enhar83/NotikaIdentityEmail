@@ -1,4 +1,5 @@
-﻿using Business_Layer.Abstract;
+﻿using System.Security.Claims;
+using Business_Layer.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
 namespace NotikaIdentityEmail.ViewComponents.NotificationViewComponents
@@ -14,7 +15,14 @@ namespace NotikaIdentityEmail.ViewComponents.NotificationViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            return View();
+            var userIdToString = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdToString == null)
+                return View();
+
+            var userId = Guid.Parse(userIdToString);
+
+            var notifications = await _notificationService.NotificationListInHeaderAsync(userId);
+            return View(notifications);
         }
     }
 }

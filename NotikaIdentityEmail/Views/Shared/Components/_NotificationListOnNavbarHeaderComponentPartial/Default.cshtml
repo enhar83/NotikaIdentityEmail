@@ -1,0 +1,70 @@
+﻿@using Entity_Layer.DTOs.NotificationDtos
+@model List<NotificationListInHeaderDto>
+
+<div role="menu" class="dropdown-menu message-dd notification-dd animated zoomIn">
+	<div class="hd-mg-tt">
+		<h2>Okunmamış Son Bildirimler</h2>
+	</div>
+	@if (Model != null && Model.Any())
+	{
+		@foreach (var item in Model)
+		{
+			<div class="hd-message-info">
+				<a href="/Notification/NotificationDetails/@item.Id">
+					<div class="hd-message-sn">
+						<div class="hd-message-img">
+							@if (string.IsNullOrEmpty(item.NotificationImageUrl) || item.NotificationImageUrl == "test")
+							{
+								<img src="/notika-master/notika/green-horizotal/img/post/1.jpg" class="header-msg-img" alt="Bildirim" />
+							}
+							else
+							{
+								<img src="@item.NotificationImageUrl" class="header-msg-img" alt="Bildirim" />
+							}
+						</div>
+						<div class="hd-mg-ctn">
+							<h3>
+								@{
+									var detail = item.NotificationDetail ?? "";
+									var displayText = detail.Length > 45 ? detail.Substring(0, 30) + "..." : detail;
+								}
+								@displayText
+							</h3>
+							<p><i class="notika-icon notika-calendar"></i>@item.Date.ToString("dd MMM yyyy")</p>
+						</div>
+					</div>
+				</a>
+			</div>
+		}
+	}
+	else
+	{
+		<div class="text-center p-3">
+			<span style="font-size: 13px; color: #999;">Yeni bildiriminiz bulunmuyor.</span>
+		</div>
+	}
+
+
+	<div class="hd-mg-va">
+		<a href="/Notification/NotificationList">Hepsini Gör</a>
+	</div>
+</div>
+
+<style>
+	/* Hem mesaj hem bildirim resimlerini sabitleyen ortak CSS */
+	.header-msg-img {
+		width: 40px !important;
+		height: 40px !important;
+		object-fit: cover;
+		border-radius: 50%;
+	}
+
+	/* Resim konteyner alanı sabitleme */
+	.hd-message-img {
+		width: 40px;
+		height: 40px;
+		flex-shrink: 0;
+	}
+</style>
+
+

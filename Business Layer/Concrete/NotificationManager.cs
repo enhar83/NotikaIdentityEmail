@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Business_Layer.Abstract;
 using Data_Access_Layer.Abstract;
+using Entity_Layer.DTOs.NotificationDtos;
 using Entity_Layer.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business_Layer.Concrete
 {
@@ -19,6 +22,17 @@ namespace Business_Layer.Concrete
         {
             _uow = uow;
             _mapper = mapper;
+        }
+
+        public async Task<List<NotificationListInHeaderDto>> NotificationListInHeaderAsync(Guid userId)
+        {
+            var query = _uow.Notifications.GetWhere(n => n.AppUserId == userId && n.Status == false);
+
+            return await query
+                .ProjectTo<NotificationListInHeaderDto>(_mapper.ConfigurationProvider)
+                .OrderByDescending(n => n.Date)
+                .Take(5)
+                .ToListAsync();
         }
 
         public void TDelete(Notification entity)
