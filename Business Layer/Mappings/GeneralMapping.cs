@@ -135,6 +135,9 @@ namespace Business_Layer.Mappings
 
             CreateMap<Notification, NotificationListInHeaderDto>()
                 .ReverseMap();
+
+            CreateMap<Notification, NotificationListDto>()
+                .ReverseMap();
         }
     }
 }
