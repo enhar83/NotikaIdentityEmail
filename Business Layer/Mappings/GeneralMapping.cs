@@ -13,6 +13,7 @@ using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using Entity_Layer.DTOs.AppUserDtos.RegisterDtos;
 using Entity_Layer.DTOs.AppUserDtos.UserListDtos;
 using Entity_Layer.DTOs.CategoryDtos;
+using Entity_Layer.DTOs.CommentDtos;
 using Entity_Layer.DTOs.JwtDtos;
 using Entity_Layer.DTOs.MessageDtos;
 using Entity_Layer.DTOs.NotificationDtos;
@@ -153,6 +154,10 @@ namespace Business_Layer.Mappings
             CreateMap<Message, MessageListByCategoryDto>()
                 .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => src.Sender.Name + " " + src.Sender.Surname))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
+                .ReverseMap();
+
+            CreateMap<Comment, CommentListDto>()
+                .ForMember(dest=>dest.SenderName, opt=>opt.MapFrom(src=>src.Sender.Name + " " + src.Sender.Surname))
                 .ReverseMap();
         }
     }
