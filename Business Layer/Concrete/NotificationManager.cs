@@ -77,5 +77,17 @@ namespace Business_Layer.Concrete
                 .ProjectTo<NotificationListDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
         }
+
+        public async Task<NotificationDetailDto> GetNotificationDetailAsync(Guid id)
+        {
+            var query = _uow.Notifications.GetWhere();
+
+
+            return await query
+                .Where(n => n.Id == id)
+                .ProjectTo<NotificationDetailDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
+        }
+
     }
 }

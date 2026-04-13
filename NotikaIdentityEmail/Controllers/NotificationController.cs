@@ -19,5 +19,18 @@ namespace NotikaIdentityEmail.Controllers
         {
             return View();
         }
+
+        public async Task<IActionResult> NotificationDetails(Guid id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return NotFound();
+
+            var notification = await _notificationService.GetNotificationDetailAsync(id);
+            if (notification == null)
+                return RedirectToAction("NotificationList");
+
+            return View(notification);
+        }
     }
 }
