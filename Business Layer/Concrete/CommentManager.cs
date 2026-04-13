@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Business_Layer.Abstract;
 using Data_Access_Layer.Abstract;
+using Entity_Layer.DTOs.CommentDtos;
 using Entity_Layer.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business_Layer.Concrete
 {
@@ -18,6 +21,16 @@ namespace Business_Layer.Concrete
         {
             _uow = uow;
             _mapper = mapper;
+        }
+
+        public async Task<List<CommentListDto>> GetCommentListAsync(Guid userId)
+        {
+            var query = _uow.Comments.GetWhere(c => c.SenderId == userId);
+
+            return await query
+                .ProjectTo<CommentListDto>(_mapper.ConfigurationProvider)
+                .OrderByDescending(c => c.Date)
+                .ToListAsync();
         }
 
         public void TDelete(Comment entity)
