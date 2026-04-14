@@ -25,5 +25,15 @@ namespace NotikaIdentityEmail.Controllers
 
             return View(comments);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteComment(Guid id)
+        {
+            var comment = await _commentService.TGetByIdAsync(id);
+            if (comment != null)
+                _commentService.TDelete(comment);
+
+            return RedirectToAction("CommentList");
+        }
     }
 }

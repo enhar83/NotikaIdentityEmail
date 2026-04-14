@@ -159,6 +159,9 @@ namespace Business_Layer.Mappings
             CreateMap<Comment, CommentListDto>()
                 .ForMember(dest=>dest.SenderName, opt=>opt.MapFrom(src=>src.Sender.Name + " " + src.Sender.Surname))
                 .ReverseMap();
+
+            CreateMap<ComposeCommentDto, Comment>()
+                .ReverseMap();
         }
     }
 }
