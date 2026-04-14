@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Business_Layer.Abstract;
+using Business_Layer.Exceptions;
 using Data_Access_Layer.Abstract;
 using Entity_Layer.DTOs.CommentDtos;
 using Entity_Layer.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Business_Layer.Concrete
@@ -17,10 +19,26 @@ namespace Business_Layer.Concrete
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
-        public CommentManager(IUnitOfWork uow, IMapper mapper)
+        private readonly UserManager<AppUser> _userManager;
+        public CommentManager(IUnitOfWork uow, IMapper mapper, UserManager<AppUser> userManager)
         {
             _uow = uow;
             _mapper = mapper;
+            _userManager = userManager;
+        }
+
+        public async Task ComposeCommentAsync(ComposeCommentDto composeCommentDto)
+        {
+            var senderId = await _userManager.FindByIdAsync(composeCommentDto.SenderId.ToString());
+            if (senderId == null)
+                throw new LogicException("SenderId","Gönderen kullanıcı bulunamadı.");
+
+            var comment = _mapper.Map<Comment>(composeCommentDto);
+            comment.SenderId = composeCommentDto.SenderId;
+            comment.Date = DateTime.Now;
+            comment.CommentStatus = true;
+
+            await TInsertAsync(comment);
         }
 
         public async Task<List<CommentListDto>> GetCommentListAsync(Guid userId)

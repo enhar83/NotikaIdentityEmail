@@ -11,6 +11,6 @@ namespace Business_Layer.Abstract
     public interface ICommentService:IGenericService<Comment>
     {
         Task<List<CommentListDto>> GetCommentListAsync(Guid userId);
-        
+        Task ComposeCommentAsync(ComposeCommentDto composeCommentDto);
     }
 }
