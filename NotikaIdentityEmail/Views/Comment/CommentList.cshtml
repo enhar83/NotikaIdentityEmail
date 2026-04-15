@@ -41,7 +41,7 @@
                                                 @(item.CommentStatus == null ? "Beklemede" : (item.CommentStatus == true ? "Onaylandı" : "Reddedildi"))
                                             </span>
                                         </td>
-                                        <td>@item.Date.ToString("dd MMM yyyy")</td>
+                                        <td>@item.Date.ToString("dd MMM yyyy - HH:mm")</td>
                                         <td>
                                             <button class="btn btn-info btn-sm btn-detail"
                                                     data-subject="@item.Subject"
