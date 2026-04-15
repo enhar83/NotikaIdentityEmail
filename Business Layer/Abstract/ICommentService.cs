@@ -12,5 +12,7 @@ namespace Business_Layer.Abstract
     {
         Task<List<CommentListDto>> GetCommentListAsync(Guid userId);
         Task ComposeCommentAsync(ComposeCommentDto composeCommentDto);
+        Task<List<CommentListForAdminDto>> GetCommentListForAdmin();
+        Task UpdateCommentStatusAsync (UpdateCommentStatusDto updateCommentStatusDto);
     }
 }

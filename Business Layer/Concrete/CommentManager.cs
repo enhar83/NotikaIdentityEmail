@@ -50,6 +50,16 @@ namespace Business_Layer.Concrete
                 .ToListAsync();
         }
 
+        public async Task<List<CommentListForAdminDto>> GetCommentListForAdmin()
+        {
+            var query = _uow.Comments.GetWhere();
+
+            return await query 
+                .ProjectTo<CommentListForAdminDto>(_mapper.ConfigurationProvider)
+                .OrderByDescending(c => c.Date)
+                .ToListAsync();
+        }
+
         public void TDelete(Comment entity)
         {
             _uow.Comments.Delete(entity);
@@ -75,7 +85,19 @@ namespace Business_Layer.Concrete
         public void TUpdate(Comment entity)
         {
             _uow.Comments.Update(entity);
-            _uow.SaveAsync();
+
+        }
+
+        public async Task UpdateCommentStatusAsync(UpdateCommentStatusDto updateCommentStatusDto)
+        {
+            var comment = await TGetByIdAsync(updateCommentStatusDto.Id);
+            if (comment == null)
+                throw new LogicException("Id", "Yorum bulunamadı.");
+
+            comment.CommentStatus = updateCommentStatusDto.CommentStatus;
+            
+            TUpdate(comment);
+            await _uow.SaveAsync();
         }
     }
 }
