@@ -104,5 +104,11 @@ namespace NotikaIdentityEmail.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
+        public async Task<IActionResult> CommentListForForum()
+        {
+            var comments = await _commentService.GetCommentListForForumAsync();
+            return View(comments);
+        }
     }
 }

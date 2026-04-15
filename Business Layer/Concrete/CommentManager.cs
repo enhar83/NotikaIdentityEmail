@@ -60,6 +60,16 @@ namespace Business_Layer.Concrete
                 .ToListAsync();
         }
 
+        public async Task<List<CommentListForForumDto>> GetCommentListForForumAsync()
+        {
+            var query = _uow.Comments.GetWhere(c=>c.CommentStatus == true);
+
+            return await query
+                .ProjectTo<CommentListForForumDto>(_mapper.ConfigurationProvider)
+                .OrderByDescending(c => c.Date)
+                .ToListAsync();
+        }
+
         public void TDelete(Comment entity)
         {
             _uow.Comments.Delete(entity);

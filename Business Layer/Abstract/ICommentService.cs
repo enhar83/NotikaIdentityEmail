@@ -14,5 +14,6 @@ namespace Business_Layer.Abstract
         Task ComposeCommentAsync(ComposeCommentDto composeCommentDto);
         Task<List<CommentListForAdminDto>> GetCommentListForAdmin();
         Task UpdateCommentStatusAsync (UpdateCommentStatusDto updateCommentStatusDto);
+        Task<List<CommentListForForumDto>> GetCommentListForForumAsync();
     }
 }
