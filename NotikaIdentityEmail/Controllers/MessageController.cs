@@ -80,7 +80,7 @@ namespace NotikaIdentityEmail.Controllers
                 await GetCategoryListAsync();
                 return View(composedMessage);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ModelState.AddModelError("", "Beklenmedik bir hata oluştu.");
                 await GetCategoryListAsync();

@@ -1,0 +1,67 @@
+﻿@using Entity_Layer.DTOs.CommentDtos
+@model ComposeCommentDto
+
+@{
+    ViewData["Title"] = "ComposeComment";
+    Layout = "~/Views/UserLayout/Index.cshtml";
+}
+
+<div class="form-element-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="form-element-list">
+                    <div class="basic-tb-hd">
+                        <h2>Yorum Yapma Sayfası</h2>
+                        <p>Lütfen yorum içeriklerini eksiksiz olarak doldurunuz.</p>
+                    </div>
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger m-b-20"></div>
+
+                    <form asp-action="ComposeComment" asp-controller="Comment" method="post">
+
+                        @* SenderId Gizli Alan Olarak Eklendi *@
+                        <input type="hidden" asp-for="SenderId" />
+
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label>Yorum Konusu</label>
+                                    <div class="nk-int-st">
+                                        <input type="text" asp-for="Subject" class="form-control" placeholder="Yorum konusu...">
+                                    </div>
+                                    <span asp-validation-for="Subject" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label>Yorum Detayı</label>
+                                    <div class="nk-int-st">
+                                        <input type="text" asp-for="CommentDetail" class="form-control" placeholder="Yorum içeriği...">
+                                    </div>
+                                    <span asp-validation-for="CommentDetail" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            @* Not: Eğer yorum içeriği (CommentDetail) için bir alan eklemediysen onu da buraya eklemelisin *@
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <div class="nk-int-st">
+                                        <button type="submit" class="btn btn-success">Yorumu Yap </button>
+                                    </div>
+                                </div>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .text-danger {
+        color: #ff0000 !important;
+        font-size: 12px;
+        margin-top: 5px;
+        display: block;
+    }
+</style>
