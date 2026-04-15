@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entity_Layer.DTOs.CommentDtos
 {
-    public class CommentListDto
+    public class CommentListForAdminDto
     {
         public Guid Id { get; set; }
         public string Subject { get; set; }

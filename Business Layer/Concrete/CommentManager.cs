@@ -36,7 +36,6 @@ namespace Business_Layer.Concrete
             var comment = _mapper.Map<Comment>(composeCommentDto);
             comment.SenderId = composeCommentDto.SenderId;
             comment.Date = DateTime.Now;
-            comment.CommentStatus = false;
 
             await TInsertAsync(comment);
         }

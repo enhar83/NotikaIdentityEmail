@@ -37,8 +37,8 @@
                                         <td>@count</td>
                                         <td>@item.Subject</td>
                                         <td>
-                                            <span class="label @(item.CommentStatus ? "label-success" : "label-warning")">
-                                                @(item.CommentStatus ? "Onaylandı" : "Beklemede")
+                                            <span class="label @(item.CommentStatus == null ? "label-warning" : (item.CommentStatus == true ? "label-success" : "label-danger"))">
+                                                @(item.CommentStatus == null ? "Beklemede" : (item.CommentStatus == true ? "Onaylandı" : "Reddedildi"))
                                             </span>
                                         </td>
                                         <td>@item.Date.ToString("dd MMM yyyy")</td>

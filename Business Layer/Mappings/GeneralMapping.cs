@@ -162,6 +162,10 @@ namespace Business_Layer.Mappings
 
             CreateMap<ComposeCommentDto, Comment>()
                 .ReverseMap();
+
+            CreateMap<Comment, CommentListForAdminDto>()
+                .ForMember(dest=>dest.SenderName, opt=>opt.MapFrom(src=>src.Sender.Name + " " + src.Sender.Surname))
+                .ReverseMap();
         }
     }
 }
