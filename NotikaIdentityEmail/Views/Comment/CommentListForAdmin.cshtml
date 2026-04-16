@@ -61,6 +61,7 @@
                                     <th>#</th>
                                     <th>Yapan Kişi</th>
                                     <th>Başlık</th>
+                                    <th>Toksikliik Skoru</th>
                                     <th>Durum</th>
                                     <th>Tarih</th>
                                     <th style="width: 250px;">İşlemler</th>
@@ -74,6 +75,7 @@
                                         <td>@count</td>
                                         <td>@item.SenderName</td>
                                         <td>@item.Subject</td>
+                                        <td>@item.ToxicityScore</td>
                                         <td>
                                             @if (item.CommentStatus == null)
                                             {

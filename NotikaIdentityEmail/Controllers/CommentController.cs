@@ -12,9 +12,11 @@ namespace NotikaIdentityEmail.Controllers
     public class CommentController : Controller
     {
         private readonly ICommentService _commentService;
-        public CommentController(ICommentService commentService)
+        private readonly IToxicityService _toxicityService;
+        public CommentController(ICommentService commentService, IToxicityService toxicityService)
         {
             _commentService = commentService;
+            _toxicityService = toxicityService;
         }
 
         [Authorize(Roles = "Admin,Employee")]
@@ -109,6 +111,21 @@ namespace NotikaIdentityEmail.Controllers
         {
             var comments = await _commentService.GetCommentListForForumAsync();
             return View(comments);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult TrainModel()
+        {
+            try
+            {
+                _toxicityService.TrainModel();
+                TempData["ToxicitySuccess"] = "Yapay zeka modeli başarıyla eğitildi ve ToxicityModel.zip güncellendi.";
+                return Content($"Model başarıyla eğitildi.");
+            }
+            catch (Exception ex)
+            {
+                return Content($"Model eğitilirken bir hata oluştu: {ex.Message}");
+            }
         }
     }
 }

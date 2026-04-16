@@ -20,11 +20,13 @@ namespace Business_Layer.Concrete
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
         private readonly UserManager<AppUser> _userManager;
-        public CommentManager(IUnitOfWork uow, IMapper mapper, UserManager<AppUser> userManager)
+        private readonly IToxicityService _toxicityService;
+        public CommentManager(IUnitOfWork uow, IMapper mapper, UserManager<AppUser> userManager, IToxicityService toxicityService)
         {
             _uow = uow;
             _mapper = mapper;
             _userManager = userManager;
+            _toxicityService = toxicityService;
         }
 
         public async Task ComposeCommentAsync(ComposeCommentDto composeCommentDto)
@@ -33,9 +35,17 @@ namespace Business_Layer.Concrete
             if (senderId == null)
                 throw new LogicException("SenderId","Gönderen kullanıcı bulunamadı.");
 
+            var analysisResult = _toxicityService.AnalyzeComment(composeCommentDto.CommentDetail);
+
             var comment = _mapper.Map<Comment>(composeCommentDto);
             comment.SenderId = composeCommentDto.SenderId;
             comment.Date = DateTime.Now;
+            comment.ToxicityScore = analysisResult.Score;
+
+            if (analysisResult.Score > 0.60)
+                comment.CommentStatus = false;
+            else
+                comment.CommentStatus = null; 
 
             await TInsertAsync(comment);
         }

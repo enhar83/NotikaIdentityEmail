@@ -13,6 +13,7 @@ namespace Entity_Layer.DTOs.CommentDtos
         public string CommentDetail { get; set; }
         public DateTime Date { get; set; }
         public bool? CommentStatus { get; set; }
+        public double? ToxicityScore { get; set; }
         public string SenderName { get; set; }
     }
 }
