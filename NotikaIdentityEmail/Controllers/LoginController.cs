@@ -2,6 +2,8 @@
 using Business_Layer.Exceptions;
 using Entity_Layer.DTOs.AppUserDtos.ForgotPasswordDtos;
 using Entity_Layer.DTOs.AppUserDtos.LoginDtos;
+using Entity_Layer.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
@@ -12,10 +14,12 @@ namespace NotikaIdentityEmail.Controllers
     public class LoginController : Controller
     {
         private readonly IAppUserService _appUserService;
+        private readonly SignInManager<AppUser> _signInManager;
 
-        public LoginController(IAppUserService appUserService)
+        public LoginController(IAppUserService appUserService, SignInManager<AppUser> signInManager)
         {
             _appUserService = appUserService;
+            _signInManager = signInManager;
         }
 
         [HttpGet]
@@ -141,6 +145,43 @@ namespace NotikaIdentityEmail.Controllers
                 }
             }
             return View(resetPasswordDto);
+        }
+
+        //kullanıcı login olmak istiyor ama kimliği yok. google eğer kimliği tanırsa login işlemi tamamlanacak.
+        //yönlendirme bileti olarak düşünülebilir. google onaylarsa şu adrese (callback) geri gönder denir.
+        //kullanıcı siteden ayrılır ve googleın giriş sayfasına gider. 
+        public IActionResult ExternalLogin(string provider = "Google", string? returnUrl = null)
+        {
+            //kullanıcının googlda işi bitince kullanıcının hangi adrese geri döneceği belirlenir.
+            var redirectUrl = Url.Action("ExternalLoginCallBack", "Login", new { ReturnUrl = returnUrl });
+
+            //properties: uygulamanın kimlik bilgilerini ve dönüş adresi paketlenir.
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            
+            //challenge: kullanıcıyı googlea git ve kendini doğrula diyerek dışarı fırlatır.
+            return Challenge(properties, provider);
+        }
+
+        //kullanıcı googleda şifreyi girer ve onay verir. google kullanıcı geri gönderir.
+        //kullanıcı geri geldiğinde içerisinde adı soyadı ve epostasını içeren bir zarfla gelir.
+        //bu kod  gelen zarfı açar ve içerisindeki bilgileri (claims) çıkarır.
+        //bu bilgileri managere paslar, kullanıcıyı sisteme kaydeder ve ona bir token verir.
+        //managerdan token geri gelince kullanıcıya cookie açar ve inbox'a yönlendirir.
+        public async Task<IActionResult> ExternalLoginCallBack(string? returnUrl = null)
+        {
+            //googleın gönderdiği zarfı yakalar.
+            //getexternallogininfoasync: kullanıcının googleda doğrulandıktan sonra googleın gönderdiği zarfı açar ve içerisindeki bilgileri (claims) çıkarır.
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null) return RedirectToAction("Login");
+
+            //zarfın içindeki bilgileri managera yolluyoruz. 
+            var token = await _appUserService.ExternalLoginAsync(info.Principal.Claims);
+
+            //gelen cookie kullanıcının tarayıcısına mühürlenir.
+            //response.cookies.append: tokene ekrana yazdırmak yerine kullanıcının tarayıcısına iliştirir. 
+            Response.Cookies.Append("JwtToken", token, new CookieOptions { HttpOnly = true, Secure = true });
+
+            return LocalRedirect(returnUrl ?? "/Message/Inbox");
         }
     }
 }

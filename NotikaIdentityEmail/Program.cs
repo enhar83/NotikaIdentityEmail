@@ -140,8 +140,11 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthentication()
     .AddGoogle(options => //addgoogle ile sisteme ben google üzerinden gelen kimlikleri tanýyacaðým denir.
     {
-        options.ClientId = "Google Client Id Gelecek"; //uygulamanýn kullanýcý adý gibidir. googlea siteyi tanýtýr. Google Id ile ne olduðunu anlar.
-        options.ClientSecret = " Google Client Secret Deðeri Gelecek"; //uygulamanýn þifresidir. google ile site arasýndaki iletiþimin güvenli olduðunu kanýtlar. asla paylaþýlmamalý ve github gibi yerlere açýk þekilde yüklenmemelidir. eðer çalýnýrsa bir baþkasý senin adýna googledan veri çeker.
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? string.Empty;
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? string.Empty; //uygulamanýn þifresidir. google ile site arasýndaki iletiþimin güvenli olduðunu kanýtlar. asla paylaþýlmamalý ve github gibi yerlere açýk þekilde yüklenmemelidir. eðer çalýnýrsa bir baþkasý senin adýna googledan veri çeker.
+
+        options.CorrelationCookie.SameSite = SameSiteMode.None;
+        options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
     });
 
 var app = builder.Build();
