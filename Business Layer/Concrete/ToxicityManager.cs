@@ -53,16 +53,12 @@ namespace Business_Layer.Concrete
             IDataView trainingData = _mlContext.Data.LoadFromTextFile<ModelInputDto>(
                 path: _dataPath, hasHeader: true, separatorChar: ',');
 
-            // 2. Pipeline (Eğitim Hattı) Oluştur
-            // Metni (CommentText) sayısal vektörlere çevir (Features) ve SDCA algoritmasıyla eğit
             var pipeline = _mlContext.Transforms.Text.FeaturizeText("Features", nameof(ModelInputDto.CommentText))
                 .Append(_mlContext.BinaryClassification.Trainers.SdcaLogisticRegression(
                     labelColumnName: nameof(ModelInputDto.Label), featureColumnName: "Features"));
 
-            // 3. Modeli Eğit
             var model = pipeline.Fit(trainingData);
 
-            // 4. Modeli .zip olarak kaydet
             _mlContext.Model.Save(model, trainingData.Schema, _modelPath);
         }
     }
