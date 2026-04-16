@@ -13,7 +13,10 @@ namespace Entity_Layer.Entities
         public string CommentDetail { get; set; }
         public DateTime Date { get; set; }
         public bool? CommentStatus { get; set; }
+        public double? ToxicityScore { get; set; }
         public Guid SenderId { get; set; }
         public AppUser Sender { get; set; }
     }
 }
+
+
