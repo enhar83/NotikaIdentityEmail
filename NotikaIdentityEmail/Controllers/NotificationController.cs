@@ -68,7 +68,7 @@ namespace NotikaIdentityEmail.Controllers
                 await GetUserListAsync();
                 return View(composedNotification);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ModelState.AddModelError("", "Beklenmedik bir hata oluştu.");
                 await GetUserListAsync();

@@ -19,10 +19,10 @@ namespace Business_Layer.Concrete
         }
 
         private readonly IUnitOfWork _uow;
-        public void TDelete(T entity)
+        public async Task TDelete(T entity)
         {
             _repository.Delete(entity);
-            _uow.SaveAsync().Wait();
+            await _uow.SaveAsync();
         }
 
         public async Task<T?> TGetByIdAsync(Guid id)

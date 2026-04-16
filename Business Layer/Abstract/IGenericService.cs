@@ -10,7 +10,7 @@ namespace Business_Layer.Abstract
     {
         Task TInsertAsync(T entity);
         void TUpdate(T entity); 
-        void TDelete(T entity);
+        Task TDelete(T entity);
         Task<List<T>> TGetListAsync();
         Task<T?> TGetByIdAsync(Guid id);
     }

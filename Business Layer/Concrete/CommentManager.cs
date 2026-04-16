@@ -80,10 +80,10 @@ namespace Business_Layer.Concrete
                 .ToListAsync();
         }
 
-        public void TDelete(Comment entity)
+        public async Task TDelete(Comment entity)
         {
             _uow.Comments.Delete(entity);
-            _uow.SaveAsync();
+            await _uow.SaveAsync();
         }
 
         public async Task<Comment?> TGetByIdAsync(Guid id)

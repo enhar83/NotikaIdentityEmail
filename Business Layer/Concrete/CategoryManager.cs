@@ -24,10 +24,10 @@ namespace Business_Layer.Concrete
             _mapper = mapper;
         }
 
-        public void TDelete(Category entity)
+        public async Task TDelete(Category entity)
         {
             _uow.Categories.Delete(entity);
-            _uow.SaveAsync();
+            await _uow.SaveAsync();
         }
 
         public async Task<Category?> TGetByIdAsync(Guid id)

@@ -40,10 +40,10 @@ namespace Business_Layer.Concrete
                 .ToListAsync();
         }
 
-        public void TDelete(Notification entity)
+        public async Task TDelete(Notification entity)
         {
             _uow.Notifications.Delete(entity);
-            _uow.SaveAsync();
+            await _uow.SaveAsync();
         }
 
         public async Task<Notification?> TGetByIdAsync(Guid id)

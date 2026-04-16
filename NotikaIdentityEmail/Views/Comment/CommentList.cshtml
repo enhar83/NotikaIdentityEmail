@@ -7,24 +7,109 @@
     int count = 0;
 }
 
+<style>
+    /* Pagination Stilleri */
+    .pagination-container {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .pagination {
+        display: inline-flex;
+        list-style: none;
+        padding: 0;
+    }
+
+        .pagination li {
+            margin: 0 3px;
+        }
+
+            .pagination li a {
+                color: #333;
+                padding: 8px 16px;
+                text-decoration: none;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                transition: all 0.3s;
+            }
+
+            .pagination li.active a {
+                background-color: #00c292;
+                color: white;
+                border: 1px solid #00c292;
+            }
+
+    /* Modern Tablo ve Badge Stilleri */
+    .bg-danger {
+        background-color: #f44336 !important;
+    }
+
+    .bg-success {
+        background-color: #4caf50 !important;
+    }
+
+    .bg-warning {
+        background-color: #ff9800 !important;
+        color: #fff !important;
+    }
+
+    .toxicity-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        min-width: 120px;
+    }
+
+    #commentTable {
+        border-collapse: separate;
+        border-spacing: 0 10px;
+        background-color: transparent !important;
+    }
+
+        #commentTable tbody tr {
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+            #commentTable tbody tr:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            }
+
+        #commentTable td {
+            vertical-align: middle !important;
+            border: none !important;
+            padding: 15px !important;
+        }
+
+        #commentTable thead th {
+            border: none !important;
+            text-transform: uppercase;
+            font-size: 12px;
+            color: #777;
+            letter-spacing: 1px;
+        }
+</style>
+
 <div class="form-element-area">
     <div class="container">
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="form-element-list">
-
                     <div class="basic-tb-hd">
-                        <h2>Yorum Listesi</h2>
-                        <p>Sistemde yapmış olduğunuz tüm yorumları buradan görebilirsiniz.</p>
+                        <h2>Yorumlarım</h2>
+                        <p>Sistemde yapmış olduğunuz tüm yorumları ve analiz sonuçlarını buradan takip edebilirsiniz.</p>
                     </div>
 
                     <div class="table-responsive">
-                        <table class="table table-bordered">
+                        <table class="table" id="commentTable">
                             <thead>
                                 <tr>
                                     <th>#</th>
                                     <th>Yorum Başlığı</th>
-                                    <th>Yorum Durumu</th>
+                                    <th>Analiz Skoru</th>
+                                    <th>Durum</th>
                                     <th>Tarih</th>
                                     <th style="width: 200px;">İşlemler</th>
                                 </tr>
@@ -34,21 +119,43 @@
                                 {
                                     count++;
                                     <tr>
-                                        <td>@count</td>
+                                        <td><strong>@count</strong></td>
                                         <td>@item.Subject</td>
+                                        <td>
+                                            @{
+                                                var scoreValue = (item.ToxicityScore ?? 0) * 100;
+                                                string badgeClass = scoreValue >= 50 ? "bg-danger" : "bg-success";
+                                                string statusText = scoreValue >= 50 ? $"%{scoreValue:0} (Riskli)" : $"%{scoreValue:0} (Güvenli)";
+
+                                                if (item.ToxicityScore == null)
+                                                {
+                                                    badgeClass = "bg-warning";
+                                                    statusText = "Analiz Yok";
+                                                }
+                                            }
+                                            <div class="toxicity-container">
+                                                <span class="badge @badgeClass" style="color:white; font-size:10px;">@statusText</span>
+                                                @if (item.ToxicityScore != null)
+                                                {
+                                                    <div class="progress" style="height: 5px; margin-top: 5px; width: 100%; background-color: #eee;">
+                                                        <div class="progress-bar @badgeClass" role="progressbar" style="width: @scoreValue.ToString().Replace(",", ".")%;"></div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </td>
                                         <td>
                                             <span class="label @(item.CommentStatus == null ? "label-warning" : (item.CommentStatus == true ? "label-success" : "label-danger"))">
                                                 @(item.CommentStatus == null ? "Beklemede" : (item.CommentStatus == true ? "Onaylandı" : "Reddedildi"))
                                             </span>
                                         </td>
-                                        <td>@item.Date.ToString("dd MMM yyyy - HH:mm")</td>
+                                        <td>@item.Date.ToString("dd MMM yyyy")</td>
                                         <td>
                                             <button class="btn btn-info btn-sm btn-detail"
                                                     data-subject="@item.Subject"
                                                     data-detail="@item.CommentDetail"
                                                     data-sender="@item.SenderName"
                                                     data-date="@item.Date.ToString("dd MMMM yyyy HH:mm")">
-                                                Yorum Detayı
+                                                Detay
                                             </button>
 
                                             <button class="btn btn-danger btn-sm btn-delete"
@@ -63,10 +170,13 @@
                         </table>
                     </div>
 
+                    <div class="pagination-container">
+                        <ul class="pagination" id="paginationList"></ul>
+                    </div>
+
                     <div class="form-example-int mg-t-15">
                         <a href="/Comment/ComposeComment" class="btn btn-primary">Yeni Yorum Yap</a>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -78,33 +188,55 @@
 
     <script>
         $(document).ready(function () {
-            // Yorum Detayı Göster
-            $(document).on("click", ".btn-detail", function () {
-                const subject = $(this).data("subject");
-                const detail = $(this).data("detail");
-                const sender = $(this).data("sender");
-                const date = $(this).data("date");
+            // --- Pagination (10 Satırda bir sayfa) ---
+            const rowsPerPage = 10;
+            const $tableBody = $("#commentTable tbody");
+            const $rows = $tableBody.find("tr");
+            const rowsCount = $rows.length;
+            const pageCount = Math.ceil(rowsCount / rowsPerPage);
+            const $paginationList = $("#paginationList");
 
+            function displayPage(page) {
+                const start = (page - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                $rows.hide().slice(start, end).show();
+                $paginationList.find("li").removeClass("active");
+                $paginationList.find(`li[data-page='${page}']`).addClass("active");
+            }
+
+            if (pageCount > 1) {
+                for (let i = 1; i <= pageCount; i++) {
+                    $paginationList.append(`<li class="page-item" data-page="${i}"><a href="javascript:void(0)">${i}</a></li>`);
+                }
+            }
+
+            $(document).on("click", ".page-item", function () {
+                displayPage($(this).data("page"));
+            });
+
+            displayPage(1);
+
+            // --- Yorum Detayı Göster ---
+            $(document).on("click", ".btn-detail", function () {
                 Swal.fire({
-                    title: `<strong>${subject}</strong>`,
+                    title: `<strong>${$(this).data("subject")}</strong>`,
                     icon: 'info',
                     html: `
-                        <div style="text-align: left; border-top: 1px solid #eee; padding-top: 10px; font-family: 'Poppins', sans-serif;">
-                            <p style="margin-bottom: 5px;"><strong>Yazan:</strong> ${sender}</p>
-                            <p style="margin-bottom: 5px;"><strong>Tarih:</strong> ${date}</p>
-                            <hr style="margin: 10px 0;">
-                            <div style="max-height: 300px; overflow-y: auto; padding-right: 5px;">
-                                ${detail} @* Eğer HTML render edilecekse tırnaksız ve direkt koyulabilir *@
+                        <div style="text-align: left; font-family: sans-serif;">
+                            <p><strong>Yazan:</strong> ${$(this).data("sender")}</p>
+                            <p><strong>Tarih:</strong> ${$(this).data("date")}</p>
+                            <hr>
+                            <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; max-height: 200px; overflow-y: auto;">
+                                ${$(this).data("detail")}
                             </div>
-                        </div>
-                    `,
+                        </div>`,
                     showCloseButton: true,
-                    confirmButtonText: 'Anladım',
+                    confirmButtonText: 'Kapat',
                     confirmButtonColor: '#00c292'
                 });
             });
 
-            // Silme İşlemi
+            // --- Silme İşlemi ---
             $(document).on("click", ".btn-delete", function () {
                 const commentId = $(this).data("id");
                 const subject = $(this).data("subject");
@@ -112,7 +244,7 @@
 
                 Swal.fire({
                     title: 'Emin misiniz?',
-                    text: `"${subject}" konulu yorum kalıcı olarak silinecek!`,
+                    text: `"${subject}" konulu yorumunuz silinecek!`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
@@ -123,19 +255,19 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: "POST",
-                            url: "/Comment/DeleteComment/", 
+                            url: "/Comment/DeleteComment",
                             data: { id: commentId },
                             success: function (response) {
-                                // Burada response.success büyük-küçük harf duyarlılığına dikkat!
-                                if (response.success || response === true) { 
+                                if (response.success) {
                                     Swal.fire('Başarılı!', 'Yorum başarıyla silindi.', 'success');
-                                    currentRow.fadeOut(600, function() { $(this).remove(); });
+                                    currentRow.fadeOut(600, function() {
+                                        $(this).remove();
+                                        // Satır silindikten sonra sayfayı yenilemek pagination'ı günceller
+                                        location.reload();
+                                    });
                                 } else {
                                     Swal.fire('Hata!', response.message || 'Bir hata oluştu.', 'error');
                                 }
-                            },
-                            error: function() {
-                                Swal.fire('Hata!', 'Sunucuyla iletişim kurulamadı.', 'error');
                             }
                         });
                     }

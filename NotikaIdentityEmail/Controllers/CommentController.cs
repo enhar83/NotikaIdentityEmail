@@ -37,11 +37,19 @@ namespace NotikaIdentityEmail.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteComment(Guid id)
         {
-            var comment = await _commentService.TGetByIdAsync(id);
-            if (comment != null)
-                _commentService.TDelete(comment);
+            try
+            {
+                var comment = await _commentService.TGetByIdAsync(id);
+                if (comment == null)
+                    return Json(new { success = false, message = "Yorum bulunamadı." });
 
-            return RedirectToAction("CommentList");
+                await _commentService.TDelete(comment); 
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
 
         [Authorize(Roles = "Admin,Employee")]
