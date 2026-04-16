@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Entity_Layer.DTOs.AppUserDtos.ConfirmUserDto;
@@ -29,5 +30,6 @@ namespace Business_Layer.Abstract
         Task<List<UserListDto>> GetUserListAsync();
         Task ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDto,string scheme, string host);
         Task ResetPasswordAsync(ResetPasswordDto resetPasswordDto);
+        Task<string> ExternalLoginAsync(IEnumerable<Claim> claims);
     }
 }

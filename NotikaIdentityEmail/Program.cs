@@ -129,6 +129,21 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+/*
+    1. Ýstek: Kullanýcý Google ile giriþ yap butonuna basar.
+    2. Yönlendirme: Uygulama kullanýcýyý ClientId deðerini de yanýna ekleyerek Googleýn giriþ sayfasýna gönderir.
+    3. Onay: Kullanýcý Googleda þifresini girer ve uygulamaya girmeye izin veriyor musun sorusuna evet der.
+    4. Doðrulama: Google kullanýcýyý uygulamaya geri gönderirken bir kod verir. Uygulama ise elindeki ClientSecret ve o kodu Google'a geri gönderip bu kod gerçekten Googledan mý geldi diye teyit eder.
+    5. Google evet benim dediðinde kullanýcýnýn adý, epostasý ve profil fotoðrafý gibi bilgiler (Claims) uygulamana akar.
+ */
+
+builder.Services.AddAuthentication()
+    .AddGoogle(options => //addgoogle ile sisteme ben google üzerinden gelen kimlikleri tanýyacaðým denir.
+    {
+        options.ClientId = "Google Client Id Gelecek"; //uygulamanýn kullanýcý adý gibidir. googlea siteyi tanýtýr. Google Id ile ne olduðunu anlar.
+        options.ClientSecret = " Google Client Secret Deðeri Gelecek"; //uygulamanýn þifresidir. google ile site arasýndaki iletiþimin güvenli olduðunu kanýtlar. asla paylaþýlmamalý ve github gibi yerlere açýk þekilde yüklenmemelidir. eðer çalýnýrsa bir baþkasý senin adýna googledan veri çeker.
+    });
+
 var app = builder.Build();
 
 //reexecute: bu metod tarayýcýya hata oldu þu sayfaya git (redirect) demez. Bunun yerine sunucu kendi içinde isteði /Error/404 gibi gibi bir adrese yeniden yönlendirir. (internal re-execute)

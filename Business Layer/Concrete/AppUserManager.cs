@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -288,6 +289,47 @@ namespace Business_Layer.Concrete
             }
 
             await _userManager.UpdateSecurityStampAsync(user);
+        }
+
+        public async Task<string> ExternalLoginAsync(IEnumerable<Claim> claims)
+        {
+            //google giriş başarılı olduktan sonra bilgileri gönderir ve bu torba içerisinden ihtiyaç olanları değişkenlere atıyor.
+            var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var firstName = claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value;
+            var lastName = claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value;
+
+            //verilerin kontrolü yapılır.
+            if (email == null) throw new LogicException("Email","Google'dan email bilgisi alınamadı.");
+            if (firstName == null) throw new LogicException("Name","Google'dan isim bilgisi alınamadı.");
+            if (lastName == null) throw new LogicException("LastName","Google'dan soyisim bilgisi alınamadı.");
+
+            //kullanıcının sistemde olup olmadığı kontrol ediliyor.
+            var user = await _userManager.FindByEmailAsync(email);
+
+            //kullanıcı kayıt olmamışsa yeni bir kullanıcı oluşturuluyor.
+            if (user == null)
+            {
+                user = new AppUser
+                {
+                    Email = email,
+                    UserName = email,
+                    Name = firstName,
+                    Surname = lastName,
+                    City = "Belirtilmedi",
+                    EmailConfirmed = true,
+                    ActivationCode = new Random().Next(100000, 1000000)
+                    //burada şifre propu yok çünkü google ile giriş yapıyor. db içerisinde password alanı null olarak kalıyor. kullanıcı profil kısmından veya şifremi unuttum kısmından isterse şifresini değiştirebilir.
+                };
+
+                var createResult = await _userManager.CreateAsync(user); //bu metot şifre paramteresi almadan çağrıldığında identity kullanıcının dış bir kaynaktan geliyor veya şu an şifresi olmadığını anlar. bu yüzden hata vermez sadece şifre alanını boş bırakarak kaydı tamamlar.
+                await _userManager.AddToRoleAsync(user, "Visitor"); //google ile kayıt olan kullanıcıya default olarak "User" rolü atanır. 
+                if (!createResult.Succeeded) 
+                {
+                    var error = createResult.Errors.FirstOrDefault()?.Description;
+                    throw new Exception($"Kullanıcı oluşturulamadı: {error}");
+                }
+            }
+            return await _tokenService.CreateToken(user);
         }
     }
 }
