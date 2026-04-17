@@ -56,10 +56,15 @@ namespace NotikaIdentityEmail.Controllers
                 else
                     ModelState.AddModelError("", "Email veya Şifre hatalı");
             }
-            catch (LogicException)
+            catch (LogicException ex)
             {
-                TempData["ActivationMessage"] = "Email adresiniz onaylanmamış. Mail adresinize bir onay kodu gönderdik, lütfen aşağıya giriniz.";
-                return RedirectToAction("UserActivation", "Activation", new { email = userLoginDto.Email });
+                if (ex.Message.Contains("onaylanmamış"))
+                {
+                    TempData["ActivationMessage"] = ex.Message;
+                    return RedirectToAction("UserActivation", "Activation", new { email = userLoginDto.Email });
+                }
+
+                ModelState.AddModelError(ex.PropertyName ?? "", ex.Message);
             }
             return View(userLoginDto);
         }

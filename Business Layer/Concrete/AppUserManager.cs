@@ -197,9 +197,11 @@ namespace Business_Layer.Concrete
 
             if (user != null)
             { 
+                if (!user.IsActive)
+                    throw new LogicException("Email", "Hesabınız aktif değil, lütfen yöneticinizle iletişime geçiniz.");
+
                 //hashlenmiş sifre ile kullanıcının girdiği açık metin şifreyi karşılaştırır.
                 //parametreler: email, password, benihatırla(bool), hatalıgiriştekilitlensinmi(bool)
-                var result = await _signInManager.PasswordSignInAsync(user.UserName, userLoginDto.Password, false, false);
 
                 if (!user.EmailConfirmed)
                 {
@@ -210,9 +212,12 @@ namespace Business_Layer.Concrete
                     await _userManager.UpdateAsync(user);
 
                     await _emailActivationService.SendConfirmEmailAsync(user.Email,code.ToString());
+
                     throw new LogicException("Email", "Email adresiniz onaylanmamış, mail adresinize bir onay maili gönderdik, lütfen kodu giriniz.");
                 }
-                    
+
+                var result = await _signInManager.PasswordSignInAsync(user.UserName, userLoginDto.Password, false, false);
+
 
                 if (result.Succeeded)
                 {
@@ -240,6 +245,7 @@ namespace Business_Layer.Concrete
             //dtodaki password ve confirmpassword alanları appuser içinde karşılık bulmadığından dolayı bu alanlar kopyalanmaz. (dbde passwordhash tutulur)
             var appUser = _mapper.Map<AppUser>(userRegisterDto);
             appUser.ActivationCode = code; //üretilen 6 haneli kodu kullanıcı nesnesine bağlar.
+            appUser.IsActive = true; //kullanıcı aktif olarak kaydedilir. email onayı bekleniyor ama kullanıcı aktif durumda olur, böylece admin panelinden kullanıcıyı görebiliriz.
 
             //userRegisterDto.Password içerisindeki açık metni alır, karmaşık bir algoritma ile Hash'ler. metodu çağırırken nesneyi ve password yollamak zorunludur, iki parametre ile çalışıyor.
             //oluşturulan bu hashlenmiş şifreyi ve diğer kullanıcı bilgilerini AspNetUsers tablosuna kaydeder.

@@ -14,6 +14,7 @@ namespace Entity_Layer.Entities
         public string? ImageUrl { get; set; }
         public string? City { get; set; }
         public int? ActivationCode { get; set; }
+        public bool IsActive { get; set; } = true;
         public virtual ICollection<Message> SentMessages { get; set; }
         public virtual ICollection<Message> ReceivedMessages { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
