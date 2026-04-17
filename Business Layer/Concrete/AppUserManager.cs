@@ -322,7 +322,7 @@ namespace Business_Layer.Concrete
                 };
 
                 var createResult = await _userManager.CreateAsync(user); //bu metot şifre paramteresi almadan çağrıldığında identity kullanıcının dış bir kaynaktan geliyor veya şu an şifresi olmadığını anlar. bu yüzden hata vermez sadece şifre alanını boş bırakarak kaydı tamamlar.
-                await _userManager.AddToRoleAsync(user, "Visitor"); //google ile kayıt olan kullanıcıya default olarak "User" rolü atanır. 
+                await _userManager.AddToRoleAsync(user, "Employee"); //google ile kayıt olan kullanıcıya default olarak "User" rolü atanır. 
                 if (!createResult.Succeeded) 
                 {
                     var error = createResult.Errors.FirstOrDefault()?.Description;
@@ -330,6 +330,23 @@ namespace Business_Layer.Concrete
                 }
             }
             return await _tokenService.CreateToken(user);
+        }
+
+        public async Task<IdentityResult> SetPasswordAsync(string userName, SetPasswordDto setPasswordDto)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+                throw new LogicException("", "Şifresi güncellenecek kullanıcı bulunamadı.");
+
+            if (await _userManager.HasPasswordAsync(user))
+                throw new LogicException("Password", "Zaten şifreniz mevcut, lütfen şifre değiştir kısmından yeni şifrenizi belirleyiniz.");
+
+            var result = await _userManager.AddPasswordAsync(user, setPasswordDto.Password);
+
+            if (result.Succeeded)
+                await _userManager.UpdateSecurityStampAsync(user);
+
+            return result;
         }
     }
 }

@@ -21,6 +21,7 @@ namespace Business_Layer.Abstract
         Task<SimpleUserDto?> LoginAsync(UserLoginDto userLoginDto);
         Task<IdentityResult> EditProfileAsync(string userName, EditProfileDto editProfileDto);
         Task<IdentityResult> ChangePasswordAsync(string userName, ChangePasswordDto changePasswordDto);
+        Task<IdentityResult> SetPasswordAsync(string userName, SetPasswordDto setPasswordDto);
         Task<EditProfileDto> GetProfileByUserNameAsync(string userName);
         Task<bool> ConfirmEmailAsync(ConfirmUserDto confirmUserDto);
         Task ResendActivationCodeAsync(string email);

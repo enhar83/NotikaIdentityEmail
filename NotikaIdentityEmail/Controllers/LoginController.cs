@@ -181,7 +181,8 @@ namespace NotikaIdentityEmail.Controllers
             //response.cookies.append: tokene ekrana yazdırmak yerine kullanıcının tarayıcısına iliştirir. 
             Response.Cookies.Append("JwtToken", token, new CookieOptions { HttpOnly = true, Secure = true });
 
-            return LocalRedirect(returnUrl ?? "/Message/Inbox");
+            TempData["SuccessExternalLoginMessage"] = "Hoşgeldiniz. Eğer şifrenizi önceden belirlediyseniz bu sayfadan ayrılabilirsiniz, ancak oluşturmadıysanız lütfen oluşturun.";
+            return LocalRedirect(returnUrl ?? "/Profile/SetPassword");
         }
     }
 }
