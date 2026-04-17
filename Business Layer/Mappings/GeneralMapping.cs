@@ -170,6 +170,9 @@ namespace Business_Layer.Mappings
             CreateMap<Comment, CommentListForForumDto>()
                 .ForMember(dest=>dest.SenderName, opt=>opt.MapFrom(src=>src.Sender.Name + " " + src.Sender.Surname))
                 .ReverseMap();
+
+            CreateMap<SetPasswordDto, AppUser>()
+                .ReverseMap();
         }
     }
 }
