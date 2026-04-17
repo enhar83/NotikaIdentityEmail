@@ -32,5 +32,6 @@ namespace Business_Layer.Abstract
         Task ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDto,string scheme, string host);
         Task ResetPasswordAsync(ResetPasswordDto resetPasswordDto);
         Task<string> ExternalLoginAsync(IEnumerable<Claim> claims);
+        Task<IdentityResult> ToggleUserActiveStatusAsync(Guid userId);
     }
 }

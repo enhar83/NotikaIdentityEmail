@@ -15,7 +15,7 @@
 
                     <div class="basic-tb-hd">
                         <h2>Kullanıcı Listesi</h2>
-                        <p>Sistemde tanımlı olan tüm kullanıcıları buradan yönetebilirsiniz.</p>
+                        <p>Sistemde tanımlı olan tüm kullanıcıları buradan yönetebilir, hesaplarını dondurabilir veya aktifleştirebilirsiniz.</p>
                     </div>
 
                     <div class="table-responsive">
@@ -25,11 +25,11 @@
                                     <th width="50">#</th>
                                     <th width="80">Profil</th>
                                     <th>Ad Soyad</th>
-                                    <th>Kullanıcı Adı</th>
                                     <th>Email</th>
+                                    <th>Durum</th> @* IsActive sütunu *@
                                     <th>Mail Onayı</th>
                                     <th>Roller</th>
-                                    <th style="width: 120px; text-align:center;">İşlemler</th>
+                                    <th style="width: 220px; text-align:center;">İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -45,13 +45,24 @@
                                             }
                                             else
                                             {
-                                                @* Resim yoksa şık bir placeholder (varsayılan resim) *@
                                                 <img src="https://ui-avatars.com/api/?name=@item.FullName&background=random&color=fff" class="user-avatar" />
                                             }
                                         </td>
                                         <td><span style="font-weight: 600; color: #333;">@item.FullName</span></td>
-                                        <td><span class="badge badge-info" style="background-color: #f1f1f1; color: #555; border: 1px solid #ddd;">@item.UserName</span></td>
                                         <td>@item.Email</td>
+
+                                        @* Durum Sütunu - ID bazlı yakalayacağız *@
+                                        <td id="status-cell-@item.Id">
+                                            @if (item.IsActive)
+                                            {
+                                                <span class="label label-success">Aktif</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="label label-danger">Pasif</span>
+                                            }
+                                        </td>
+
                                         <td>
                                             @if (item.EmailConfirmed)
                                             {
@@ -78,6 +89,14 @@
                                             }
                                         </td>
                                         <td style="text-align:center;">
+                                            @* AJAX için class ve data-id ekledik *@
+                                            <button type="button"
+                                                    class="btn btn-sm btn-toggle-status @(item.IsActive ? "btn-danger" : "btn-info")"
+                                                    data-id="@item.Id"
+                                                    style="font-weight:bold; min-width: 100px;">
+                                                <i class="fa fa-sync"></i> @(item.IsActive ? "Dondur" : "Aktifleştir")
+                                            </button>
+
                                             <a href="/Role/AssignRole/@item.Id" class="btn btn-warning btn-sm" style="color:white; font-weight:bold;">
                                                 <i class="fa fa-user-tag"></i> Rol Ata
                                             </a>
@@ -94,11 +113,10 @@
 </div>
 
 <style>
-    /* Tablo hücrelerini dikeyde ortalamak için */
     .table td, .table th {
         vertical-align: middle !important;
     }
-    /* Resim çerçevesi için küçük bir dokunuş */
+
     .user-avatar {
         width: 45px;
         height: 45px;
@@ -107,4 +125,53 @@
         border: 2px solid #f0f0f0;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+    /* Butonlar arası boşluk */
+    .btn-sm {
+        margin: 2px;
+    }
 </style>
+
+@section Scripts {
+    @* AJAX İşlemi *@
+    <script>
+        $(document).on('click', '.btn-toggle-status', function () {
+            var btn = $(this);
+            var userId = btn.data('id');
+            var statusCell = $('#status-cell-' + userId);
+
+            // Kullanıcıya bir yükleniyor görseli veya butonu disable etme eklenebilir
+            btn.prop('disabled', true);
+
+            $.ajax({
+                url: '/User/ToggleActive', // Controller/Action yolunu kontrol et
+                type: 'POST',
+                data: { id: userId },
+                success: function (response) {
+                    if (response.success) {
+                        // Durum yazısını ve rengini güncelle
+                        if (btn.hasClass('btn-danger')) {
+                            // Aktiften Pasife geçti
+                            statusCell.html('<span class="label label-danger">Pasif</span>');
+                            btn.removeClass('btn-danger').addClass('btn-info').html('<i class="fa fa-sync"></i> Aktifleştir');
+                        } else {
+                            // Pasiften Aktife geçti
+                            statusCell.html('<span class="label label-success">Aktif</span>');
+                            btn.removeClass('btn-info').addClass('btn-danger').html('<i class="fa fa-sync"></i> Dondur');
+                        }
+
+                        // Opsiyonel: Toastr veya alert ile bildirim verilebilir
+                        console.log(response.message);
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert("İşlem sırasında bir hata oluştu!");
+                },
+                complete: function () {
+                    btn.prop('disabled', false);
+                }
+            });
+        });
+    </script>
+}

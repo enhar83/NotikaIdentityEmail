@@ -354,5 +354,17 @@ namespace Business_Layer.Concrete
 
             return result;
         }
+
+        public async Task<IdentityResult> ToggleUserActiveStatusAsync(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+                throw new LogicException("", "Kullanıcı bulunamadı.");
+
+            user.IsActive = !user.IsActive;
+
+            var result = await _userManager.UpdateAsync(user);
+            return result;
+        }
     }
 }
