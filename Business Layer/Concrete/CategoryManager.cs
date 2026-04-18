@@ -24,6 +24,20 @@ namespace Business_Layer.Concrete
             _mapper = mapper;
         }
 
+        public async Task<bool> TChangeStatusAsync(Guid id, bool status)
+        {
+            var category = await _uow.Categories.GetByIdAsync(id);
+
+            if (category == null) return false;
+
+            category.CategoryStatus = status;
+
+            _uow.Categories.Update(category);
+            await _uow.SaveAsync();
+
+            return true;
+        }
+
         public async Task TComposeCategoryAsync(ComposeCategoryDto composeCategoryDto)
         {
             var category = _mapper.Map<Category>(composeCategoryDto);

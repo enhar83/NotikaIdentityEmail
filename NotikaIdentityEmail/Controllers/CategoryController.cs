@@ -82,5 +82,16 @@ namespace NotikaIdentityEmail.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeStatus(Guid id, bool status)
+        {
+            var result = await _categoryService.TChangeStatusAsync(id, status);
+
+            if (result)
+                return Json(new { success = true, message = "Durum başarıyla güncellendi." });
+
+            return Json(new { success = false, message = "Kategori bulunamadı veya bir hata oluştu." });
+        }
     }
 }

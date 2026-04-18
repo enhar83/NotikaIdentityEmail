@@ -14,5 +14,6 @@ namespace Business_Layer.Abstract
         Task<List<CategoryListDto>> TGetCategoryListAsync();
         Task TComposeCategoryAsync(ComposeCategoryDto composeCategoryDto);
         Task TUpdateCategoryAsync(UpdateCategoryDto updateCategoryDto);
+        Task<bool> TChangeStatusAsync(Guid id, bool status);
     }
 }
