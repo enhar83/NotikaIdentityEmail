@@ -1,46 +1,33 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
 using AutoMapper;
 using Business_Layer.Abstract;
 using Business_Layer.Exceptions;
 using Entity_Layer.DTOs.MessageDtos;
-using Entity_Layer.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace NotikaIdentityEmail.Controllers
 {
-    [Authorize(Roles="Admin,Employee")]
+    [Authorize(Roles = "Admin,Employee")]
     public class MessageController : Controller
     {
         private readonly IMessageService _messageService;
-        private readonly ICategoryService _categoryService; //categorylist dropwdown için eklendi.
+        private readonly ICategoryService _categoryService;
         private readonly IAppUserService _appUserService;
-        private readonly IMapper _mapper;
 
-        public MessageController(IMessageService messageService, ICategoryService categoryService, IAppUserService appUserService, IMapper mapper)
+        public MessageController(IMessageService messageService, ICategoryService categoryService, IAppUserService appUserService)
         {
             _messageService = messageService;
             _categoryService = categoryService;
             _appUserService = appUserService;
-            _mapper = mapper;
         }
 
-        public IActionResult Inbox()
-        {
-            return View();
-        }
-        public IActionResult Sendbox()
-        {
-            return View();
-        }
+        public IActionResult Inbox() => View();
+        public IActionResult Sendbox() => View();
+        public IActionResult Draft() => View();
 
-        public IActionResult Draft()
-        {
-            return View();
-        }
         public async Task<IActionResult> MessageDetails(Guid id)
         {
             var message = await _messageService.TGetMessageDetailAsync(id);
@@ -48,81 +35,95 @@ namespace NotikaIdentityEmail.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ComposeMessage()
+        public async Task<IActionResult> ComposeMessage(Guid? id)
         {
-            var email = User.FindFirstValue(ClaimValueTypes.Email);
+            // 🔥 DOĞRU CLAIM
+            var email = User.FindFirstValue(ClaimTypes.Email);
 
             var model = new ComposeMessageDto
             {
                 SenderEmail = email
             };
 
+            if (id.HasValue && id != Guid.Empty)
+            {
+                var draft = await _messageService.TGetByIdAsync(id.Value);
+
+                if (draft != null)
+                {
+                    model.Id = draft.Id;
+                    model.Subject = draft.Subject;
+                    model.MessageDetail = draft.MessageDetail;
+                    model.CategoryId = draft.CategoryId;
+
+                    if (draft.ReceiverId != Guid.Empty)
+                        model.ReceiverEmail = await _appUserService.GetEmailByUserIdAsync(draft.ReceiverId);
+                }
+            }
+
             await GetCategoryListAsync();
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> ComposeMessage(ComposeMessageDto composedMessage)
+        [ValidateAntiForgeryToken] // 🔥 EKLENDİ
+        public async Task<IActionResult> ComposeMessage(ComposeMessageDto composedMessage, string action)
         {
-            if (!ModelState.IsValid)
-            {
-                await GetCategoryListAsync();
-                return View(composedMessage);
-            }
+            var currentUserName = User.FindFirstValue(ClaimTypes.Name);
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (currentUserName == null || userIdString == null)
+                return RedirectToAction("Login", "Account");
+
+            var userId = Guid.Parse(userIdString);
 
             try
             {
-                var currentUserName = User.FindFirstValue(ClaimTypes.Name);
-                if (currentUserName == null)
-                    return View(composedMessage);
+                // 🟡 TASLAK
+                if (action == "saveDraft")
+                {
+                    await _messageService.TCreateOrUpdateMessageDraftAsync(userId, composedMessage);
+                    return RedirectToAction("Draft");
+                }
 
+                // 🔴 KATEGORİ VALIDATION FIX
+                if (composedMessage.CategoryId == Guid.Empty)
+                    ModelState.AddModelError("CategoryId", "Kategori seçmelisiniz");
+
+                if (!ModelState.IsValid)
+                {
+                    await GetCategoryListAsync();
+                    return View(composedMessage);
+                }
+
+                // 🟢 GÖNDER
                 await _messageService.TSendMessageAsync(currentUserName, composedMessage);
+
                 return RedirectToAction("Sendbox");
             }
             catch (LogicException ex)
             {
                 ModelState.AddModelError(ex.PropertyName, ex.Message);
-                await GetCategoryListAsync();
-                return View(composedMessage);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                ModelState.AddModelError("", "Beklenmedik bir hata oluştu.");
-                await GetCategoryListAsync();
-                return View(composedMessage);
+                // 🔥 GERÇEK HATA GÖSTER (DEBUG)
+                ModelState.AddModelError("", ex.Message);
             }
-        }
 
-        public IActionResult MessageListByCategory(Guid id)
-        {
-            ViewBag.SelectedCategoryId = id;
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SaveDraft(ComposeMessageDto composeMessageDto)
-        {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userIdString == null)
-                return RedirectToAction("Login", "Account");
-
-            var userId = Guid.Parse(userIdString);
-
-            await _messageService.TCreateOrUpdateMessageDraftAsync(userId, composeMessageDto);
-
-            return RedirectToAction("DraftList");
+            await GetCategoryListAsync();
+            return View(composedMessage);
         }
 
         private async Task GetCategoryListAsync()
         {
             var categories = await _categoryService.TGetListAsync();
-            List<SelectListItem> categoryValues = (from x in categories
-                                                   select new SelectListItem
-                                                   {
-                                                       Text = x.CategoryName,
-                                                       Value = x.Id.ToString()
-                                                   }).ToList();
-            ViewBag.CategoryList = categoryValues;
+
+            ViewBag.CategoryList = categories.Select(x => new SelectListItem
+            {
+                Text = x.CategoryName,
+                Value = x.Id.ToString()
+            }).ToList();
         }
     }
 }

@@ -13,6 +13,14 @@
 
             <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
                 <form method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" asp-for="Id" />
+
+                    <!-- 🔥 TÜM HATALARI GÖSTER -->
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
                     <div class="view-mail-list sm-res-mg-t-30">
                         <div class="view-mail-hd">
                             <div class="view-mail-hrd">
@@ -21,7 +29,8 @@
                         </div>
 
                         <div class="cmp-int mg-t-20">
-                            @* Gönderen Email (Readonly hale getirildi) *@
+
+                            <!-- Kimden -->
                             <div class="row">
                                 <div class="col-lg-1 col-md-2 col-sm-2 col-xs-12">
                                     <div class="cmp-int-lb cmp-int-lb1 text-right">
@@ -31,15 +40,17 @@
                                 <div class="col-lg-11 col-md-10 col-sm-10 col-xs-12">
                                     <div class="form-group">
                                         <div class="nk-int-st cmp-int-in">
-                                            @* readonly attribute'u ve gri arka plan stili eklendi *@
-                                            <input type="email" asp-for="SenderEmail" class="form-control" readonly style="background-color: #f5f5f5; cursor: not-allowed;" />
+                                            <input type="email" asp-for="SenderEmail"
+                                                   class="form-control"
+                                                   readonly
+                                                   style="background-color:#f5f5f5;cursor:not-allowed;" />
                                             <span asp-validation-for="SenderEmail" class="text-danger"></span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            @* Alıcı Email *@
+                            <!-- Kime -->
                             <div class="row">
                                 <div class="col-lg-1 col-md-2 col-sm-2 col-xs-12">
                                     <div class="cmp-int-lb cmp-int-lb1 text-right">
@@ -49,14 +60,16 @@
                                 <div class="col-lg-11 col-md-10 col-sm-10 col-xs-12">
                                     <div class="form-group">
                                         <div class="nk-int-st cmp-int-in">
-                                            <input type="email" asp-for="ReceiverEmail" class="form-control" placeholder="alıcı@example.com" />
+                                            <input type="email" asp-for="ReceiverEmail"
+                                                   class="form-control"
+                                                   placeholder="alici@example.com" />
                                             <span asp-validation-for="ReceiverEmail" class="text-danger"></span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            @* Kategori Dropdown *@
+                            <!-- Kategori -->
                             <div class="row">
                                 <div class="col-lg-1 col-md-2 col-sm-2 col-xs-12">
                                     <div class="cmp-int-lb text-right">
@@ -66,7 +79,9 @@
                                 <div class="col-lg-11 col-md-10 col-sm-10 col-xs-12">
                                     <div class="form-group">
                                         <div class="nk-int-st">
-                                            <select asp-for="CategoryId" asp-items="ViewBag.CategoryList" class="form-control">
+                                            <select asp-for="CategoryId"
+                                                    asp-items="ViewBag.CategoryList"
+                                                    class="form-control">
                                                 <option value="">Lütfen Bir Kategori Seçiniz</option>
                                             </select>
                                             <span asp-validation-for="CategoryId" class="text-danger"></span>
@@ -75,7 +90,7 @@
                                 </div>
                             </div>
 
-                            @* Konu *@
+                            <!-- Konu -->
                             <div class="row">
                                 <div class="col-lg-1 col-md-2 col-sm-2 col-xs-12">
                                     <div class="cmp-int-lb text-right">
@@ -85,7 +100,9 @@
                                 <div class="col-lg-11 col-md-10 col-sm-10 col-xs-12">
                                     <div class="form-group">
                                         <div class="nk-int-st cmp-int-in">
-                                            <input type="text" asp-for="Subject" class="form-control" placeholder="Mesaj konusu" />
+                                            <input type="text" asp-for="Subject"
+                                                   class="form-control"
+                                                   placeholder="Mesaj konusu" />
                                             <span asp-validation-for="Subject" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -93,27 +110,38 @@
                             </div>
                         </div>
 
-                        @* Mesaj İçeriği *@
+                        <!-- Mesaj -->
                         <div class="cmp-int-box mg-t-20">
                             <div class="form-group">
                                 <label>Mesaj Detayı</label>
                                 <div class="nk-int-st">
-                                    <textarea asp-for="MessageDetail" class="form-control summernote" style="display:none;"></textarea>
+                                    <textarea asp-for="MessageDetail" class="form-control summernote"></textarea>
                                 </div>
                                 <span asp-validation-for="MessageDetail" class="text-danger"></span>
                             </div>
                         </div>
 
+                        <!-- BUTONLAR -->
                         <div class="vw-ml-action-ls text-right mg-t-20">
                             <div class="btn-group ib-btn-gp active-hook nk-email-inbox">
-                                <button type="submit" class="btn btn-default btn-sm waves-effect">
+
+                                <button type="submit" name="action" value="send"
+                                        class="btn btn-default btn-sm waves-effect">
                                     <i class="notika-icon notika-next"></i> Mesajı Gönder
                                 </button>
-                                <a href="/Message/Inbox" class="btn btn-default btn-sm waves-effect">
+
+                                <button type="submit" name="action" value="saveDraft"
+                                        class="btn btn-default btn-sm waves-effect">
+                                    <i class="notika-icon notika-draft"></i> Taslağa Kaydet
+                                </button>
+
+                                <a href="/Message/Inbox"
+                                   class="btn btn-default btn-sm waves-effect">
                                     <i class="notika-icon notika-trash"></i> İptal Et
                                 </a>
                             </div>
                         </div>
+
                     </div>
                 </form>
             </div>
@@ -121,34 +149,31 @@
     </div>
 </div>
 
-<!-- Summernote CSS -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.css" rel="stylesheet" />
 
-<!-- jQuery + Bootstrap + Summernote JS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.js"></script>
 
 <script>
-        $(document).ready(function () {
+    $(document).ready(function () {
         $('.summernote').summernote({
-            height: 250
+            height: 250,
+            callbacks: {
+                onChange: function (contents) {
+                    $('.summernote').val(contents);
+                }
+            }
         });
     });
 </script>
 
 <style>
-    /* ASP.NET Validation mesajını zorla kırmızı yap */
     .text-danger.field-validation-error {
-        color: #e74c3c !important; /* Bootstrap Danger kırmızısı */
+        color: #e74c3c !important;
         display: block;
         margin-top: 5px;
         font-weight: 600;
         font-size: 13px;
-    }
-
-    /* Summernote çerçevesi hata anında kırmızı görünsün istersen (opsiyonel) */
-    .field-validation-error ~ .note-editor {
-        border: 1px solid #e74c3c !important;
     }
 </style>

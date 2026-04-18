@@ -31,9 +31,9 @@ namespace Business_Layer.Concrete
         public async Task TSendMessageAsync(string senderUserName, ComposeMessageDto composeMessageDto)
         {
             var receiverId = await _userManager.Users
-            .Where(u => u.Email == composeMessageDto.ReceiverEmail)
-            .Select(u => u.Id)
-            .FirstOrDefaultAsync();
+        .Where(u => u.Email == composeMessageDto.ReceiverEmail)
+        .Select(u => u.Id)
+        .FirstOrDefaultAsync();
 
             var sender = await _userManager.FindByNameAsync(senderUserName);
 
@@ -41,15 +41,36 @@ namespace Business_Layer.Concrete
             if (sender == null) throw new LogicException("SenderEmail", "Sistemde bu mail bulunamadı.");
             if (sender.Id == receiverId) throw new LogicException("ReceiverEmail", "Kendinize mail yollayamazsınız.");
 
-            var message = _mapper.Map<Message>(composeMessageDto);
-            message.ReceiverId = receiverId;
-            message.SenderId = sender.Id;
-            message.SendDate = DateTime.Now;
-            message.IsRead = false;
-            message.IsDraft = false;
+            Message? existingMessage = null;
+            if (composeMessageDto.Id.HasValue && composeMessageDto.Id != Guid.Empty)
+            {
+                existingMessage = await _uow.Messages.GetByIdAsync(composeMessageDto.Id.Value);
+            }
 
-            await TInsertAsync(message);
-            //genericmanager içerisinde bu metot alınır ve kullanılır. 
+            if (existingMessage != null)
+            {
+                _mapper.Map(composeMessageDto, existingMessage);
+                existingMessage.ReceiverId = receiverId;
+                existingMessage.SenderId = sender.Id;
+                existingMessage.SendDate = DateTime.Now;
+                existingMessage.IsRead = false;
+                existingMessage.IsDraft = false;
+
+                _uow.Messages.Update(existingMessage);
+            }
+            else
+            {
+                var message = _mapper.Map<Message>(composeMessageDto);
+                message.ReceiverId = receiverId;
+                message.SenderId = sender.Id;
+                message.SendDate = DateTime.Now;
+                message.IsRead = false;
+                message.IsDraft = false;
+
+                await TInsertAsync(message);
+            }
+
+            await _uow.SaveAsync();
         }
 
         public async Task<MessageDetailDto> TGetMessageDetailAsync(Guid id)
