@@ -13,6 +13,7 @@ namespace Entity_Layer.Entities
         public DateTime SendDate { get; set; } = DateTime.Now;
         public string MessageDetail { get; set; }
         public bool IsRead { get; set; } = false;
+        public bool IsDraft { get; set; } = false;
         public Guid CategoryId { get; set; }
         public Category Category { get; set; }
         public Guid SenderId { get; set; }
