@@ -35,5 +35,23 @@ namespace NotikaIdentityEmail.Controllers
             }
             return View(composeCategoryDto);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteCategory(Guid id)
+        {
+            try
+            {
+                var category = await _categoryService.TGetByIdAsync(id);
+                if (category == null)
+                    return Json(new { success = false, message = "Kategori bulunamadı." });
+
+                await _categoryService.TDelete(category);
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
     }
 }
