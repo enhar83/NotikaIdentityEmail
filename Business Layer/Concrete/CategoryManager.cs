@@ -24,6 +24,15 @@ namespace Business_Layer.Concrete
             _mapper = mapper;
         }
 
+        public async Task TComposeCategoryAsync(ComposeCategoryDto composeCategoryDto)
+        {
+            var category = _mapper.Map<Category>(composeCategoryDto);
+            category.CategoryStatus = true;
+
+            await _uow.Categories.InsertAsync(category);
+            await _uow.SaveAsync();
+        }
+
         public async Task TDelete(Category entity)
         {
             _uow.Categories.Delete(entity);
