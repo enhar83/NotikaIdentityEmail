@@ -179,6 +179,9 @@ namespace Business_Layer.Mappings
 
             CreateMap<ComposeCategoryDto, Category>()
                 .ReverseMap();
+
+            CreateMap<UpdateCategoryDto, Category>()
+                .ReverseMap();
         }
     }
 }

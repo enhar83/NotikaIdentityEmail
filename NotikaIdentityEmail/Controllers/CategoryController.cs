@@ -1,9 +1,11 @@
 ﻿using Business_Layer.Abstract;
 using Entity_Layer.DTOs.CategoryDtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace NotikaIdentityEmail.Controllers
 {
+    [Authorize(Roles = "Admin,Employee")]
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;
