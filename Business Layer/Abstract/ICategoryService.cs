@@ -13,5 +13,6 @@ namespace Business_Layer.Abstract
         Task<List<CategorySidebarDto>> TGetCategoryListForSidebarAsync(Guid receiverId);
         Task<List<CategoryListDto>> TGetCategoryListAsync();
         Task TComposeCategoryAsync(ComposeCategoryDto composeCategoryDto);
+        Task TUpdateCategoryAsync(UpdateCategoryDto updateCategoryDto);
     }
 }

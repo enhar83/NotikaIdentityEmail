@@ -38,6 +38,33 @@ namespace NotikaIdentityEmail.Controllers
             return View(composeCategoryDto);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditCategory(Guid id)
+        {
+            var category = await _categoryService.TGetByIdAsync(id);
+            if (category == null)
+                return NotFound();
+
+            var updateDto = new UpdateCategoryDto
+            {
+                Id = category.Id,
+                CategoryName = category.CategoryName!,
+                CategoryIconUrl = category.CategoryIconUrl!
+            };
+
+            return View(updateDto);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditCategory(UpdateCategoryDto updateCategoryDto)
+        {
+            if (!ModelState.IsValid)
+                return View(updateCategoryDto);
+
+            await _categoryService.TUpdateCategoryAsync(updateCategoryDto);
+            return RedirectToAction("CategoryList");
+        }
+
         [HttpPost]
         public async Task<IActionResult> DeleteCategory(Guid id)
         {

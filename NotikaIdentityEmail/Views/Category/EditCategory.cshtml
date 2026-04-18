@@ -1,7 +1,7 @@
-﻿@model ComposeCategoryDto
+﻿@model UpdateCategoryDto
 
 @{
-    ViewData["Title"] = "CreateCategory";
+    ViewData["Title"] = "EditCategory";
     Layout = "~/Views/UserLayout/Index.cshtml";
 }
 
@@ -11,13 +11,14 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="form-element-list">
                     <div class="basic-tb-hd">
-                        <h2>Kategori Ekleme Sayfası</h2>
-                        <p>Lütfen kategori bilgilerini eksiksiz olarak doldurunuz.</p>
+                        <h2><i class="@Model.CategoryIconUrl"></i> Kategori Düzenleme</h2>
+                        <p>Lütfen kategori bilgilerini eksiksiz olarak doldurup güncelleme işlemini yapınız.</p>
                     </div>
 
                     <div asp-validation-summary="ModelOnly" class="text-danger m-b-20"></div>
 
-                    <form asp-action="CreateCategory" asp-controller="Category" method="post">
+                    <form asp-action="EditCategory" asp-controller="Category" method="post">
+                        <input type="hidden" asp-for="Id" />
 
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -27,7 +28,7 @@
                                     </div>
                                     <div class="nk-int-st">
                                         <label>Kategori Adı</label>
-                                        <input type="text" asp-for="CategoryName" class="form-control" placeholder="Kategori Adı...">
+                                        <input type="text" asp-for="CategoryName" class="form-control" placeholder="Kategori Adı">
                                     </div>
                                     <span asp-validation-for="CategoryName" class="text-danger"></span>
                                 </div>
@@ -36,27 +37,24 @@
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="form-group ic-cmp-int">
                                     <div class="form-ic-cmp">
-                                        <i id="icon-preview" class="fa fa-question-circle" style="font-size: 20px; color: #00c292;"></i>
+                                        <i class="@Model.CategoryIconUrl" id="icon-preview"></i>
                                     </div>
                                     <div class="nk-int-st">
                                         <label>Kategori Icon (Class)</label>
-                                        <input type="text" asp-for="CategoryIconUrl" id="icon-input" class="form-control" placeholder="Örn: fa fa-laptop veya notika-icon notika-mail">
+                                        <input type="text" asp-for="CategoryIconUrl" id="icon-input" class="form-control" placeholder="Örn: fa fa-heart">
                                     </div>
                                     <span asp-validation-for="CategoryIconUrl" class="text-danger"></span>
                                 </div>
                             </div>
 
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 mg-t-15">
-                                <div class="fm-checkbox">
-                                    <button type="submit" class="btn btn-success btn-icon-notika">
-                                        <i class="fa fa-plus"></i> Kategoriyi Oluştur
-                                    </button>
-                                    <a href="/Category/CategoryList" class="btn btn-danger btn-icon-notika">
-                                        <i class="fa fa-close"></i> Vazgeç
-                                    </a>
-                                </div>
+                                <button type="submit" class="btn btn-success btn-icon-notika">
+                                    <i class="fa fa-save"></i> Bilgileri Güncelle
+                                </button>
+                                <a href="/Category/CategoryList" class="btn btn-danger btn-icon-notika">
+                                    <i class="fa fa-arrow-left"></i> Vazgeç
+                                </a>
                             </div>
-
                         </div>
                     </form>
                 </div>
@@ -66,19 +64,10 @@
 </div>
 
 @section Scripts {
+    @* Sayfa yenilenmeden ikonun değiştiğini görmek için küçük bir script *@
     <script>
-        $(document).ready(function () {
-            // Input değiştikçe ikonu güncelle
-            $("#icon-input").on("input", function () {
-                var iconClass = $(this).val();
-
-                // Eğer input boşsa varsayılan soru işareti ikonunu göster
-                if (iconClass.trim() === "") {
-                    $("#icon-preview").attr("class", "fa fa-question-circle");
-                } else {
-                    $("#icon-preview").attr("class", iconClass);
-                }
-            });
+        $("#icon-input").on("input", function () {
+            $("#icon-preview").attr("class", $(this).val());
         });
     </script>
 }
@@ -93,9 +82,5 @@
 
     .mg-t-15 {
         margin-top: 15px;
-    }
-
-    .form-ic-cmp i {
-        transition: all 0.3s ease; /* İkon değişimine yumuşak bir geçiş ekler */
     }
 </style>

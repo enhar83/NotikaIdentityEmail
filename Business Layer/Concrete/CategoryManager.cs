@@ -51,7 +51,7 @@ namespace Business_Layer.Concrete
             return query
                 .ProjectTo<CategoryListDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
-        
+
         }
 
         public async Task<List<CategorySidebarDto>> TGetCategoryListForSidebarAsync(Guid receiverId)
@@ -84,6 +84,20 @@ namespace Business_Layer.Concrete
         {
             _uow.Categories.Update(entity);
             _uow.SaveAsync();
+        }
+
+        public async Task TUpdateCategoryAsync(UpdateCategoryDto updateCategoryDto)
+        {
+            var value = await _uow.Categories.GetByIdAsync(updateCategoryDto.Id);
+
+            if (value != null)
+            {
+                value.CategoryName = updateCategoryDto.CategoryName;
+                value.CategoryIconUrl = updateCategoryDto.CategoryIconUrl;
+
+                _uow.Categories.Update(value);
+                await _uow.SaveAsync();
+            }
         }
     }
 }
