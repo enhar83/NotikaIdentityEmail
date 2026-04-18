@@ -10,7 +10,7 @@
                 <th>Kategori</th>
                 <th>Mesaj Konusu</th>
                 <th>Tarih</th>
-                <th>İşlem</th>
+                <th class="text-center" style="width: 200px;">İşlemler</th>
             </tr>
         </thead>
         <tbody>
@@ -60,11 +60,19 @@
                             @item.SendDate.ToString("dd MMM yyyy")
                         </td>
 
-                        @* 6. Sütun: Buton *@
-                        <td class="text-right" style="width:150px; vertical-align: middle;">
-                            <a href="/Message/MessageDetails/@item.Id" class="btn btn-sm btn-info">
-                                Mesaj İçeriği
-                            </a>
+                        <td class="text-center" style="width: 150px; vertical-align: middle;">
+                            <div class="btn-group-custom">
+                                <a href="@(ViewContext.RouteData.Values["action"]?.ToString() == "Draft" ? "/Message/ComposeMessage/" : "/Message/MessageDetails/")@item.Id"
+                                   class="btn btn-info btn-xs btn-custom" title="Görüntüle">
+                                    <i class="notika-icon notika-edit"></i>
+                                </a>
+                                <button type="button"
+                                        class="btn btn-danger btn-xs btn-custom delete-message-btn"
+                                        data-id="@item.Id"
+                                        title="Sil">
+                                    <i class="notika-icon notika-trash"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 }
@@ -102,11 +110,81 @@
     tr.unread {
         background-color: #fbfbfb;
     }
+
+    .btn-group-custom {
+        display: flex;
+        justify-content: center;
+        gap: 8px; /* Butonlar arası boşluk */
+    }
+
+    .btn-custom {
+        border-radius: 4px !important; /* Köşeleri yuvarla */
+        padding: 5px 10px !important;
+        transition: all 0.3s;
+    }
+
+        .btn-custom:hover {
+            transform: translateY(-2px); /* Üzerine gelince hafif yükselme efekti */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
 </style>
 
 <script>
     window.addEventListener('pageshow', function (event) {
         if (event.persisted || (typeof window.performance != 'undefined' && window.performance.navigation.type === 2)) {
+            window.location.reload();
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).on('click', '.delete-message-btn', function (e) {
+        e.preventDefault();
+        var btn = $(this);
+        var messageId = btn.data('id');
+        var row = btn.closest('tr');
+
+        Swal.fire({
+            title: 'Emin misiniz?',
+            text: "Mesaj çöp kutusuna taşınacak!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'Vazgeç',
+            background: '#fff',
+            customClass: {
+                popup: 'animated fadeInDown'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Message/DeleteMessageAjax/',
+                    type: 'POST',
+                    data: { id: messageId },
+                    success: function (response) {
+                        if (response.success) {
+                            row.fadeOut(400, function () { $(this).remove(); });
+                            Swal.fire(
+                                'Silindi!',
+                                'Mesaj başarıyla taşındı.',
+                                'success'
+                            );
+                        } else {
+                            Swal.fire('Hata!', 'Bir sorun oluştu.', 'error');
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+    // Geri butonuyla dönüldüğünde sayfayı yenileme (Daha önce konuştuğumuz mantık)
+    window.addEventListener('pageshow', function (event) {
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
             window.location.reload();
         }
     });

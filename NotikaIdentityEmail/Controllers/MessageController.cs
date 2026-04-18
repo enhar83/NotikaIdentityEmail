@@ -120,6 +120,26 @@ namespace NotikaIdentityEmail.Controllers
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> DeleteMessageAjax(Guid id)
+        {
+            try
+            {
+                var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userIdString == null) return Json(new { success = false, message = "Oturum kapalı." });
+
+                var userId = Guid.Parse(userIdString);
+
+                await _messageService.TSoftDeleteMessageAsync(id, userId);
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
         private async Task GetCategoryListAsync()
         {
             var categories = await _categoryService.TGetListAsync();

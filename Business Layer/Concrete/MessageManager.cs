@@ -205,6 +205,23 @@ namespace Business_Layer.Concrete
                 await _uow.SaveAsync();
             }
         }
+
+        public async Task TSoftDeleteMessageAsync(Guid messageId, Guid userId)
+        {
+            var message = await _uow.Messages.GetByIdAsync(messageId);
+
+            if (message != null)
+            {
+                if (message.ReceiverId == userId)
+                    message.ReceiverIsDeleted = true;
+
+                else if (message.SenderId == userId)
+                    message.SenderIsDeleted = true;
+
+                _uow.Messages.Update(message);
+                await _uow.SaveAsync();
+            }
+        }
     }
 }
 
