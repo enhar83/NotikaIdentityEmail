@@ -193,6 +193,18 @@ namespace Business_Layer.Concrete
         {
             return await _uow.Messages.GetWhere(m => m.SenderId == senderId && m.IsDraft == true).CountAsync();
         }
+
+        public async Task MarkAsReadAsync(Guid id)
+        {
+            var message = await _uow.Messages.GetByIdAsync(id);
+
+            if (message != null && !message.IsRead)
+            {
+                message.IsRead = true;
+                _uow.Messages.Update(message);
+                await _uow.SaveAsync();
+            }
+        }
     }
 }
 

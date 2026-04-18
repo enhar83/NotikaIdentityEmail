@@ -3,52 +3,65 @@
 
 <div class="table-responsive">
     <table class="table table-hover table-inbox">
-
-        <tr>
-            <th>#</th>
-            <th>Gönderen Kişi</th>
-            <th>Kategori</th>
-            <th>Mesaj Konusu</th>
-            <th>Tarih</th>
-            <th>Mesaj Detayı</th>
-        </tr>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Gönderen Kişi</th>
+                <th>Kategori</th>
+                <th>Mesaj Konusu</th>
+                <th>Tarih</th>
+                <th>İşlem</th>
+            </tr>
+        </thead>
         <tbody>
             @if (Model != null && Model.Any())
             {
                 @foreach (var item in Model)
                 {
                     <tr class="@(item.IsRead ? "" : "unread")">
-                        @* 1. Sütun: Seçim Kutusu *@
-                        <td style="width: 40px; vertical-align: middle;">
-                            <label><input type="checkbox" class="i-checks"></label>
+                        @* 1. Sütun: Durum İkonu *@
+                        <td style="width: 40px; vertical-align: middle; text-align: center;">
+                            @if (item.IsRead)
+                            {
+                                <i class="notika-icon notika-checked" style="color: #00c292;"></i>
+                            }
+                            else
+                            {
+                                <i class="notika-icon notika-mail" style="color: #ccc;"></i>
+                            }
                         </td>
 
-                        @* 2. Sütun: Gönderici Adı (Sabit genişlik hizayı korur) *@
+                        @* 2. Sütun: Gönderici *@
                         <td style="width: 200px; vertical-align: middle;">
-                            <a href="/Message/MessageDetails/@item.Id">@item.SenderName</a>
+                            <a href="/Message/MessageDetails/@item.Id" style="color: inherit;">
+                                @item.SenderName
+                            </a>
                         </td>
 
-                        @* 3. Sütun: Kategori (Sabit hizada başlar) *@
+                        @* 3. Sütun: Kategori *@
                         <td style="width: 110px; vertical-align: middle;">
                             <span class="label @CategoryColorHelperForInboxAndSendbox.GetLabelClass(item.CategoryName)">
                                 @item.CategoryName
                             </span>
                         </td>
 
-                        @* 4. Sütun: Mesaj Konusu (Strong/Kalın) *@
+                        @* 4. Sütun: Mesaj Konusu (Düzenlendi) *@
                         <td style="vertical-align: middle;">
-                            <a href="/Message/MessageDetails/@item.Id" class="subject-link">
-                                <strong class="truncate-text" title="@item.Subject">@item.Subject</strong>
+                            <a href="/Message/MessageDetails/@item.Id" class="subject-link" style="color: inherit; text-decoration: none;">
+                                @* Truncate class'ını doğrudan a etiketine veya içteki metne veriyoruz *@
+                                <div class="truncate-text" title="@item.Subject">
+                                    @(!string.IsNullOrEmpty(item.Subject) ? item.Subject : "Konu Belirtilmemiş")
+                                </div>
                             </a>
                         </td>
 
                         @* 5. Sütun: Tarih *@
-                        <td class="text-right mail-date" style="width: 120px; vertical-align: middle;">
+                        <td class="text-right mail-date" style="width:120px; vertical-align: middle;">
                             @item.SendDate.ToString("dd MMM yyyy")
                         </td>
 
-                        @* 6. Sütun: Mesajı Görüntüle Butonu *@
-                        <td class="text-right" style="width: 150px; vertical-align: middle;">
+                        @* 6. Sütun: Buton *@
+                        <td class="text-right" style="width:150px; vertical-align: middle;">
                             <a href="/Message/MessageDetails/@item.Id" class="btn btn-sm btn-info">
                                 Mesaj İçeriği
                             </a>
@@ -58,9 +71,7 @@
             }
             else
             {
-                <tr>
-                    <td colspan="6" class="text-center">Gelen mesaj bulunamadı.</td>
-                </tr>
+                <tr><td colspan="6" class="text-center" style="padding: 20px;">Gelen mesaj bulunamadı.</td></tr>
             }
         </tbody>
     </table>
@@ -68,16 +79,35 @@
 
 <style>
     .truncate-text {
+        /* display: block yerine inline-block veya table-cell denenebilir ama block kalsın, max-width ekleyelim */
         display: block;
-        max-width: 250px; /* Burayı ekranındaki boşluğa göre 200px veya 300px yapabilirsin */
-        white-space: nowrap; /* Kelimelerin alt satıra geçmesini engeller (Üst üste binme biter) */
-        overflow: hidden; /* Sığmayan kısmı gizler */
-        text-overflow: ellipsis; /* Gizlenen yerin sonuna ... koyar */
-        line-height: 1.4; /* Harflerin birbirine girmemesi için dikey boşluk */
+        max-width: 350px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.4;
     }
 
-    /* Tablonun diğer sütunlarının kaymaması için */
     .table-inbox td {
         white-space: nowrap;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    /* Okunmamış satırları kalın yapıyoruz */
+    tr.unread td, tr.unread td a, tr.unread td div {
+        font-weight: bold !important;
+        color: #333;
+    }
+
+    tr.unread {
+        background-color: #fbfbfb;
     }
 </style>
+
+<script>
+    window.addEventListener('pageshow', function (event) {
+        if (event.persisted || (typeof window.performance != 'undefined' && window.performance.navigation.type === 2)) {
+            window.location.reload();
+        }
+    });
+</script>

@@ -23,6 +23,7 @@ namespace Business_Layer.Abstract
         Task<List<MessageListInHeaderDto>> TGetMessageListForHeaderAsync(Guid receiverId);
         Task<int> TGetUnreadMessageCountForHeaderAsync(Guid receiverId);
         Task<List<MessageListByCategoryDto>> TGetMessageListByCategoryAsync(Guid receiverId, Guid categoryId);
-        Task TCreateOrUpdateMessageDraftAsync(Guid senderId, ComposeMessageDto composeMessageDto); 
+        Task TCreateOrUpdateMessageDraftAsync(Guid senderId, ComposeMessageDto composeMessageDto);
+        Task MarkAsReadAsync(Guid id);
     }
 }
