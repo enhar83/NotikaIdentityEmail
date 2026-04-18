@@ -1,6 +1,24 @@
 ﻿@using NotikaIdentityEmail.Models.Message
 @model MessageSidebarViewModel
 
+@{
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<style>
+    /* Temadan gelen sabit bold etkisini sıfırlıyoruz */
+    .inbox-st-nav.inbox-ft li a {
+        font-weight: 400 !important; /* Varsayılan olarak ince yap */
+        color: #333 !important; /* Varsayılan renk */
+    }
+
+    /* Sadece bizim 'active' dediğimiz veya o anki sayfada olan bold olsun */
+    .inbox-st-nav.inbox-ft li.active a {
+        font-weight: 700 !important;
+        color: #00c292 !important; /* Aktif olanın rengi (Notika yeşili) */
+    }
+</style>
+
 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
     <div class="inbox-left-sd">
         <div class="compose-ml">
@@ -8,10 +26,29 @@
         </div>
         <div class="inbox-status">
             <ul class="inbox-st-nav inbox-ft">
-                <li><a href="/Message/Inbox"><i class="notika-icon notika-mail"></i> Gelen Kutusu<span class="pull-right">(@Model.IncomingMessageCount)</span></a></li>
-                <li><a href="/Message/Sendbox"><i class="notika-icon notika-sent"></i> Giden Kutusu<span class="pull-right">(@Model.OutcomingMessageCount)</span></a></li>
-                <li><a href="/Message/Draft"><i class="notika-icon notika-draft"></i> Taslaklar<span class="pull-right">(@Model.DraftMessageCount)</span></a></li>
-                <li><a href="/Message/Trash"><i class="notika-icon notika-trash"></i> Silinenler</a></li>
+                <li class="@(currentAction == "Inbox" ? "active" : "")">
+                    <a href="/Message/Inbox">
+                        <i class="notika-icon notika-mail"></i> Gelen Kutusu
+                        <span class="pull-right">(@Model.IncomingMessageCount)</span>
+                    </a>
+                </li>
+                <li class="@(currentAction == "Sendbox" ? "active" : "")">
+                    <a href="/Message/Sendbox">
+                        <i class="notika-icon notika-sent"></i> Giden Kutusu
+                        <span class="pull-right">(@Model.OutcomingMessageCount)</span>
+                    </a>
+                </li>
+                <li class="@(currentAction == "Draft" ? "active" : "")">
+                    <a href="/Message/Draft">
+                        <i class="notika-icon notika-draft"></i> Taslaklar
+                        <span class="pull-right">(@Model.DraftMessageCount)</span>
+                    </a>
+                </li>
+                <li class="@(currentAction == "Trash" ? "active" : "")">
+                    <a href="/Message/Trash">
+                        <i class="notika-icon notika-trash"></i> Silinenler
+                    </a>
+                </li>
             </ul>
         </div>
         <hr>

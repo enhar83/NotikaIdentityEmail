@@ -111,6 +111,13 @@ namespace NotikaIdentityEmail.Controllers
             return View(composedMessage);
         }
 
+        public IActionResult MessageListByCategory(Guid id)
+        {
+            // URL'den gelen ID'yi alıyoruz, ViewComponent'e paslayacağız
+            ViewBag.SelectedCategoryId = id;
+            return View();
+        }
+
         private async Task GetCategoryListAsync()
         {
             var categories = await _categoryService.TGetListAsync();

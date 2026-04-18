@@ -1,13 +1,20 @@
 ﻿@model List<CategorySidebarDto>
 
+@{
+    var selectedCategoryId = ViewBag.SelectedCategoryId?.ToString();
+}
+
 <div class="inbox-status">
     <ul class="inbox-st-nav">
         @if (Model != null && Model.Any())
         {
             @foreach (var item in Model)
             {
-                <li>
-                    <a href="/Message/MessageListByCategory/@item.Id">
+                bool isActive = selectedCategoryId == item.Id.ToString();
+
+                <li class="@(isActive ? "active" : "")">
+                    <a href="/Message/MessageListByCategory/@item.Id"
+                       style="@(isActive ? "font-weight:bold; color:#00c292 !important;" : "")">
                         <i class="@item.CategoryIconUrl"></i> @item.CategoryName
                         <span class="pull-right">
                             (@item.MessageCount)
