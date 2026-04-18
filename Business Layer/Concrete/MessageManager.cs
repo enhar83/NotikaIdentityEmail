@@ -89,7 +89,7 @@ namespace Business_Layer.Concrete
 
         public async Task<List<MessageListInboxDto>> TGetMessageListForInboxAsync(Guid receiverId)
         {
-            var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.IsDraft == false);
+            var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.IsDraft == false && m.ReceiverIsDeleted == false);
 
             return await query
                 .ProjectTo<MessageListInboxDto>(_mapper.ConfigurationProvider)
@@ -99,7 +99,7 @@ namespace Business_Layer.Concrete
 
         public async Task<List<MessageListSendboxDto>> TGetMessageListForSendboxAsync(Guid senderId)
         {
-            var query = _uow.Messages.GetWhere(m => m.SenderId == senderId && m.IsDraft == false);
+            var query = _uow.Messages.GetWhere(m => m.SenderId == senderId && m.IsDraft == false && m.SenderIsDeleted == false);
 
             return await query
                 .ProjectTo<MessageListSendboxDto>(_mapper.ConfigurationProvider)
@@ -134,7 +134,7 @@ namespace Business_Layer.Concrete
 
         public async Task<List<MessageListByCategoryDto>> TGetMessageListByCategoryAsync(Guid receiverId, Guid categoryId)
         {
-            var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.CategoryId == categoryId && m.IsDraft == false);
+            var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.CategoryId == categoryId && m.IsDraft == false && m.ReceiverIsDeleted == false);
 
             return await query
                 .ProjectTo<MessageListByCategoryDto>(_mapper.ConfigurationProvider)
@@ -181,7 +181,7 @@ namespace Business_Layer.Concrete
 
         public async Task<List<MessageListDraftDto>> TGetMessageListForDraftAsync(Guid senderId)
         {
-            var query = _uow.Messages.GetWhere(m => m.SenderId == senderId && m.IsDraft == true);
+            var query = _uow.Messages.GetWhere(m => m.SenderId == senderId && m.IsDraft == true && m.SenderIsDeleted == false);
 
             return await query
                 .ProjectTo<MessageListDraftDto>(_mapper.ConfigurationProvider)
