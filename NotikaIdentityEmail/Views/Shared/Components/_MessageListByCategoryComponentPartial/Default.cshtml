@@ -170,21 +170,25 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    // URL TOGGLE METODUNA GÜNCELLENDİ
                     url: '/Message/ChangeMessageDeleteStatusAjax/',
                     type: 'POST',
                     data: { id: messageId },
                     success: function (response) {
                         if (response.success) {
-                            // Satırı listeden kaldır
+                            // 1. Önce satırı görsel olarak kaldırıyoruz
                             row.fadeOut(400, function () { $(this).remove(); });
 
+                            // 2. Başarı mesajını gösteriyoruz
                             Swal.fire({
                                 title: 'Başarılı!',
                                 text: 'Mesaj çöp kutusuna taşındı.',
                                 icon: 'success',
-                                timer: 1500,
+                                timer: 1000, // 1 saniye sonra otomatik kapanır
                                 showConfirmButton: false
+                            }).then(() => {
+                                // 3. MESAJ KAPANDIĞINDA SAYFAYI YENİLE
+                                // Bu sayede Sidebar'daki sayılar güncellenir.
+                                window.location.reload();
                             });
                         } else {
                             Swal.fire('Hata!', response.message || 'Bir sorun oluştu.', 'error');

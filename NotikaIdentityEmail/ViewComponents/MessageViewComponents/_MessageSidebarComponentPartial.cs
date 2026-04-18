@@ -28,12 +28,16 @@ namespace NotikaIdentityEmail.ViewComponents.MessageViewComponents
             int incomingMessageCount = await _messageService.TGetIncomingMessagesCount(userId);
             int outcomingMessageCount = await _messageService.TGetOutcomingMessagesCount(userId);
             int draftMessageCount = await _messageService.TGetDraftMessagesCount(userId);
+            int sendedTrashBinCount = await _messageService.TGetSendedTrashBinMessagesCount(userId);
+            int receivedTrashBinCount = await _messageService.TGetReceivedTrashBinMessagesCount(userId);
 
             var vm = new MessageSidebarViewModel
             {
                 IncomingMessageCount = incomingMessageCount,
                 OutcomingMessageCount = outcomingMessageCount,
-                DraftMessageCount = draftMessageCount
+                DraftMessageCount = draftMessageCount,
+                SendedTrashBinMessageCount = sendedTrashBinCount,
+                ReceivedTrashBinMessageCount = receivedTrashBinCount
             };
 
             return View(vm);

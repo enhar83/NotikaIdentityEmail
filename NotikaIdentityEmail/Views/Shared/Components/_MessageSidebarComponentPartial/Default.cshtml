@@ -47,11 +47,13 @@
                 <li class="@(currentAction == "SendedMessagesTrashBin" ? "active" : "")">
                     <a href="/Message/SendedMessagesTrashBin">
                         <i class="notika-icon notika-trash"></i> Silinenler (Gönderilen)
+                        <span class="pull-right">(@Model.SendedTrashBinMessageCount)</span>
                     </a>
                 </li>
                 <li class="@(currentAction == "ReceivedMessagesTrashBin" ? "active" : "")">
                     <a href="/Message/ReceivedMessagesTrashBin">
                         <i class="notika-icon notika-trash"></i> Silinenler (Alınan)
+                        <span class="pull-right">(@Model.ReceivedTrashBinMessageCount)</span>
                     </a>
                 </li>
             </ul>

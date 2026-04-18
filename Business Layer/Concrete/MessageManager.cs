@@ -109,12 +109,12 @@ namespace Business_Layer.Concrete
 
         public async Task<int> TGetIncomingMessagesCount(Guid receiverId)
         {
-            return await _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.IsDraft == false).CountAsync();
-        }
+            return await _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.IsDraft == false && m.ReceiverIsDeleted == false).CountAsync();
+        } 
 
         public async Task<int> TGetOutcomingMessagesCount(Guid senderId)
         {
-            return await _uow.Messages.GetWhere(m => m.SenderId == senderId && m.IsDraft == false).CountAsync();
+            return await _uow.Messages.GetWhere(m => m.SenderId == senderId && m.IsDraft == false && m.SenderIsDeleted == false).CountAsync();
         }
 
         public async Task<List<MessageListInHeaderDto>> TGetMessageListForHeaderAsync(Guid receiverId)
@@ -224,7 +224,7 @@ namespace Business_Layer.Concrete
 
         public async Task<List<ReceivedMessageListTrashBinDto>> TGetReceivedMessageListForTrashBinAsync(Guid receiverId)
         {
-            var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.ReceiverIsDeleted == true);
+            var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.ReceiverIsDeleted == true && m.IsDraft == false);
 
             return await query
                 .ProjectTo<ReceivedMessageListTrashBinDto>(_mapper.ConfigurationProvider)
@@ -234,12 +234,22 @@ namespace Business_Layer.Concrete
 
         public async Task<List<SendedMessageListTrashBinDto>> TGetSendedMessageListForTrashBinAsync(Guid senderId)
         {
-            var query = _uow.Messages.GetWhere(m => m.SenderId == senderId && m.SenderIsDeleted == true);
+            var query = _uow.Messages.GetWhere(m => m.SenderId == senderId && m.SenderIsDeleted == true && m.IsDraft == false);
 
             return await query
                 .ProjectTo<SendedMessageListTrashBinDto>(_mapper.ConfigurationProvider)
                 .OrderByDescending(m => m.SendDate)
                 .ToListAsync();
+        }
+
+        public async Task<int> TGetSendedTrashBinMessagesCount(Guid senderId)
+        {
+            return await _uow.Messages.GetWhere(m => m.SenderId == senderId && m.IsDraft == false && m.SenderIsDeleted == true).CountAsync();
+        }
+
+        public async Task<int> TGetReceivedTrashBinMessagesCount(Guid receiverId)
+        {
+            return await _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.IsDraft == false && m.ReceiverIsDeleted == true).CountAsync();
         }
     }
 }

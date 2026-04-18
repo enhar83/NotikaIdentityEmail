@@ -22,6 +22,8 @@ namespace Business_Layer.Abstract
         Task<int> TGetIncomingMessagesCount(Guid receiverId);
         Task<int> TGetOutcomingMessagesCount(Guid senderId);
         Task<int> TGetDraftMessagesCount(Guid senderId);
+        Task<int> TGetSendedTrashBinMessagesCount(Guid senderId);
+        Task<int> TGetReceivedTrashBinMessagesCount(Guid receiverId);
         Task<List<MessageListInHeaderDto>> TGetMessageListForHeaderAsync(Guid receiverId);
         Task<int> TGetUnreadMessageCountForHeaderAsync(Guid receiverId);
         Task<List<MessageListByCategoryDto>> TGetMessageListByCategoryAsync(Guid receiverId, Guid categoryId);
