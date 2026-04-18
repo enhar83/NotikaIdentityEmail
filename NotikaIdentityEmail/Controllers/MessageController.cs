@@ -37,7 +37,6 @@ namespace NotikaIdentityEmail.Controllers
         [HttpGet]
         public async Task<IActionResult> ComposeMessage(Guid? id)
         {
-            // 🔥 DOĞRU CLAIM
             var email = User.FindFirstValue(ClaimTypes.Email);
 
             var model = new ComposeMessageDto
@@ -45,6 +44,7 @@ namespace NotikaIdentityEmail.Controllers
                 SenderEmail = email
             };
 
+            //taslak mesajı mı yoksa sıfırdan mı oluştulacağının kontrolü yapılır. 
             if (id.HasValue && id != Guid.Empty)
             {
                 var draft = await _messageService.TGetByIdAsync(id.Value);
@@ -66,7 +66,7 @@ namespace NotikaIdentityEmail.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken] // 🔥 EKLENDİ
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ComposeMessage(ComposeMessageDto composedMessage, string action)
         {
             var currentUserName = User.FindFirstValue(ClaimTypes.Name);
@@ -79,14 +79,12 @@ namespace NotikaIdentityEmail.Controllers
 
             try
             {
-                // 🟡 TASLAK
-                if (action == "saveDraft")
+                if (action == "saveDraft") //hangi butona basıldığının kontrolü.
                 {
                     await _messageService.TCreateOrUpdateMessageDraftAsync(userId, composedMessage);
                     return RedirectToAction("Draft");
                 }
 
-                // 🔴 KATEGORİ VALIDATION FIX
                 if (composedMessage.CategoryId == Guid.Empty)
                     ModelState.AddModelError("CategoryId", "Kategori seçmelisiniz");
 
@@ -96,7 +94,6 @@ namespace NotikaIdentityEmail.Controllers
                     return View(composedMessage);
                 }
 
-                // 🟢 GÖNDER
                 await _messageService.TSendMessageAsync(currentUserName, composedMessage);
 
                 return RedirectToAction("Sendbox");
@@ -107,7 +104,6 @@ namespace NotikaIdentityEmail.Controllers
             }
             catch (Exception ex)
             {
-                // 🔥 GERÇEK HATA GÖSTER (DEBUG)
                 ModelState.AddModelError("", ex.Message);
             }
 

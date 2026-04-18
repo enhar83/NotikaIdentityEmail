@@ -4,5 +4,6 @@
     {
         public int IncomingMessageCount { get; set; }
         public int OutcomingMessageCount { get; set; }
+        public int DraftMessageCount { get; set; }
     }
 }

@@ -31,9 +31,9 @@ namespace Business_Layer.Concrete
         public async Task TSendMessageAsync(string senderUserName, ComposeMessageDto composeMessageDto)
         {
             var receiverId = await _userManager.Users
-        .Where(u => u.Email == composeMessageDto.ReceiverEmail)
-        .Select(u => u.Id)
-        .FirstOrDefaultAsync();
+                .Where(u => u.Email == composeMessageDto.ReceiverEmail)
+                .Select(u => u.Id)
+                .FirstOrDefaultAsync();
 
             var sender = await _userManager.FindByNameAsync(senderUserName);
 
@@ -41,6 +41,7 @@ namespace Business_Layer.Concrete
             if (sender == null) throw new LogicException("SenderEmail", "Sistemde bu mail bulunamadı.");
             if (sender.Id == receiverId) throw new LogicException("ReceiverEmail", "Kendinize mail yollayamazsınız.");
 
+            //eğer dto içerisinde id alanı doluysa bu taslak mesajdır ve güncellenmesi gerekir. 
             Message? existingMessage = null;
             if (composeMessageDto.Id.HasValue && composeMessageDto.Id != Guid.Empty)
             {
@@ -58,6 +59,7 @@ namespace Business_Layer.Concrete
 
                 _uow.Messages.Update(existingMessage);
             }
+            //eğer id alanı boşsa yeni bir mesajdır ve eklenmesi gerekir.
             else
             {
                 var message = _mapper.Map<Message>(composeMessageDto);
@@ -147,6 +149,7 @@ namespace Business_Layer.Concrete
             if (composeMessageDto.Id.HasValue && composeMessageDto.Id != Guid.Empty)
                 existingMessage = await _uow.Messages.GetByIdAsync(composeMessageDto.Id.Value);
 
+            //mesajın taslakta olup olmadığına bakar, eğer taslakta varsa günceller.
             if (existingMessage != null)
             {
                 _mapper.Map(composeMessageDto, existingMessage);
@@ -155,6 +158,8 @@ namespace Business_Layer.Concrete
 
                 _uow.Messages.Update(existingMessage);
             }
+
+            //mesaj taslakta yoksa yeni bir mesaj oluşturur.
             else
             {
                 var newMessage = _mapper.Map<Message>(composeMessageDto);
@@ -182,6 +187,11 @@ namespace Business_Layer.Concrete
                 .ProjectTo<MessageListDraftDto>(_mapper.ConfigurationProvider)
                 .OrderByDescending(m => m.SendDate)
                 .ToListAsync();
+        }
+
+        public async Task<int> TGetDraftMessagesCount(Guid senderId)
+        {
+            return await _uow.Messages.GetWhere(m => m.SenderId == senderId && m.IsDraft == true).CountAsync();
         }
     }
 }

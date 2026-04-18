@@ -19,6 +19,7 @@ namespace Business_Layer.Abstract
         Task TSendMessageAsync(string senderUserName, ComposeMessageDto composeMessageDto);
         Task<int> TGetIncomingMessagesCount(Guid receiverId);
         Task<int> TGetOutcomingMessagesCount(Guid senderId);
+        Task<int> TGetDraftMessagesCount(Guid senderId);
         Task<List<MessageListInHeaderDto>> TGetMessageListForHeaderAsync(Guid receiverId);
         Task<int> TGetUnreadMessageCountForHeaderAsync(Guid receiverId);
         Task<List<MessageListByCategoryDto>> TGetMessageListByCategoryAsync(Guid receiverId, Guid categoryId);
