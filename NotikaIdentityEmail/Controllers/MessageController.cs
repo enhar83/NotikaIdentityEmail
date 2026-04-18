@@ -94,6 +94,20 @@ namespace NotikaIdentityEmail.Controllers
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SaveDraft(ComposeMessageDto composeMessageDto)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdString == null)
+                return RedirectToAction("Login", "Account");
+
+            var userId = Guid.Parse(userIdString);
+
+            await _messageService.TCreateOrUpdateMessageDraftAsync(userId, composeMessageDto);
+
+            return RedirectToAction("DraftList");
+        }
+
         private async Task GetCategoryListAsync()
         {
             var categories = await _categoryService.TGetListAsync();

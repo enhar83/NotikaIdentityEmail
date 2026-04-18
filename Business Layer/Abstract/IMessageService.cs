@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Entity_Layer.DTOs.CategoryDtos;
 using Entity_Layer.DTOs.MessageDtos;
 using Entity_Layer.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace Business_Layer.Abstract
 {
@@ -13,6 +14,7 @@ namespace Business_Layer.Abstract
     {
         Task<List<MessageListInboxDto>> TGetMessageListForInboxAsync(Guid receiverId);
         Task<List<MessageListSendboxDto>> TGetMessageListForSendboxAsync(Guid senderId);
+        Task<List<MessageListDraftDto>> TGetMessageListForDraftAsync(Guid senderId);
         Task<MessageDetailDto> TGetMessageDetailAsync(Guid id);
         Task TSendMessageAsync(string senderUserName, ComposeMessageDto composeMessageDto);
         Task<int> TGetIncomingMessagesCount(Guid receiverId);
@@ -20,5 +22,6 @@ namespace Business_Layer.Abstract
         Task<List<MessageListInHeaderDto>> TGetMessageListForHeaderAsync(Guid receiverId);
         Task<int> TGetUnreadMessageCountForHeaderAsync(Guid receiverId);
         Task<List<MessageListByCategoryDto>> TGetMessageListByCategoryAsync(Guid receiverId, Guid categoryId);
+        Task TCreateOrUpdateMessageDraftAsync(Guid senderId, ComposeMessageDto composeMessageDto); 
     }
 }

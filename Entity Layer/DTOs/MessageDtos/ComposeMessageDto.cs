@@ -8,6 +8,7 @@ namespace Entity_Layer.DTOs.MessageDtos
 {
     public class ComposeMessageDto
     {
+        public Guid? Id { get; set; }
         public string? SenderEmail { get; set; }
         public string? ReceiverEmail { get; set; }
         public Guid CategoryId { get; set; }

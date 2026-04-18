@@ -118,6 +118,50 @@ namespace Business_Layer.Concrete
                 .OrderByDescending(m => m.SendDate)
                 .ToListAsync();
         }
+
+        public async Task TCreateOrUpdateMessageDraftAsync(Guid senderId, ComposeMessageDto composeMessageDto)
+        {
+            Message? existingMessage = null;
+
+            if (composeMessageDto.Id.HasValue && composeMessageDto.Id != Guid.Empty)
+                existingMessage = await _uow.Messages.GetByIdAsync(composeMessageDto.Id.Value);
+
+            if (existingMessage != null)
+            {
+                _mapper.Map(composeMessageDto, existingMessage);
+                existingMessage.IsDraft = true;
+                existingMessage.SendDate = DateTime.Now;
+
+                _uow.Messages.Update(existingMessage);
+            }
+            else
+            {
+                var newMessage = _mapper.Map<Message>(composeMessageDto);
+                newMessage.SenderId = senderId;
+                newMessage.IsDraft = true;
+                newMessage.SendDate = DateTime.Now;
+
+                if (!string.IsNullOrEmpty(composeMessageDto.ReceiverEmail))
+                {
+                    var receiver = await _userManager.FindByEmailAsync(composeMessageDto.ReceiverEmail);
+                    newMessage.ReceiverId = receiver?.Id ?? Guid.Empty;
+                }
+
+                await _uow.Messages.InsertAsync(newMessage);
+            }
+
+            await _uow.SaveAsync();
+        }
+
+        public async Task<List<MessageListDraftDto>> TGetMessageListForDraftAsync(Guid senderId)
+        {
+            var query = _uow.Messages.GetWhere(m => m.SenderId == senderId && m.IsDraft == true);
+
+            return await query
+                .ProjectTo<MessageListDraftDto>(_mapper.ConfigurationProvider)
+                .OrderByDescending(m => m.SendDate)
+                .ToListAsync();
+        }
     }
 }
 
