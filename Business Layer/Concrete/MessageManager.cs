@@ -46,6 +46,7 @@ namespace Business_Layer.Concrete
             message.SenderId = sender.Id;
             message.SendDate = DateTime.Now;
             message.IsRead = false;
+            message.IsDraft = false;
 
             await TInsertAsync(message);
             //genericmanager içerisinde bu metot alınır ve kullanılır. 
@@ -65,7 +66,7 @@ namespace Business_Layer.Concrete
 
         public async Task<List<MessageListInboxDto>> TGetMessageListForInboxAsync(Guid receiverId)
         {
-            var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId);
+            var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.IsDraft == false);
 
             return await query
                 .ProjectTo<MessageListInboxDto>(_mapper.ConfigurationProvider)
@@ -75,7 +76,7 @@ namespace Business_Layer.Concrete
 
         public async Task<List<MessageListSendboxDto>> TGetMessageListForSendboxAsync(Guid senderId)
         {
-            var query = _uow.Messages.GetWhere(m => m.SenderId == senderId);
+            var query = _uow.Messages.GetWhere(m => m.SenderId == senderId && m.IsDraft == false);
 
             return await query
                 .ProjectTo<MessageListSendboxDto>(_mapper.ConfigurationProvider)
@@ -85,17 +86,17 @@ namespace Business_Layer.Concrete
 
         public async Task<int> TGetIncomingMessagesCount(Guid receiverId)
         {
-            return await _uow.Messages.GetWhere(m => m.ReceiverId == receiverId).CountAsync();
+            return await _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.IsDraft == false).CountAsync();
         }
 
         public async Task<int> TGetOutcomingMessagesCount(Guid senderId)
         {
-            return await _uow.Messages.GetWhere(m => m.SenderId == senderId).CountAsync();
+            return await _uow.Messages.GetWhere(m => m.SenderId == senderId && m.IsDraft == false).CountAsync();
         }
 
         public async Task<List<MessageListInHeaderDto>> TGetMessageListForHeaderAsync(Guid receiverId)
         {
-            var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.IsRead == false);
+            var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.IsRead == false && m.IsDraft == false);
             return await query
                 .ProjectTo<MessageListInHeaderDto>(_mapper.ConfigurationProvider)
                 .OrderByDescending(m => m.SendDate)
@@ -105,14 +106,12 @@ namespace Business_Layer.Concrete
 
         public async Task<int> TGetUnreadMessageCountForHeaderAsync(Guid receiverId)
         {
-            return await _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.IsRead == false).CountAsync();
+            return await _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.IsRead == false && m.IsDraft == false).CountAsync();
         }
 
         public async Task<List<MessageListByCategoryDto>> TGetMessageListByCategoryAsync(Guid receiverId, Guid categoryId)
         {
-            var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.CategoryId == categoryId);
-
-
+            var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.CategoryId == categoryId && m.IsDraft == false);
 
             return await query
                 .ProjectTo<MessageListByCategoryDto>(_mapper.ConfigurationProvider)
