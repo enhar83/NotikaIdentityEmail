@@ -14,6 +14,8 @@ namespace Entity_Layer.Entities
         public string MessageDetail { get; set; }
         public bool IsRead { get; set; } = false;
         public bool IsDraft { get; set; } = false;
+        public bool SenderIsDeleted { get; set; } = false;
+        public bool ReceiverIsDeleted { get; set; } = false;
         public Guid CategoryId { get; set; }
         public Category Category { get; set; }
         public Guid SenderId { get; set; }
