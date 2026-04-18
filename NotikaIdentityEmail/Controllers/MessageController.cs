@@ -36,6 +36,11 @@ namespace NotikaIdentityEmail.Controllers
         {
             return View();
         }
+
+        public IActionResult Draft()
+        {
+            return View();
+        }
         public async Task<IActionResult> MessageDetails(Guid id)
         {
             var message = await _messageService.TGetMessageDetailAsync(id);
