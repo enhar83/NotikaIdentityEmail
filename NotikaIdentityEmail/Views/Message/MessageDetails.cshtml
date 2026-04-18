@@ -40,7 +40,9 @@
 							<button class="btn btn-default btn-sm waves-effect"><i class="notika-icon notika-next"></i> Yanıtla</button>
 							<button class="btn btn-default btn-sm waves-effect"><i class="notika-icon notika-right-arrow"></i> İlet</button>
 							<button class="btn btn-default btn-sm waves-effect"><i class="notika-icon notika-print"></i> Yazdır</button>
-							<button class="btn btn-default btn-sm waves-effect"><i class="notika-icon notika-trash"></i> Sil</button>
+							<button class="btn btn-default btn-sm waves-effect" id="btnDeleteMessageDetail" data-id="@Model.Id">
+								<i class="notika-icon notika-trash"></i> Sil
+							</button>
 						</div>
 					</div>
 				</div>
@@ -86,4 +88,52 @@
 		white-space: normal;
 	}
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+	document.getElementById('btnDeleteMessageDetail').addEventListener('click', function () {
+		var messageId = this.getAttribute('data-id');
+
+		Swal.fire({
+			title: 'Emin misiniz?',
+			text: "Bu mesaj çöp kutusuna taşınacak!",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#d33',
+			cancelButtonColor: '#3085d6',
+			confirmButtonText: 'Evet, sil!',
+			cancelButtonText: 'Vazgeç',
+			background: '#fff'
+		}).then((result) => {
+			if (result.isConfirmed) {
+				// AJAX ile silme isteği gönderiyoruz
+				$.ajax({
+					url: '/Message/DeleteMessageAjax/',
+					type: 'POST',
+					data: { id: messageId },
+					success: function (response) {
+						if (response.success) {
+							Swal.fire({
+								title: 'Silindi!',
+								text: 'Mesaj başarıyla çöp kutusuna taşındı.',
+								icon: 'success',
+								timer: 1500,
+								showConfirmButton: false
+							}).then(() => {
+								// Silme başarılıysa Gelen Kutusu'na yönlendir
+								window.location.href = '/Message/Inbox';
+							});
+						} else {
+							Swal.fire('Hata!', 'Mesaj silinirken bir sorun oluştu.', 'error');
+						}
+					},
+					error: function () {
+						Swal.fire('Teknik Hata!', 'Sunucuyla bağlantı kurulamadı.', 'error');
+					}
+				});
+			}
+		});
+	});
+</script>
 
