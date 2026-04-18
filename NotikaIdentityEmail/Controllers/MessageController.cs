@@ -27,6 +27,8 @@ namespace NotikaIdentityEmail.Controllers
         public IActionResult Inbox() => View();
         public IActionResult Sendbox() => View();
         public IActionResult Draft() => View();
+        public IActionResult SendedMessagesTrashBin() => View();
+        public IActionResult ReceivedMessagesTrashBin() => View();
 
         public async Task<IActionResult> MessageDetails(Guid id)
         {

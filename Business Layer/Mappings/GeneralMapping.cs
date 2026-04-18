@@ -64,8 +64,13 @@ namespace Business_Layer.Mappings
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
                 .ReverseMap();
 
-            CreateMap<Message, MessageListTrashBinDto>()
+            CreateMap<Message, ReceivedMessageListTrashBinDto>()
                 .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => src.Sender.Name + " " + src.Sender.Surname))
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
+                .ReverseMap();
+
+            CreateMap<Message, SendedMessageListTrashBinDto>()
+                .ForMember(dest => dest.ReceiverName, opt => opt.MapFrom(src => src.Receiver.Name + " " + src.Receiver.Surname))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
                 .ReverseMap();
 

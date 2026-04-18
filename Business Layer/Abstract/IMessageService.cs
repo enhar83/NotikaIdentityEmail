@@ -15,6 +15,8 @@ namespace Business_Layer.Abstract
         Task<List<MessageListInboxDto>> TGetMessageListForInboxAsync(Guid receiverId);
         Task<List<MessageListSendboxDto>> TGetMessageListForSendboxAsync(Guid senderId);
         Task<List<MessageListDraftDto>> TGetMessageListForDraftAsync(Guid senderId);
+        Task<List<ReceivedMessageListTrashBinDto>> TGetReceivedMessageListForTrashBinAsync(Guid receiverId);
+        Task<List<SendedMessageListTrashBinDto>> TGetSendedMessageListForTrashBinAsync(Guid senderId);
         Task<MessageDetailDto> TGetMessageDetailAsync(Guid id);
         Task TSendMessageAsync(string senderUserName, ComposeMessageDto composeMessageDto);
         Task<int> TGetIncomingMessagesCount(Guid receiverId);

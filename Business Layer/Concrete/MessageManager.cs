@@ -222,6 +222,26 @@ namespace Business_Layer.Concrete
                 await _uow.SaveAsync();
             }
         }
+
+        public async Task<List<ReceivedMessageListTrashBinDto>> TGetReceivedMessageListForTrashBinAsync(Guid receiverId)
+        {
+            var query = _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.ReceiverIsDeleted == true);
+
+            return await query
+                .ProjectTo<ReceivedMessageListTrashBinDto>(_mapper.ConfigurationProvider)
+                .OrderByDescending(m => m.SendDate)
+                .ToListAsync();
+        }
+
+        public async Task<List<SendedMessageListTrashBinDto>> TGetSendedMessageListForTrashBinAsync(Guid senderId)
+        {
+            var query = _uow.Messages.GetWhere(m => m.SenderId == senderId && m.SenderIsDeleted == true);
+
+            return await query
+                .ProjectTo<SendedMessageListTrashBinDto>(_mapper.ConfigurationProvider)
+                .OrderByDescending(m => m.SendDate)
+                .ToListAsync();
+        }
     }
 }
 

@@ -1,0 +1,143 @@
+﻿@model List<ReceivedMessageListTrashBinDto>
+@using Business_Layer.Helpers
+
+<div class="table-responsive">
+    <table class="table table-hover table-inbox">
+        <thead>
+            <tr>
+                <th style="width: 40px; text-align: center;">#</th>
+                <th>Gönderen Kişi</th>
+                <th>Kategori</th>
+                <th>Mesaj Konusu</th>
+                <th>Tarih</th>
+                <th class="text-center" style="width: 150px;">İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        @* 1. Sütun: Durum İkonu (Okundu/Okunmadı yerine sadece Çöp Kutusu İkonu) *@
+                        <td style="vertical-align: middle; text-align: center;">
+                            <i class="notika-icon notika-trash" style="color: #999;"></i>
+                        </td>
+
+                        @* 2. Sütun: Gönderici *@
+                        <td style="width: 200px; vertical-align: middle;">
+                            @item.SenderName
+                        </td>
+
+                        @* 3. Sütun: Kategori *@
+                        <td style="width: 110px; vertical-align: middle;">
+                            <span class="label @CategoryColorHelperForInboxAndSendbox.GetLabelClass(item.CategoryName)">
+                                @item.CategoryName
+                            </span>
+                        </td>
+
+                        @* 4. Sütun: Mesaj Konusu (Tıklama Özelliği Kaldırıldı) *@
+                        <td style="vertical-align: middle;">
+                            <div class="truncate-text" title="@item.Subject">
+                                @(!string.IsNullOrEmpty(item.Subject) ? item.Subject : "Konu Belirtilmemiş")
+                            </div>
+                        </td>
+
+                        @* 5. Sütun: Tarih *@
+                        <td class="text-right mail-date" style="width:120px; vertical-align: middle;">
+                            @item.SendDate.ToString("dd MMM yyyy")
+                        </td>
+
+                        @* 6. Sütun: İşlemler (Sadece Kurtar Butonu) *@
+                        <td class="text-center" style="vertical-align: middle;">
+                            <div class="btn-group-custom">
+                                <button type="button"
+                                        class="btn btn-success btn-xs btn-custom restore-message-btn"
+                                        data-id="@item.Id"
+                                        title="Geri Yükle">
+                                    <i class="notika-icon notika-refresh"></i> Kurtar
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="6" class="text-center" style="padding: 20px;">Çöp kutusunda mesaj bulunamadı.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .truncate-text {
+        display: block;
+        max-width: 350px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.4;
+    }
+
+    .table-inbox td {
+        white-space: nowrap;
+        border-top: 1px solid #f0f0f0;
+        color: #666;
+    }
+
+    .btn-group-custom {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-custom {
+        border-radius: 4px !important;
+        padding: 5px 12px !important;
+        transition: all 0.3s;
+        font-size: 12px;
+    }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).on('click', '.restore-message-btn', function (e) {
+        e.preventDefault();
+        var btn = $(this);
+        var messageId = btn.data('id');
+        var row = btn.closest('tr');
+
+        Swal.fire({
+            title: 'Mesajı Geri Yükle?',
+            text: "Bu mesaj tekrar gelen kutusuna taşınacak.",
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#00c292',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Evet, kurtar!',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Message/RestoreMessageAjax/', // Yeni oluşturacağın Action ismi
+                    type: 'POST',
+                    data: { id: messageId },
+                    success: function (response) {
+                        if (response.success) {
+                            row.fadeOut(400, function () { $(this).remove(); });
+                            Swal.fire('Başarılı!', 'Mesaj kurtarıldı.', 'success');
+                        } else {
+                            Swal.fire('Hata!', 'İşlem başarısız.', 'error');
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>
