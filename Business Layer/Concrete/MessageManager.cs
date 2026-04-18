@@ -206,17 +206,16 @@ namespace Business_Layer.Concrete
             }
         }
 
-        public async Task TSoftDeleteMessageAsync(Guid messageId, Guid userId)
+        public async Task TToggleMessageDeleteStatusAsync(Guid messageId, Guid userId)
         {
             var message = await _uow.Messages.GetByIdAsync(messageId);
-
             if (message != null)
             {
                 if (message.ReceiverId == userId)
-                    message.ReceiverIsDeleted = true;
+                    message.ReceiverIsDeleted = !message.ReceiverIsDeleted;
 
                 else if (message.SenderId == userId)
-                    message.SenderIsDeleted = true;
+                    message.SenderIsDeleted = !message.SenderIsDeleted;
 
                 _uow.Messages.Update(message);
                 await _uow.SaveAsync();

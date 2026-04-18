@@ -123,22 +123,23 @@ namespace NotikaIdentityEmail.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteMessageAjax(Guid id)
+        public async Task<IActionResult> ChangeMessageDeleteStatusAjax(Guid id)
         {
             try
             {
                 var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (userIdString == null) return Json(new { success = false, message = "Oturum kapalı." });
+                if (userIdString == null)
+                    return Json(new { success = false, message = "Oturum kapalı." });
 
                 var userId = Guid.Parse(userIdString);
 
-                await _messageService.TSoftDeleteMessageAsync(id, userId);
+                await _messageService.TToggleMessageDeleteStatusAsync(id, userId);
 
                 return Json(new { success = true });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return Json(new { success = false, message = "İşlem sırasında bir hata oluştu: " + ex.Message });
             }
         }
 

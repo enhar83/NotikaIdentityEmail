@@ -127,20 +127,28 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '/Message/DeleteMessageAjax/',
+                    // URL TOGGLE METODUNA GÜNCELLENDİ
+                    url: '/Message/ChangeMessageDeleteStatusAjax/',
                     type: 'POST',
                     data: { id: messageId },
                     success: function (response) {
                         if (response.success) {
+                            // Satırı listeden kaldır
                             row.fadeOut(400, function () { $(this).remove(); });
-                            Swal.fire(
-                                'Silindi!',
-                                'Mesaj başarıyla taşındı.',
-                                'success'
-                            );
+
+                            Swal.fire({
+                                title: 'Başarılı!',
+                                text: 'Mesaj çöp kutusuna taşındı.',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
                         } else {
-                            Swal.fire('Hata!', 'Bir sorun oluştu.', 'error');
+                            Swal.fire('Hata!', response.message || 'Bir sorun oluştu.', 'error');
                         }
+                    },
+                    error: function () {
+                        Swal.fire('Hata!', 'Sunucuyla bağlantı kurulamadı.', 'error');
                     }
                 });
             }
