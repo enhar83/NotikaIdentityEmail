@@ -35,6 +35,16 @@ namespace Business_Layer.Concrete
             return await _uow.Categories.GetByIdAsync(id);
         }
 
+        public Task<List<CategoryListDto>> TGetCategoryListAsync()
+        {
+            var query = _uow.Categories.GetWhere();
+
+            return query
+                .ProjectTo<CategoryListDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+        
+        }
+
         public async Task<List<CategorySidebarDto>> TGetCategoryListForSidebarAsync(Guid receiverId)
         {
             //IQueryable olarak status'u aktif olan categoryleri alıyoruz.

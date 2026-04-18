@@ -11,5 +11,6 @@ namespace Business_Layer.Abstract
     public interface ICategoryService: IGenericService<Category>
     {
         Task<List<CategorySidebarDto>> TGetCategoryListForSidebarAsync(Guid receiverId);
+        Task<List<CategoryListDto>> TGetCategoryListAsync();
     }
 }
