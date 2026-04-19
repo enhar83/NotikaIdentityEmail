@@ -3,19 +3,62 @@
 
 @{
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    bool isTrashActive = (currentAction == "SendedMessagesTrashBin" || currentAction == "ReceivedMessagesTrashBin");
 }
 
 <style>
-    /* Temadan gelen sabit bold etkisini sıfırlıyoruz */
     .inbox-st-nav.inbox-ft li a {
-        font-weight: 400 !important; /* Varsayılan olarak ince yap */
-        color: #333 !important; /* Varsayılan renk */
+        font-weight: 400 !important;
+        color: #333 !important;
+        cursor: pointer;
+        display: block;
+        padding: 10px 15px;
+        text-decoration: none;
     }
 
-    /* Sadece bizim 'active' dediğimiz veya o anki sayfada olan bold olsun */
-    .inbox-st-nav.inbox-ft li.active a {
+
+    .inbox-st-nav.inbox-ft li.active > a {
         font-weight: 700 !important;
-        color: #00c292 !important; /* Aktif olanın rengi (Notika yeşili) */
+        color: #00c292 !important;
+    }
+
+    /* Alt menü (Sub-menu) tasarımı */
+    .trash-sub-menu {
+        list-style: none;
+        padding-left: 0;
+        display: @(isTrashActive ? "block" : "none"); 
+        background: #fcfcfc;
+        margin: 0;
+        border-left: 3px solid #eee;
+        margin-left: 20px;
+    }
+
+        .trash-sub-menu li a {
+            padding: 8px 15px !important;
+            font-size: 13px !important;
+            color: #666 !important;
+        }
+
+        .trash-sub-menu li.active a {
+            color: #00c292 !important;
+            font-weight: 600 !important;
+        }
+
+    /* Açılır menü oku (Chevron) */
+    .chevron-icon {
+        font-size: 10px;
+        margin-left: 5px;
+        transition: transform 0.3s;
+    }
+
+    .trash-toggle.open .chevron-icon {
+        transform: rotate(180deg);
+    }
+
+    /* Hover efekti */
+    .inbox-st-nav li a:hover {
+        background: #f5f5f5;
+        color: #00c292 !important;
     }
 </style>
 
@@ -26,43 +69,59 @@
         </div>
         <div class="inbox-status">
             <ul class="inbox-st-nav inbox-ft">
+                @* Gelen Kutusu *@
                 <li class="@(currentAction == "Inbox" ? "active" : "")">
                     <a href="/Message/Inbox">
                         <i class="notika-icon notika-mail"></i> Gelen Kutusu
                         <span class="pull-right">(@Model.IncomingMessageCount)</span>
                     </a>
                 </li>
+
+                @* Giden Kutusu *@
                 <li class="@(currentAction == "Sendbox" ? "active" : "")">
                     <a href="/Message/Sendbox">
                         <i class="notika-icon notika-sent"></i> Giden Kutusu
                         <span class="pull-right">(@Model.OutcomingMessageCount)</span>
                     </a>
                 </li>
+
+                @* Taslaklar *@
                 <li class="@(currentAction == "Draft" ? "active" : "")">
                     <a href="/Message/Draft">
                         <i class="notika-icon notika-draft"></i> Taslaklar
                         <span class="pull-right">(@Model.DraftMessageCount)</span>
                     </a>
                 </li>
-                <li class="@(currentAction == "SendedMessagesTrashBin" ? "active" : "")">
-                    <a href="/Message/SendedMessagesTrashBin">
-                        <i class="notika-icon notika-trash"></i> Silinenler (Gönderilen)
-                        <span class="pull-right">(@Model.SendedTrashBinMessageCount)</span>
+
+                @* Silinenler (Açılır Menü) *@
+                <li class="@(isTrashActive ? "active" : "")">
+                    <a class="trash-toggle @(isTrashActive ? "open" : "")" id="trashMenuTrigger">
+                        <i class="notika-icon notika-trash"></i> Silinen Mesajlar
+                        <i class="fa fa-chevron-down chevron-icon"></i>
+                        <span class="pull-right"></span>
                     </a>
-                </li>
-                <li class="@(currentAction == "ReceivedMessagesTrashBin" ? "active" : "")">
-                    <a href="/Message/ReceivedMessagesTrashBin">
-                        <i class="notika-icon notika-trash"></i> Silinenler (Alınan)
-                        <span class="pull-right">(@Model.ReceivedTrashBinMessageCount)</span>
-                    </a>
+                    <ul class="trash-sub-menu" id="trashSubMenu">
+                        <li class="@(currentAction == "SendedMessagesTrashBin" ? "active" : "")">
+                            <a href="/Message/SendedMessagesTrashBin">
+                                <i class="fa fa-angle-right"></i> Silinenler (Gönderilen)
+                                <span class="pull-right">(@Model.SendedTrashBinMessageCount)</span>
+                            </a>
+                        </li>
+                        <li class="@(currentAction == "ReceivedMessagesTrashBin" ? "active" : "")">
+                            <a href="/Message/ReceivedMessagesTrashBin">
+                                <i class="fa fa-angle-right"></i> Silinenler (Alınan)
+                                <span class="pull-right">(@Model.ReceivedTrashBinMessageCount)</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </div>
-        <hr>
 
+        <hr>
         @await Component.InvokeAsync("_MessageCategoryListSidebarComponentPartial")
-
         <hr>
+
         <div class="inbox-status">
             <ul class="inbox-st-nav inbox-nav-mg">
                 <li><a href="#"><i class="notika-icon notika-success"></i> Forum</a></li>
@@ -74,3 +133,24 @@
         </div>
     </div>
 </div>
+
+<script>
+    (function() {
+        const trigger = document.getElementById("trashMenuTrigger");
+        const menu = document.getElementById("trashSubMenu");
+
+        if (trigger && menu) {
+            trigger.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                this.classList.toggle("open");
+
+                if (menu.style.display === "block") {
+                    menu.style.display = "none";
+                } else {
+                    menu.style.display = "block";
+                }
+            });
+        }
+    })();
+</script>

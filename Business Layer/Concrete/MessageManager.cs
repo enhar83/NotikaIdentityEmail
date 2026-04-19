@@ -209,15 +209,23 @@ namespace Business_Layer.Concrete
         public async Task TToggleMessageDeleteStatusAsync(Guid messageId, Guid userId)
         {
             var message = await _uow.Messages.GetByIdAsync(messageId);
+
             if (message != null)
             {
-                if (message.ReceiverId == userId)
-                    message.ReceiverIsDeleted = !message.ReceiverIsDeleted;
+                if (message.IsDraft)
+                    _uow.Messages.Delete(message);
 
-                else if (message.SenderId == userId)
-                    message.SenderIsDeleted = !message.SenderIsDeleted;
+                else
+                {
+                    if (message.ReceiverId == userId)
+                        message.ReceiverIsDeleted = !message.ReceiverIsDeleted;
 
-                _uow.Messages.Update(message);
+                    else if (message.SenderId == userId)
+                        message.SenderIsDeleted = !message.SenderIsDeleted;
+
+                    _uow.Messages.Update(message);
+                }
+
                 await _uow.SaveAsync();
             }
         }
@@ -250,7 +258,7 @@ namespace Business_Layer.Concrete
         public async Task<int> TGetReceivedTrashBinMessagesCount(Guid receiverId)
         {
             return await _uow.Messages.GetWhere(m => m.ReceiverId == receiverId && m.IsDraft == false && m.ReceiverIsDeleted == true).CountAsync();
-        }
+        } 
     }
 }
 

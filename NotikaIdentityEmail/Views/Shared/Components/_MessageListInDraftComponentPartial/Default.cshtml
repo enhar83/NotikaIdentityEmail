@@ -133,7 +133,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).on('click', '.delete-message-btn', function (e) {
+        $(document).on('click', '.delete-message-btn', function (e) {
         e.preventDefault();
         var btn = $(this);
         var messageId = btn.data('id');
@@ -141,7 +141,8 @@
 
         Swal.fire({
             title: 'Emin misiniz?',
-            text: "Mesaj çöp kutusuna taşınacak!",
+            // Taslaklar kalıcı silindiği için uyarı metnini değiştirdik
+            text: "Taslak mesaj kalıcı olarak silinecektir!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -155,7 +156,6 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    // URL TOGGLE METODUNA GÜNCELLENDİ
                     url: '/Message/ChangeMessageDeleteStatusAjax/',
                     type: 'POST',
                     data: { id: messageId },
@@ -166,7 +166,7 @@
 
                             Swal.fire({
                                 title: 'Başarılı!',
-                                text: 'Mesaj çöp kutusuna taşındı.',
+                                text: 'Mesaj başarıyla silindi.', // Genel bir mesaj daha iyi olur
                                 icon: 'success',
                                 timer: 1500,
                                 showConfirmButton: false

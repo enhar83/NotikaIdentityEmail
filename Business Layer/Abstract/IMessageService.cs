@@ -29,6 +29,6 @@ namespace Business_Layer.Abstract
         Task<List<MessageListByCategoryDto>> TGetMessageListByCategoryAsync(Guid receiverId, Guid categoryId);
         Task TCreateOrUpdateMessageDraftAsync(Guid senderId, ComposeMessageDto composeMessageDto);
         Task MarkAsReadAsync(Guid id);
-        Task TToggleMessageDeleteStatusAsync(Guid messageId, Guid userId);
+        Task TToggleMessageDeleteStatusAsync(Guid messageId, Guid userId);   
     }
 }
