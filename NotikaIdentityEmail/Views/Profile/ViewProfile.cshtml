@@ -1,0 +1,155 @@
+﻿@using Entity_Layer.DTOs.AppUserDtos.ProfileDtos
+@model ViewProfileDto
+
+@{
+    ViewData["Title"] = "Profil Bilgilerim";
+    Layout = "~/Views/UserLayout/Index.cshtml";
+}
+
+<div class="contact-info-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-5 col-sm-12 col-xs-12">
+                <div class="contact-inner" style="min-height: 465px;">
+                    <div class="contact-inner-img">
+                        <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/img/default-user.png" : Model.ImageUrl)"
+                             alt="Profil Resmi"
+                             class="img-circle"
+                             style="width: 140px; height: 140px; object-fit: cover; border: 4px solid #00c292; padding: 2px;">
+                    </div>
+                    <div class="contact-inner-title">
+                        <h2>@Model.Name @Model.Surname</h2>
+                        <p>@@@Model.UserName</p>
+                    </div>
+                    <div class="contact-dt">
+                        <ul class="contact-list">
+                            <li><i class="notika-icon notika-mail"></i> @Model.Email</li>
+                            <li><i class="notika-icon notika-phone"></i> @(Model.PhoneNumber ?? "Belirtilmedi")</li>
+                            <li><i class="notika-icon notika-map"></i> @(Model.City ?? "Belirtilmedi")</li>
+                        </ul>
+                    </div>
+                    <div class="contact-win-right" style="margin-top: 15px;">
+                        <a href="/Profile/EditProfile" class="btn btn-success waves-effect btn-sm">Profili Düzenle</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8 col-md-7 col-sm-12 col-xs-12">
+                <div class="form-element-list" style="min-height: 465px;">
+                    <div class="basic-tb-hd">
+                        <h2>Detaylı Hesap Bilgileri</h2>
+                        <p>Sistemde kayıtlı olan güncel iletişim ve kimlik bilgileriniz aşağıdadır.</p>
+                    </div>
+
+                    @* Başarı mesajı varsa gösteriyoruz *@
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label class="profile-label"><i class="notika-icon notika-support"></i> İsim</label>
+                                <p class="profile-value">@Model.Name</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label class="profile-label"><i class="notika-icon notika-support"></i> Soyisim</label>
+                                <p class="profile-value">@Model.Surname</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 20px;">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label class="profile-label"><i class="notika-icon notika-user"></i> Kullanıcı Adı</label>
+                                <p class="profile-value">@Model.UserName</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label class="profile-label"><i class="notika-icon notika-mail"></i> E-Posta</label>
+                                <p class="profile-value">@Model.Email</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 20px;">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label class="profile-label"><i class="notika-icon notika-map"></i> Şehir</label>
+                                <p class="profile-value">@(Model.City ?? "Belirtilmedi")</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label class="profile-label"><i class="notika-icon notika-phone"></i> Telefon</label>
+                                <p class="profile-value">@(Model.PhoneNumber ?? "Belirtilmedi")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Notika Temasıyla Tam Uyum İçin Custom CSS */
+    .profile-label {
+        color: #999;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+        .profile-label i {
+            color: #00c292;
+            margin-right: 5px;
+        }
+
+    .profile-value {
+        font-weight: 600;
+        font-size: 16px;
+        color: #333;
+        border-bottom: 1px solid #f1f1f1;
+        padding-bottom: 8px;
+    }
+
+    .contact-inner {
+        background: #fff;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    }
+
+    .contact-list {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0;
+        text-align: left;
+    }
+
+        .contact-list li {
+            margin-bottom: 12px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .contact-list i {
+            margin-right: 10px;
+            color: #00c292;
+        }
+
+    /* Kartların altındaki boşlukları düzenle */
+    .contact-info-area {
+        margin-bottom: 40px;
+    }
+</style>

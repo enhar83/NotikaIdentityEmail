@@ -3,11 +3,14 @@ using Business_Layer.Abstract;
 using Business_Layer.Exceptions;
 using Entity_Layer.DTOs.AppUserDtos.ProfileDtos;
 using Entity_Layer.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Crypto;
 
 namespace NotikaIdentityEmail.Controllers
 {
+    [Authorize(Roles ="Admin,Employee")]
     public class ProfileController : Controller
     {
         private readonly IAppUserService _appUserService;
@@ -15,6 +18,18 @@ namespace NotikaIdentityEmail.Controllers
         public ProfileController(IAppUserService appUserService)
         {
             _appUserService = appUserService;
+        }
+
+        public async Task<IActionResult> ViewProfile()
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier); 
+            if (userIdString == null)
+                return View();
+
+            var userId = Guid.Parse(userIdString);
+
+            var userProfile = await _appUserService.GetProfileAsync(userId);
+            return View(userProfile);
         }
 
         [HttpGet]
@@ -55,7 +70,7 @@ namespace NotikaIdentityEmail.Controllers
             if (result.Succeeded)
             {
                 TempData["SuccessMessage"] = "Profiliniz başarıyla güncellendi.";
-                return RedirectToAction("EditProfile"); //sayfa tazelensin diye aynı metodun get haline gönderilir.
+                return RedirectToAction("ViewProfile"); //sayfa tazelensin diye aynı metodun get haline gönderilir.
             }
 
             foreach (var error in result.Errors)

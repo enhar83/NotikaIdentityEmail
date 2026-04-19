@@ -366,5 +366,16 @@ namespace Business_Layer.Concrete
             var result = await _userManager.UpdateAsync(user);
             return result;
         }
+
+        public async Task<ViewProfileDto> GetProfileAsync(Guid Id)
+        {
+            var user = await _userManager.FindByIdAsync(Id.ToString());
+            if (user == null)
+                throw new LogicException("", "Bilgileri görüntülenecek kullanıcı bulunamadı.");
+
+            var profileDto = _mapper.Map<ViewProfileDto>(user);
+
+            return profileDto;
+        }
     }
 }
