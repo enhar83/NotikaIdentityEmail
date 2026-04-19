@@ -102,6 +102,8 @@ namespace Business_Layer.Mappings
                 .ForMember(dest => dest.ReceiverId, opt => opt.Ignore())
                 .ReverseMap();
 
+            CreateMap<ViewProfileDto, AppUser>().ReverseMap();
+
             CreateMap<EditProfileDto, AppUser>().ReverseMap();
 
             CreateMap<ConfirmUserDto, AppUser>().ReverseMap();
