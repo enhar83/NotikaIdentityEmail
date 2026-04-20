@@ -17,6 +17,7 @@ ASP.NET Core Identity
 JWT (JSON Web Token)
 FluentValidation
 AutoMapper
+
 🧩 Mimari
 
 Katmanlı mimari kullanılmıştır:
@@ -25,6 +26,7 @@ UI (Presentation)
 Business (Service)
 Data Access (DAL)
 Entity
+
 🔄 AutoMapper
 
 Katmanlar arası veri dönüşümünü kolaylaştırır.
